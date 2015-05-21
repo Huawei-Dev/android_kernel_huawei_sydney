@@ -331,6 +331,13 @@ static int snvs_rtc_suspend_noirq(struct device *dev)
 {
 	struct snvs_rtc_data *data = dev_get_drvdata(dev);
 
+	return 0;
+}
+
+static int snvs_rtc_suspend_noirq(struct device *dev)
+{
+	struct snvs_rtc_data *data = dev_get_drvdata(dev);
+
 	if (data->clk)
 		clk_disable_unprepare(data->clk);
 

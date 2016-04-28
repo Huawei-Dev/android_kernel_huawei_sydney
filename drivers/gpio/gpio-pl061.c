@@ -87,9 +87,6 @@ static int pl061_direction_input(struct gpio_chip *gc, unsigned offset)
 	unsigned long flags;
 	unsigned char gpiodir;
 
-	if (offset >= gc->ngpio)
-		return -EINVAL;
-
 	if (pl061_check_security_status(chip))
 		return -EBUSY;
 
@@ -117,9 +114,6 @@ static int pl061_direction_output(struct gpio_chip *gc, unsigned offset,
 	struct pl061_gpio *chip = gpiochip_get_data(gc);
 	unsigned long flags;
 	unsigned char gpiodir;
-
-	if (offset >= gc->ngpio)
-		return -EINVAL;
 
 	if (pl061_check_security_status(chip))
 		return -EBUSY;

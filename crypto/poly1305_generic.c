@@ -17,6 +17,7 @@
 #include <linux/crypto.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
+#include <asm/unaligned.h>
 
 static inline u64 mlt(u64 a, u64 b)
 {
@@ -31,11 +32,6 @@ static inline u32 sr(u64 v, u_char n)
 static inline u32 and(u32 v, u32 mask)
 {
 	return v & mask;
-}
-
-static inline u32 le32_to_cpuvp(const void *p)
-{
-	return le32_to_cpup(p);
 }
 
 int crypto_poly1305_init(struct shash_desc *desc)
@@ -118,11 +114,11 @@ static void poly1305_blocks_internal(struct poly1305_state *state,
 
 	do {
 		/* h += m[i] */
-		h0 += (le32_to_cpuvp(src +  0) >> 0) & 0x3ffffff;
-		h1 += (le32_to_cpuvp(src +  3) >> 2) & 0x3ffffff;
-		h2 += (le32_to_cpuvp(src +  6) >> 4) & 0x3ffffff;
-		h3 += (le32_to_cpuvp(src +  9) >> 6) & 0x3ffffff;
-		h4 += (le32_to_cpuvp(src + 12) >> 8) | hibit;
+		h0 += (get_unaligned_le32(src +  0) >> 0) & 0x3ffffff;
+		h1 += (get_unaligned_le32(src +  3) >> 2) & 0x3ffffff;
+		h2 += (get_unaligned_le32(src +  6) >> 4) & 0x3ffffff;
+		h3 += (get_unaligned_le32(src +  9) >> 6) & 0x3ffffff;
+		h4 += (get_unaligned_le32(src + 12) >> 8) | hibit;
 
 		/* h *= r */
 		d0 = mlt(h0, r0) + mlt(h1, s4) + mlt(h2, s3) +

@@ -67,19 +67,15 @@ struct exception_table_entry
 extern int fixup_exception(struct pt_regs *regs);
 
 #define get_ds()	(KERNEL_DS)
-
-#ifndef CONFIG_HISI_HHEE_ADDR_LIMIT_PROTECTION
 #define get_fs()	(current_thread_info()->addr_limit)
-#else
-#define get_fs()	(mm_segment_t)hkip_get_fs()
-#endif
 
 static inline void set_fs(mm_segment_t fs)
 {
 	current_thread_info()->addr_limit = fs;
-#ifdef CONFIG_HISI_HHEE_ADDR_LIMIT_PROTECTION
-	hkip_set_fs(fs);
-#endif
+
+	/* On user-mode return, check fs is correct */
+	set_thread_flag(TIF_FSCHECK);
+
 	/*
 	 * Prevent a mispredicted conditional call to set_fs from forwarding
 	 * the wrong address limit to access_ok under speculation.

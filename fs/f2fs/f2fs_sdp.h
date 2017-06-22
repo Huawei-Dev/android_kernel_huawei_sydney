@@ -10,7 +10,7 @@
 #ifndef __F2FS_SDP_H__
 #define __F2FS_SDP_H__
 
-#include <linux/fscrypt_common.h>
+#include <linux/fscrypt.h>
 #include <linux/printk.h>
 #include <linux/types.h>
 #include <crypto/kpp.h>

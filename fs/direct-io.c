@@ -37,7 +37,7 @@
 #include <linux/uio.h>
 #include <linux/atomic.h>
 #include <linux/prefetch.h>
-#include <linux/fscrypt_common.h>
+#include <linux/fscrypt.h>
 #include <linux/hisi/iolimit_cgroup.h>
 
 /*

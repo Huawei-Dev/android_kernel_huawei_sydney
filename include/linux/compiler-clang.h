@@ -24,13 +24,6 @@
 #undef __noretpoline
 #endif
 
-/*
- * GCC does not warn about unused static inline functions for
- * -Wunused-function.  This turns out to avoid the need for complex #ifdef
- * directives.  Suppress the warning in clang as well.
- */
-#undef inline
-#define inline inline __attribute__((unused)) notrace
 #define randomized_struct_fields_start	struct {
 #define randomized_struct_fields_end	};
 

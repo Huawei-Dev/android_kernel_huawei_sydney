@@ -108,6 +108,7 @@ static inline int fscrypt_ci_key_index(struct inode *inode)
 }
 
 /* crypto.c */
+extern struct kmem_cache *fscrypt_info_cachep;
 extern int fscrypt_initialize(unsigned int cop_flags);
 extern int fscrypt_do_page_crypto(const struct inode *inode,
 				  fscrypt_direction_t rw, u64 lblk_num,

@@ -80,14 +80,6 @@ struct fscrypt_operations {
 	int (*is_permitted_context)(struct inode *, struct inode *);
 };
 
-static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
-{
-	if (inode->i_sb->s_cop->dummy_context &&
-				inode->i_sb->s_cop->dummy_context(inode))
-		return true;
-	return false;
-}
-
 static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
 {
 	if (str->len == 1 && str->name[0] == '.')

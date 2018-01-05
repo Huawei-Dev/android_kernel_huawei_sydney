@@ -21,8 +21,8 @@
  *
  * Return: 0 on success, -errno on failure
  */
-static int fname_encrypt(struct inode *inode,
-			const struct qstr *iname, struct fscrypt_str *oname)
+int fname_encrypt(struct inode *inode,
+		  const struct qstr *iname, struct fscrypt_str *oname)
 {
 	struct skcipher_request *req = NULL;
 	DECLARE_CRYPTO_WAIT(wait);
@@ -43,9 +43,11 @@ static int fname_encrypt(struct inode *inode,
 	 * Copy the filename to the output buffer for encrypting in-place and
 	 * pad it with the needed number of NUL bytes.
 	 */
+	if (WARN_ON(oname->len < iname->len))
+		return -ENOBUFS;
 	cryptlen = max_t(unsigned int, iname->len, FS_CRYPTO_BLOCK_SIZE);
 	cryptlen = round_up(cryptlen, padding);
-	cryptlen = min(cryptlen, lim);
+	cryptlen = min3(cryptlen, lim, oname->len);
 	memcpy(oname->name, iname->name, iname->len);
 	memset(oname->name + iname->len, 0, cryptlen - iname->len);
 

@@ -78,6 +78,7 @@
 #include <linux/sysctl.h>
 #include <linux/hisi/hisi_hkip.h>
 #include <linux/kcov.h>
+#include <linux/cpufreq_times.h>
 
 #include <linux/blk-cgroup.h>
 
@@ -359,6 +360,8 @@ void put_task_stack(struct task_struct *tsk)
 
 void free_task(struct task_struct *tsk)
 {
+	cpufreq_task_times_exit(tsk);
+
 #ifndef CONFIG_THREAD_INFO_IN_TASK
 	/*
 	 * The task is finally done with both the stack and thread_info,
@@ -1599,6 +1602,8 @@ static __latent_entropy struct task_struct *copy_process(
 	p = dup_task_struct(current, node);
 	if (!p)
 		goto fork_out;
+		
+	cpufreq_task_times_init(p);
 
 	retval = hkip_check_xid_root();
 	if (retval)
@@ -1738,10 +1743,6 @@ static __latent_entropy struct task_struct *copy_process(
 
 #ifdef CONFIG_HW_VIP_THREAD
 	init_task_vip_info(p);
-#endif
-
-#ifdef CONFIG_CPU_FREQ_TIMES
-	cpufreq_task_times_init(p);
 #endif
 
 	/* Perform scheduler related setup. Assign this task to a CPU. */
@@ -1997,9 +1998,6 @@ bad_fork_cleanup_audit:
 bad_fork_cleanup_perf:
 	perf_event_free_task(p);
 bad_fork_cleanup_policy:
-#ifdef CONFIG_CPU_FREQ_TIMES
-	cpufreq_task_times_exit(p);
-#endif
 #ifdef CONFIG_NUMA
 	mpol_put(p->mempolicy);
 bad_fork_cleanup_threadgroup_lock:
@@ -2088,6 +2086,8 @@ long _do_fork(unsigned long clone_flags,
 	if (!IS_ERR(p)) {
 		struct completion vfork;
 		struct pid *pid;
+
+		cpufreq_task_times_alloc(p);
 
 		trace_sched_process_fork(current, p);
 

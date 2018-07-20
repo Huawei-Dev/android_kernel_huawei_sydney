@@ -72,13 +72,8 @@ ENDPROC(__kvm_hyp_teardown)
 el1_sync:				// Guest trapped into EL2
 	stp	x0, x1, [sp, #-16]!
 
-alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
-	mrs	x1, esr_el2
-alternative_else
-	mrs	x1, esr_el1
-alternative_endif
-	lsr	x0, x1, #ESR_ELx_EC_SHIFT
-
+	mrs	x0, esr_el2
+	lsr	x0, x0, #ESR_ELx_EC_SHIFT
 	cmp	x0, #ESR_ELx_EC_HVC64
 	ccmp	x0, #ESR_ELx_EC_HVC32, #4, ne
 	b.ne	el1_trap
@@ -154,10 +149,14 @@ wa_epilogue:
 	eret
 
 el1_trap:
+	get_vcpu_ptr	x1, x0
+
+	mrs		x0, esr_el2
+	lsr		x0, x0, #ESR_ELx_EC_SHIFT
 	/*
 	 * x0: ESR_EC
+	 * x1: vcpu pointer
 	 */
-	ldr	x1, [sp, #16 + 8]	// vcpu stored by __guest_enter
 
 	/* Guest accessed VFP/SIMD registers, save host, restore Guest */
 	cmp	x0, #ESR_ELx_EC_FP_ASIMD
@@ -168,13 +167,13 @@ el1_trap:
 
 el1_irq:
 	stp     x0, x1, [sp, #-16]!
-	ldr	x1, [sp, #16 + 8]
+	get_vcpu_ptr	x1, x0
 	mov	x0, #ARM_EXCEPTION_IRQ
 	b	__guest_exit
 
 el1_error:
 	stp     x0, x1, [sp, #-16]!
-	ldr	x1, [sp, #16 + 8]
+	get_vcpu_ptr	x1, x0
 	mov	x0, #ARM_EXCEPTION_EL1_SERROR
 	b	__guest_exit
 
@@ -208,6 +207,11 @@ ENTRY(__hyp_do_panic)
 	msr	elr_el2, lr
 	eret
 ENDPROC(__hyp_do_panic)
+
+ENTRY(__hyp_panic)
+	get_host_ctxt x0, x1
+	b	hyp_panic
+ENDPROC(__hyp_panic)
 
 .macro invalid_vector	label, target = __hyp_panic
 	.align	2

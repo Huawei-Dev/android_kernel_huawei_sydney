@@ -7088,7 +7088,7 @@ static const struct hda_fixup alc662_fixups[] = {
 		.chained = true,
 		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
 	},
-	[ALC668_FIXUP_MIC_COEF] = {
+	[ALC668_FIXUP_ASUS_G751] = {
 		.type = HDA_FIXUP_VERBS,
 		.v.verbs = (const struct hda_verb[]) {
 			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
@@ -7096,7 +7096,7 @@ static const struct hda_fixup alc662_fixups[] = {
 			{}
 		},
 	},
-	[ALC668_FIXUP_ASUS_G751] = {
+	[ALC668_FIXUP_MIC_COEF] = {
 		.type = HDA_FIXUP_PINS,
 		.v.pins = (const struct hda_pintbl[]) {
 			{ 0x16, 0x0421101f }, /* HP */

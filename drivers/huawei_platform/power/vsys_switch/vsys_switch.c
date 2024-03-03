@@ -33,10 +33,6 @@
 #include <huawei_platform/power/huawei_battery_temp.h>
 #include <huawei_platform/power/vsys_switch/vsys_switch.h>
 
-#ifdef CONFIG_HUAWEI_BATTERY_VOLTAGE
-#include <huawei_platform/power/battery_voltage.h>
-#endif
-
 #ifdef CONFIG_HISI_BCI_BATTERY
 #include <linux/power/hisi/hisi_bci_battery.h>
 #endif

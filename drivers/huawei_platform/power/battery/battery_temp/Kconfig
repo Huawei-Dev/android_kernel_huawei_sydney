@@ -1,3 +1,0 @@
-config HUAWEI_BATTERY_TEMP
-	bool "huawei battery temp"
-	default n

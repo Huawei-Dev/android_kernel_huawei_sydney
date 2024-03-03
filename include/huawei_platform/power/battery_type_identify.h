@@ -31,12 +31,6 @@ enum batt_type_identify_mode {
 	BAT_INVALID_MODE,
 };
 
-#ifdef CONFIG_HUAWEI_BATTERY_TYPE_IDENTIFY
-void apply_batt_type_mode(enum batt_type_identify_mode mode);
-void release_batt_type_mode(void);
-void register_security_ic_ops(const struct security_ic_ops *ops);
-void unregister_security_ic_ops(const struct security_ic_ops *ops);
-#else
 static inline void apply_batt_type_mode(enum batt_type_identify_mode mode)
 {
 }
@@ -52,7 +46,5 @@ static inline void register_security_ic_ops(const struct security_ic_ops *ops)
 static inline void unregister_security_ic_ops(const struct security_ic_ops *ops)
 {
 }
-#endif /* CONFIG_HUAWEI_BATTERY_TYPE_IDENTIFY */
 
 #endif /* _BATTERY_TYPE_IDENTIFY_H_ */
-

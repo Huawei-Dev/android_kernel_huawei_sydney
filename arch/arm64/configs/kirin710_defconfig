@@ -4545,7 +4545,6 @@ CONFIG_HISI_SECS_CTRL=y
 #
 # Hisilicon ISP FD
 #
-# CONFIG_HISPFD is not set
 # CONFIG_HISI_ENGINEER_MODE is not set
 
 #

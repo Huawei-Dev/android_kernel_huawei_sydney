@@ -24,7 +24,6 @@
 
 #include <huawei_platform/power/power_dsm.h>
 #include <huawei_platform/power/huawei_charger_power_interface.h>
-#include <huawei_platform/power/power_debug.h>
 
 #ifdef CONFIG_DIRECT_CHARGER
 #include <huawei_platform/power/direct_charger.h>

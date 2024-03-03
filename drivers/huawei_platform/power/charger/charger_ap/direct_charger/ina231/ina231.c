@@ -104,47 +104,6 @@ static struct ina231_config_data ina231_config = {
 	.current_lsb = 500, /* 500 uA/bit */
 };
 
-#ifdef CONFIG_HUAWEI_POWER_DEBUG
-static ssize_t ina231_dbg_show(void *dev_data, char *buf, size_t size)
-{
-	struct ina231_device_info *dev_p;
-
-	dev_p = (struct ina231_device_info *)dev_data;
-	if (dev_p == NULL) {
-		hwlog_err("dev_p is null\n");
-		return scnprintf(buf, size, "dev_p is null\n");
-	}
-
-	return scnprintf(buf, size,
-		"ina231_calibrate_content=0x%x\n",
-		dev_p->config->calibrate_content);
-}
-
-static ssize_t ina231_dbg_store(void *dev_data, const char *buf, size_t size)
-{
-	struct ina231_device_info *dev_p;
-	u16 calibrate_content = 0;
-
-	dev_p = (struct ina231_device_info *)dev_data;
-	if (dev_p == NULL) {
-		hwlog_err("dev_p is null\n");
-		return -EINVAL;
-	}
-
-	if (kstrtou16(buf, 0, &calibrate_content) < 0) {
-		hwlog_err("get kstrtou16 failed:%s\n", buf);
-		return -EINVAL;
-	}
-
-	dev_p->config->calibrate_content = calibrate_content;
-
-	hwlog_info("calibrate_content=0x%x\n",
-		dev_p->config->calibrate_content);
-
-	return size;
-}
-#endif /* CONFIG_HUAWEI_POWER_DEBUG */
-
 static int ina231_get_shunt_voltage_mv(int *val)
 {
 	struct ina231_device_info *di = g_ina231_dev;
@@ -511,12 +470,6 @@ static int ina231_probe(struct i2c_client *client,
 		hwlog_err("ina231 wireless_sc batinfo ops register fail\n");
 		goto ina231_fail_2;
 	}
-#endif
-
-#ifdef CONFIG_HUAWEI_POWER_DEBUG
-	power_dbg_ops_register("ina231_para", i2c_get_clientdata(client),
-		(power_dgb_show)ina231_dbg_show,
-		(power_dgb_store)ina231_dbg_store);
 #endif
 
 	di->chip_already_init = 1;

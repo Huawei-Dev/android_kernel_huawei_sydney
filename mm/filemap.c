@@ -1774,9 +1774,6 @@ find_page:
 			count_mmonitor_event(FILE_CACHE_MISS_COUNT);
 #endif
 
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-			filp->f_path.dentry->mapping_stat.generic_sync_read_times++;
-#endif
 			if(is_pagecache_stats_enable()) {
 				stat_inc_syncread_pages_count(last_index - index);
 			}
@@ -2101,10 +2098,6 @@ static void do_sync_mmap_readahead(struct vm_area_struct *vma,
 				   pgoff_t offset)
 {
 	struct address_space *mapping = file->f_mapping;
-
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-	file->f_path.dentry->mapping_stat.mmap_sync_read_times++;
-#endif
 
 	/* If we don't want any read-ahead, don't bother */
 	if (vma->vm_flags & VM_RAND_READ) {

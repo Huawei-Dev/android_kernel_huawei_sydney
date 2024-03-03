@@ -1716,16 +1716,6 @@ static struct ctl_table vm_table[] = {
 		.extra1		= &zero,
 	},
 #endif
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-	{
-		.procname	= "pagecache_dump",
-		.data		= &pagecache_dump,
-		.maxlen		= sizeof(pagecache_dump),
-		.mode		= 0644,
-		.proc_handler	= proc_dointvec,
-		.extra1		= &zero,
-	},
-#endif
 	{
 		.procname	= "vfs_cache_pressure",
 		.data		= &sysctl_vfs_cache_pressure,

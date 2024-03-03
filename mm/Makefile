@@ -103,5 +103,4 @@ obj-$(CONFIG_DEBUG_PAGE_REF) += debug_page_ref.o
 obj-$(CONFIG_HARDENED_USERCOPY) += usercopy.o
 obj-$(CONFIG_PROCESS_RECLAIM)	+= process_reclaim.o
 obj-$(CONFIG_HISI_MM) += hisi/
-obj-$(CONFIG_HISI_PAGECACHE_DEBUG) += pagecache_debug.o
 obj-$(CONFIG_HUAWEI_UNMOVABLE_ISOLATE) += unmovable_isolate.o

@@ -1007,13 +1007,6 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 	bool rec_flag = sc->ishibernation_rec;
 #endif
 
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-	struct address_space *d_mapping;
-	int file_map, freepages = 0, nul_dentry_pages = 0;
-	struct dentry *tmp_dentry = NULL;
-	struct dentry *cur_dentry = NULL;
-#endif
-
 	cond_resched();
 
 	while (!list_empty(page_list)) {
@@ -1033,15 +1026,6 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 
 		page = lru_to_page(page_list);
 		list_del(&page->lru);
-
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-		if (unlikely(pagecache_dump & BIT_MM_SHRINK_INACTIVE_DUMP)) {
-			d_mapping = page_mapping(page);
-			file_map = page_is_file_cache(page);
-			if (file_map)
-				cur_dentry = (d_mapping && d_mapping->host) ? d_find_alias(d_mapping->host) : NULL;
-		}
-#endif
 
 		if (!trylock_page(page))
 			goto keep;
@@ -1217,13 +1201,6 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 		}
 
 		if (PageDirty(page)) {
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-			if (unlikely(pagecache_dump & BIT_MM_SHRINK_INACTIVE_DUMP)) {
-				if (file_map)
-					pgcache_log_dentry(BIT_MM_SHRINK_INACTIVE_DUMP, cur_dentry,
-							"shrink_page, this page is dirty");
-			}
-#endif
 
 			/*
 			 * Only kswapd can writeback filesystem pages
@@ -1347,31 +1324,6 @@ free_it:
 		if (ret == SWAP_LZFREE)
 			count_vm_event(PGLAZYFREED);
 
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-		if (unlikely(pagecache_dump & BIT_MM_SHRINK_INACTIVE_DUMP)) {
-			if (file_map) {
-				if (cur_dentry) {
-					if (cur_dentry != tmp_dentry) {
-						if (tmp_dentry) {
-							tmp_dentry->mapping_stat.shrink_page_times++;
-							pgcache_log_dentry(BIT_MM_SHRINK_INACTIVE_DUMP, tmp_dentry,
-									"shrink_page, free pages, %d", freepages);
-						}
-						tmp_dentry = cur_dentry;
-						freepages = 1;
-					} else {
-						freepages++;
-					}
-					dput(cur_dentry);
-				} else {
-					nul_dentry_pages++;
-				}
-			}
-		}
-		if(is_pagecache_stats_enable()) {
-			stat_inc_shrink_pages_count();
-		}
-#endif
 		nr_reclaimed++;
 
 		/*
@@ -1421,20 +1373,6 @@ keep:
 	*ret_nr_unqueued_dirty += nr_unqueued_dirty;
 	*ret_nr_writeback += nr_writeback;
 	*ret_nr_immediate += nr_immediate;
-
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-	if (unlikely(pagecache_dump & BIT_MM_SHRINK_INACTIVE_DUMP)) {
-		if (tmp_dentry) {
-			tmp_dentry->mapping_stat.shrink_page_times++;
-			pgcache_log_dentry(BIT_MM_SHRINK_INACTIVE_DUMP, tmp_dentry,
-					"shrink_page, free %d pages", freepages);
-		}
-
-		if (nul_dentry_pages)
-			pgcache_log(BIT_MM_SHRINK_INACTIVE_DUMP,
-					"shrink_page, free %d pages which is null dentry", nul_dentry_pages);
-	}
-#endif
 
 	return nr_reclaimed;
 }

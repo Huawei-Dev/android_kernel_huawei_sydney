@@ -176,9 +176,6 @@ static const struct bin_table bin_vm_table[] = {
 asdfasdf
 	{ CTL_INT,	VM_UFS_DUMP,			"ufs_dump" },
 #endif
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-	{ CTL_INT,	VM_PAGECACHE_DUMP,		"pagecache_dump" },
-#endif
 	{}
 };
 

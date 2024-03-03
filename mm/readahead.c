@@ -546,9 +546,6 @@ page_cache_async_readahead(struct address_space *mapping,
 	if (inode_read_congested(mapping->host))
 		return;
 
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-	filp->f_path.dentry->mapping_stat.async_read_times++;
-#endif
 	pgcache_log_path(BIT_PAGECACHE_ASYNC_READAHEAD_DUMP, &(filp->f_path),
 			"pagecache async readahead, pg_offset, %ld, req_size, %ld",
 			offset, req_size);

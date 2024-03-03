@@ -197,9 +197,6 @@ enum
 #ifdef CONFIG_HISI_SCSI_UFS_DUMP
 	VM_UFS_DUMP=36,		 /* dump ufs scsi request */
 #endif
-#ifdef CONFIG_HISI_PAGECACHE_DEBUG
-	VM_PAGECACHE_DUMP=37,	 /* dump pagecache debug information */
-#endif
 };
 
 
@@ -281,7 +278,7 @@ enum
 	NET_CORE_AEVENT_RSEQTH=21,
 	NET_CORE_WARNINGS=22,
 #ifdef CONFIG_HUAWEI_BASTET
-	NET_CORE_FG_DSCP=31,    /*FG应用对应的dscp 值*/
+	NET_CORE_FG_DSCP=31,
 #endif
 };
 

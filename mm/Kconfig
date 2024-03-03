@@ -759,17 +759,6 @@ config HISI_SWAP_ZDATA
 
 	  If unsure, say Y to enable swap_zdata.
 
-config HISI_PAGECACHE_DEBUG
-	tristate "KIRIN page cache trace module"
-	default n
-	depends on HISI_DEBUG_FS
-
-	---help---
-	This selects the Kirin page cache trace module.
-
-	Select this if you want to optimize your Android system.
-	If unsure, say N.
-
 config HISI_DIRECT_SWAPPINESS
 	bool "Allow to adjust direct reclaim swappiness"
 	depends on SWAP && PROC_FS

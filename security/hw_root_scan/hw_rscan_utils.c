@@ -10,9 +10,5 @@
 
 int get_ro_secure(void)
 {
-#ifdef CONFIG_HW_ROOT_SCAN_ENG_DEBUG
-	return RO_SECURE;
-#else
 	return RO_NORMAL;
-#endif
 }

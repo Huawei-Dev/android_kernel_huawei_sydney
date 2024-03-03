@@ -68,20 +68,6 @@
 	pr_info_ratelimited("%s[%s][%s] " fmt "\n", RSCAN_TRACE,\
 						tag, __func__, ##args)
 
-#ifdef CONFIG_HW_ROOT_SCAN_ENG_DEBUG
-/*
- * A convenient interface for debug log print, Root Scan Log debug.
- * and the print rate is limited
- * used like below,
- * RSLogDebug("hw_rscan_utils", "xxx %s xxx", yyy)
- */
-#define RSCAN_DEBUG "[DEBUG]"
-#define RSLogDebug(tag, fmt, args...) \
-	printk_ratelimited(KERN_DEBUG "%s[%s][%s] " fmt "\n", RSCAN_DEBUG,\
-							tag, __func__, ##args)
-#else
 #define RSLogDebug(tag, fmt, args...) no_printk(fmt, ##args)
-#endif
 
 #endif
-

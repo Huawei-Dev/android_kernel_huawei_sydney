@@ -9,11 +9,7 @@
 
 #include "./include/kcode.h"
 
-#ifdef CONFIG_HW_ROOT_SCAN_ENG_DEBUG
-#define MAX_CODE_SIZE (50000000)
-#else
 #define MAX_CODE_SIZE (30000000)
-#endif
 
 static const char *TAG = "kcode";
 

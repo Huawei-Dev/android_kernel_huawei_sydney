@@ -70,10 +70,3 @@ config HISI_L3CACHE_ECC_DEBUG
         default n
         help
            Say 'Y' here if you want to support l3cache ecc debug.
-
-config HISI_MNTN_FACTORY
-        bool "debug mntn for factory test"
-        depends on HISI_BB
-        default n
-        help
-           Say 'Y' here if you want to use enable mntn factory debug

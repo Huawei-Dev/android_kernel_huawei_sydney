@@ -16,7 +16,6 @@ subdir-ccflags-$(CONFIG_HISI_BB)               += -Idrivers/hisi/mntn/blackbox/
 obj-$(CONFIG_HISI_BB_DEBUG) += hisi_mntn_test.o
 obj-$(CONFIG_HISI_MNTNDUMP)       += mntn_dump.o
 obj-$(CONFIG_HISI_RECORD_SP)       += mntn_record_sp.o
-obj-$(CONFIG_HISI_L3CACHE_ECC)       += mntn_l3cache_ecc.o
 obj-$(CONFIG_HISI_HISEE_MNTN) += hisee/
 obj-$(CONFIG_HISI_BL31_MNTN) += bl31/
 obj-$(CONFIG_HISI_SUBPMU) += subpmu/

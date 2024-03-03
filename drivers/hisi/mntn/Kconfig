@@ -58,9 +58,3 @@ config HISI_RECORD_SP
 		default n
         help
            Say 'Y' here if you want to support record sp.
-
-config HISI_L3CACHE_ECC
-        bool "Hisilicon platform l3cache ecc driver"
-        default n
-        help
-           Say 'Y' here if you want to support l3cache ecc.

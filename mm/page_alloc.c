@@ -6894,65 +6894,6 @@ void __init mem_init_print_info(const char *str)
 #endif
 		str ? ", " : "", str ? str : "");
 }
-/*lint +e87 +e436*/
-#ifdef CONFIG_HISI_RESORT_ZONE_FREELIST
-/* get the ddr boundary from cmdline */
-static unsigned long ddr_boundary = 0;
-static int __init early_ddr_boundary(char *p)
-{
-	char *tmp;
-	pr_debug("%s(%s)\n", __func__, p);
-	ddr_boundary = simple_strtoul(p, &tmp, 0);
-	return 0;
-}
-/* lint -e85 -e528 */
-early_param("ddr_rank_boundary", early_ddr_boundary);
-
-void __init resort_zone_freelist(void)
-{
-	unsigned max_order = max(MAX_ORDER - 1, pageblock_order);
-	struct list_head *temp_pos, *head_pos, *insert_pos;
-	struct list_head *bd_pos;
-	struct page *page;
-	struct zone *zone;
-	unsigned long flags;
-	unsigned long boundary;
-
-	boundary = ddr_boundary * SZ_1M;
-	if(!boundary)
-		return;
-
-	for_each_populated_zone(zone) {
-		spin_lock_irqsave(&zone->lock, flags);
-		bd_pos = NULL;
-		list_for_each(temp_pos, &zone->free_area[max_order].free_list[MIGRATE_MOVABLE]) {
-			page = list_entry(temp_pos, struct page, lru);
-			if(page_to_phys(page) <= boundary) {
-				bd_pos = temp_pos;
-				break;
-			}
-		}
-		if(!bd_pos) {
-			pr_err("%s:all pages are in the same rank\n", __func__);
-			goto exit;
-		}
-
-		head_pos = &zone->free_area[max_order].free_list[MIGRATE_MOVABLE];
-		insert_pos = head_pos->next;
-		for(;;) {
-			if((insert_pos == bd_pos) || (bd_pos->next == head_pos))
-				break;
-
-			list_move(bd_pos->next, insert_pos);
-			insert_pos = insert_pos->next->next;
-		}
-exit:
-		spin_unlock_irqrestore(&zone->lock, flags);
-	}
-
-	return;
-}
-#endif
 
 /**
  * set_dma_reserve - set the specified number of pages reserved in the first zone

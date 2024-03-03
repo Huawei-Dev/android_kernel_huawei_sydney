@@ -1934,11 +1934,7 @@ extern void free_highmem_page(struct page *page);
 extern void adjust_managed_page_count(struct page *page, long count);
 extern void mem_init_print_info(const char *str);
 
-#ifdef CONFIG_HISI_RESORT_ZONE_FREELIST
-extern void resort_zone_freelist(void);
-#else
 static inline void resort_zone_freelist(void) {}
-#endif
 
 extern void reserve_bootmem_region(phys_addr_t start, phys_addr_t end);
 

@@ -759,14 +759,6 @@ config HISI_SWAP_ZDATA
 
 	  If unsure, say Y to enable swap_zdata.
 
-config HISI_RESORT_ZONE_FREELIST
-	bool "for memory performance opt resort the zone freelist"
-	default n
-	help
-	  If this option is enabled, we resort the zone freelist in mem init.
-	  This may have a performance improvement in memory test.
-	  If in doubt, say N
-
 config HISI_PAGECACHE_HELPER
 	tristate "KIRIN page cache helper module"
 	default n

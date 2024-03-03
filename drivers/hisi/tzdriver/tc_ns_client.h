@@ -129,7 +129,4 @@ struct load_app_ioctl_struct {
 #define TC_NS_CLIENT_IOCTL_LOW_TEMPERATURE_MODE\
 	_IOWR(TC_NS_CLIENT_IOC_MAGIC, 20, unsigned int)
 
-#ifdef CONFIG_HISI_CLANG
-#define TZ_CRYPTO_SHASH_DESCSIZE    128
-#endif
 #endif

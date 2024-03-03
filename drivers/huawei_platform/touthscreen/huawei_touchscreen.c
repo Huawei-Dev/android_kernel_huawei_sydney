@@ -161,15 +161,6 @@ static struct ts_device_data g_ts_device_map[] = {
 		.ops = &ts_st_ops,
 	},
 #endif
-#ifdef CONFIG_HW_NOVATEK_TS
-	[5]	=	{
-		.chip_name = "novatek",
-		.irq_gpio = TS_IO_UNDEFINE,
-		.irq_config = TS_IRQ_CFG_UNDEFINE,
-		.reset_gpio = TS_IO_UNDEFINE,
-		.ops = &ts_novatek_ops,
-	},
-#endif
 #ifdef CONFIG_GOODIX_TS
 	[6]	=	{
 		.chip_name = "goodix",

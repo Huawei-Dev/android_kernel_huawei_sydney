@@ -25,9 +25,6 @@ extern struct ts_device_ops ts_hideep_ops;
 #ifdef CONFIG_ST_TS
 extern struct ts_device_ops ts_st_ops;
 #endif
-#ifdef CONFIG_HW_NOVATEK_TS
-extern struct ts_device_ops ts_novatek_ops;
-#endif
 #ifdef CONFIG_GOODIX_TS
 extern struct ts_device_ops ts_goodix_ops;
 #endif

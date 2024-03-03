@@ -4,4 +4,3 @@ obj-$(CONFIG_SYNAPTICS_TS)  += synaptics/
 obj-$(CONFIG_ATMEL_TS) += atmel/
 #obj-$(CONFIG_HIDEEP_TS)  += hideep/
 obj-$(CONFIG_ST_TS)  += st/
-obj-$(CONFIG_HW_NOVATEK_TS) +=novatek/

@@ -1,1 +1,0 @@
-obj-$(CONFIG_HUAWEI_VSYS_SC_DA9313) += da9313.o

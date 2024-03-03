@@ -59,7 +59,6 @@ source "drivers/hisi/isp/Kconfig"
 source "drivers/hisi/tlb_conflict/Kconfig"
 source "drivers/hisi/perf_ctrl/Kconfig"
 source "drivers/hisi/hisi_dummy_ko/Kconfig"
-source "drivers/hisi/bl31_log/Kconfig"
 endif #HISILICON_PLATFORM
 
 endmenu

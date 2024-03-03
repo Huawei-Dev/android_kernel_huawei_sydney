@@ -1021,11 +1021,6 @@ static int __ref kernel_init(void *unused)
 		ret = run_init_process(execute_command);
 		if (!ret)
 			return 0;
-#ifdef CONFIG_HISI_ENGINEER_MODE
-		ret = run_init_process("/init");
-		if (!ret)
-			return 0;
-#endif
 		panic("Requested init %s failed (error %d).",
 		      execute_command, ret);
 	}

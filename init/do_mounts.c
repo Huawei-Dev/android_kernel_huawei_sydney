@@ -45,10 +45,6 @@ static int root_wait;
 
 dev_t ROOT_DEV;
 
-#ifdef CONFIG_HISI_ENGINEER_MODE
-extern void engineer_mode_mount(void);
-#endif
-
 extern dev_t begin_oae_dm(dev_t orginal_dev,
 			  char *saved_root_name,
 			  char *root_device_name);
@@ -557,9 +553,6 @@ void __init mount_root(void)
 
 		end_oae_dm();
 	}
-#endif
-#ifdef CONFIG_HISI_ENGINEER_MODE
-	engineer_mode_mount();
 #endif
 }
 

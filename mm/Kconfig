@@ -779,14 +779,6 @@ config HISI_DIRECT_SWAPPINESS
 
 	  only 0 to 60 is valid. If unsure, say N to use it's original value(60).
 
-config HUAWEI_SLAB_UNRECLAIMABLE_THRESHOLD
-	bool "Test slab_unreclaimable when lowmem occurs"
-	depends on ARM64
-	default n
-	help
-	  If this config is set "y", we will make system panic when
-	  slab_unreclaimable is tested larger than threshold.
-
 config HISI_EARLY_RODATA_PROTECTION
 	bool "Write protect const data as early as possible in the boot sequence"
 	default y

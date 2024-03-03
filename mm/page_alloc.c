@@ -89,11 +89,6 @@
 #include <chipset_common/allocpages_delayacct/allocpages_delayacct.h>
 #endif
 
-#ifdef CONFIG_HUAWEI_SLAB_UNRECLAIMABLE_THRESHOLD
-#include "slab.h"
-#include "slab_unreclaimable_test.h"
-#endif
-
 /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */
 static DEFINE_MUTEX(pcp_batch_high_lock);
 #define MIN_PERCPU_PAGELIST_FRACTION	(8)
@@ -4450,125 +4445,6 @@ out:
 }
 
 #define K(x) ((x) << (PAGE_SHIFT-10))
-
-#ifdef CONFIG_HUAWEI_SLAB_UNRECLAIMABLE_THRESHOLD
-
-static void show_slabinfo_header(void)
-{
-#ifdef CONFIG_DEBUG_SLAB
-	printk("slabinfo - version: 2.1 (statistics)\n");
-#else
-	printk("slabinfo - version: 2.1\n");
-#endif
-	printk("# name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>"
-		 " : tunables <limit> <batchcount> <sharedfactor>"
-		 " : slabdata <active_slabs> <num_slabs> <sharedavail>"
-#ifdef CONFIG_DEBUG_SLAB
-		 " : globalstat <listallocs> <maxobjs> <grown> <reaped> "
-		 "<error> <maxfreeable> <nodeallocs> <remotefrees> <alienoverflow>"
-		 " : cpustat <allochit> <allocmiss> <freehit> <freemiss>"
-#endif
-		 "\n");
-}
-
-static void memcg_cache_accumulate_slabinfo(struct kmem_cache *s, struct slabinfo *info)
-{
-	struct kmem_cache *c = NULL;
-	struct slabinfo sinfo;
-
-	if (!is_root_cache(s))
-		return;
-
-	for_each_memcg_cache(c, s) {
-		memset(&sinfo, 0, sizeof(sinfo));
-		get_slabinfo(c, &sinfo);
-
-		info->active_slabs += sinfo.active_slabs;
-		info->num_slabs += sinfo.num_slabs;
-		info->shared_avail += sinfo.shared_avail;
-		info->active_objs += sinfo.active_objs;
-		info->num_objs += sinfo.num_objs;
-	}
-}
-
-static void show_extra_slabinfo_stats(struct kmem_cache *cachep)
-{
-#if STATS
-	/* node stats */
-	{
-		unsigned long high = cachep->high_mark;
-		unsigned long allocs = cachep->num_allocations;
-		unsigned long grown = cachep->grown;
-		unsigned long reaped = cachep->reaped;
-		unsigned long errors = cachep->errors;
-		unsigned long max_freeable = cachep->max_freeable;
-		unsigned long node_allocs = cachep->node_allocs;
-		unsigned long node_frees = cachep->node_frees;
-		unsigned long overflows = cachep->node_overflow;
-
-		printk(" : globalstat %7lu %6lu %5lu %4lu "
-				"%4lu %4lu %4lu %4lu %4lu",
-				allocs, high, grown,
-				reaped, errors, max_freeable, node_allocs,
-				node_frees, overflows);
-	}
-	/* cpu stats */
-	{
-		unsigned long allochit = atomic_read(&cachep->allochit);
-		unsigned long allocmiss = atomic_read(&cachep->allocmiss);
-		unsigned long freehit = atomic_read(&cachep->freehit);
-		unsigned long freemiss = atomic_read(&cachep->freemiss);
-
-		printk(" : cpustat %6lu %6lu %6lu %6lu",
-				allochit, allocmiss, freehit, freemiss);
-	}
-#endif
-}
-
-static void show_slabinfo(struct kmem_cache *s)
-{
-	struct slabinfo sinfo;
-
-	memset(&sinfo, 0, sizeof(sinfo));
-	get_slabinfo(s, &sinfo);
-
-	memcg_cache_accumulate_slabinfo(s, &sinfo);
-
-	printk("%-30s %6lu %6lu %6u %4u %4d : tunables %4u %4u %4u : slabdata %6lu %6lu %6lu",
-		 cache_name(s), sinfo.active_objs, sinfo.num_objs, s->size,
-		 sinfo.objects_per_slab, (1 << sinfo.cache_order),
-		 sinfo.limit, sinfo.batchcount, sinfo.shared,
-		 sinfo.active_slabs, sinfo.num_slabs, sinfo.shared_avail);
-	show_extra_slabinfo_stats(s);
-}
-
-void print_all_slabinfo(void)
-{
-	struct kmem_cache *s = NULL;
-	show_slabinfo_header();
-	list_for_each_entry(s, &slab_caches, list) {
-		if (is_root_cache(s))
-			show_slabinfo(s);
-	}
-}
-
-bool is_exceed_slab_unreclaimable_threshold(unsigned int filter)
-{
-	struct zone *zone;
-
-	pr_info("%s: g_slab_unreclaimable_threshold is %lu bytes.\n",
-			__func__, g_slab_unreclaimable_threshold);
-	for_each_populated_zone(zone) {
-		if (skip_free_areas_node(filter, zone_to_nid(zone)))
-			continue;
-		if ((K(zone_page_state(zone, NR_SLAB_UNRECLAIMABLE)) << 10) >
-			g_slab_unreclaimable_threshold)
-			return true;
-	}
-	return false;
-}
-
-#endif
 
 static void show_migration_types(unsigned char type)
 {

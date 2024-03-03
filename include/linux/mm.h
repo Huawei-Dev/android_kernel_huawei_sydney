@@ -1188,15 +1188,6 @@ extern void pagefault_out_of_memory(void);
 
 #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
 
-#ifdef CONFIG_HUAWEI_SLAB_UNRECLAIMABLE_THRESHOLD
-/*
- * Can be called by show_mem() to test if slab_unreclaimable exceeds
- * the threshold and print slab_info when it exceeds.
- */
-bool is_exceed_slab_unreclaimable_threshold(unsigned int flags);
-void print_all_slabinfo(void);
-#endif
-
 /*
  * Flags passed to show_mem() and show_free_areas() to suppress output in
  * various contexts.

@@ -81,11 +81,6 @@
 #include <linux/netlink.h>
 #include <linux/tcp.h>
 
-#ifdef CONFIG_HUAWEI_WIFI_WEIXIN_HONGBAO_ENABLE_PRIORITY
-#define WIFI_WEIXIN_HONGBAO_PROORITY 0x7
-extern uint8_t BST_FG_Proc_Send_RPacket_Priority(struct sock *pstSock);
-#endif
-
 #ifdef CONFIG_HUAWEI_BASTET
 int g_FastGrabDscp = 0;    /*fg app dscp value,get from hilink*/
 #endif
@@ -523,13 +518,6 @@ packet_routed:
 	/* TODO : should we use skb->sk here instead of sk ? */
 	skb->priority = sk->sk_priority;
 	skb->mark = sk->sk_mark;
-#ifdef CONFIG_HUAWEI_BASTET
-#ifdef CONFIG_HUAWEI_WIFI_WEIXIN_HONGBAO_ENABLE_PRIORITY
-	if(1 == BST_FG_Proc_Send_RPacket_Priority(sk)) {
-		skb->priority = WIFI_WEIXIN_HONGBAO_PROORITY;
-	}
-#endif
-#endif
 	res = ip_local_out(net, sk, skb);
 	rcu_read_unlock();
 	return res;

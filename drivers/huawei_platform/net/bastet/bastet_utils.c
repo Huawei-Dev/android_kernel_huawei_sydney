@@ -65,9 +65,6 @@ atomic_t proxy = ATOMIC_INIT(0);
 atomic_t buffer = ATOMIC_INIT(0);
 atomic_t channel = ATOMIC_INIT(0);
 atomic_t cp_reset = ATOMIC_INIT(0);
-#ifdef CONFIG_HUAWEI_BASTET_COMM_NEW
-atomic_t reg_ccore_reset = ATOMIC_INIT(0);
-#endif
 /* set 1 for adjusting to non-wifi-proxy situation */
 atomic_t channel_en = ATOMIC_INIT(1);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 1, 10)
@@ -160,53 +157,6 @@ static void bastet_modem_reset_notify(void)
 	atomic_set(&cp_reset, 1);
 }
 
-#ifdef CONFIG_HUAWEI_BASTET_COMM_NEW
-static void reg_ccore_reset_notify(void)
-{
-	atomic_set(&reg_ccore_reset, 1);
-}
-
-static void unreg_ccore_reset_notify(void)
-{
-	atomic_set(&reg_ccore_reset, 0);
-}
-
-static bool is_reg_ccore_reset_notify(void)
-{
-	return atomic_read(&reg_ccore_reset) != 0;
-}
-
-void ind_modem_reset(uint8_t *value, uint32_t len)
-{
-	uint8_t reset_info;
-
-	if (len != 4) {
-		BASTET_LOGE("error msg len %u", len);
-		return;
-	}
-
-	reset_info = value[0];
-
-	switch(reset_info)
-	{
-		case 0x1:
-		{
-			BASTET_LOGI("ccore reset");
-			if (is_reg_ccore_reset_notify()) {
-				BASTET_LOGE("bastet_modem_reset_notify");
-				bastet_modem_reset_notify();
-			}
-			break;
-		}
-		default:
-		{
-			BASTET_LOGE("error reset info value %u", reset_info);
-			break;
-		}
-	}
-}
-#endif
-
 #if defined CONFIG_MSM_SUBSYSTEM_RESTART
 #include <soc/qcom/subsystem_notif.h>
 
@@ -241,19 +191,6 @@ static void unreg_mss_reset_notify(void)
 	if (subsys_h != NULL)
 		subsys_notif_unregister_notifier(subsys_h,
 			&mss_reset_notifier);
-}
-
-#elif defined CONFIG_HUAWEI_BASTET_COMM_NEW
-static void reg_mss_reset_notify(void)
-{
-	BASTET_LOGI("register ccore reset notification");
-	reg_ccore_reset_notify();
-}
-
-static void unreg_mss_reset_notify(void)
-{
-	BASTET_LOGI("unregister ccore reset notification");
-	unreg_ccore_reset_notify();
 }
 
 #elif defined CONFIG_BALONG_MODEM_RESET

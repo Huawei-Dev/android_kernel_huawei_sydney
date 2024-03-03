@@ -2,7 +2,6 @@
 #
 
 # Each configuration option enables a list of files.
-#obj-$(CONFIG_CYPRESS_TS_KIT)  += cypress/
 obj-$(CONFIG_SYNAPTICS_TCM_TS_KIT)  += synaptics_tcm/
 obj-$(CONFIG_FOCAL_TS_KIT)  += focaltech/
 obj-$(CONFIG_SYNAPTICS_TS_KIT)  += synaptics/
@@ -21,7 +20,3 @@ obj-$(CONFIG_ST_TS_KIT)  += st/
 obj-$(CONFIG_HIMAX_TS_KIT_64)  += himax_64/
 obj-$(CONFIG_ELAN_TS_KIT)  += elan/
 obj-$(CONFIG_MSTAR_TS_KIT)  += mstar/
-#ifeq ($(CONFIG_HUAWEI_TS_TEST),y)
-#EXTRA_CFLAGS += -DHUAWEI_TOUCHSCREEN_TEST
-#endif
-#EXTRA_CFLAGS += -Idrivers/hisi/tzdriver

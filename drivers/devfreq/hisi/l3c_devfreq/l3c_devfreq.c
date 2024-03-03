@@ -18,10 +18,6 @@
 #include <linux/hisi/hisi_devfreq.h>
 #include <trace/events/power.h>
 
-#ifdef CONFIG_HISI_DRG
-#include <linux/hisi/hisi_drg.h>
-#endif
-
 #ifdef CONFIG_HISI_HW_VOTE_L3C_FREQ
 #include <linux/hisi/hisi_hw_vote.h>
 #endif
@@ -914,9 +910,6 @@ static int l3c_devfreq_setup(struct platform_device *pdev)
 	l3c->l3c_data = &device_data;
 	data = l3c->l3c_data;
 
-#ifdef CONFIG_HISI_DRG
-	drg_devfreq_register(l3c->devfreq);
-#endif
 	mutex_lock(&l3c->devfreq->lock);
 	l3c->devfreq->min_freq = data->freq_min;
 	l3c->devfreq->max_freq = data->freq_max;
@@ -935,10 +928,6 @@ free_opp_table:
 static void l3c_devfreq_unsetup(struct platform_device *pdev)
 {
 	struct l3c_devfreq *l3c = platform_get_drvdata(pdev);
-
-#ifdef CONFIG_HISI_DRG
-	drg_devfreq_unregister(l3c->devfreq);
-#endif
 
 	devm_devfreq_remove_device(&pdev->dev, l3c->devfreq);
 	dev_pm_opp_of_remove_table(&pdev->dev);

@@ -14,7 +14,6 @@
 #include <asm/io.h>
 #include <global_ddr_map.h>
 #include "perf_ctrl.h"
-#include <linux/hisi/hisi_drg.h>
 #include <libhwsecurec/securec.h>
 #include <linux/hisi_rtg.h>
 

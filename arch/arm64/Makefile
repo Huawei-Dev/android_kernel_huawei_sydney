@@ -152,10 +152,10 @@ zinstall install:
 	$(Q)$(MAKE) $(build)=$(boot)/dts/auto-generate/config $(boot)/dts/auto-generate/$@
 
 dtbs: scripts
-	$(Q)$(MAKE) $(build)=$(boot)/dts/auto-generate/config dtbs
-	$(Q)$(MAKE) $(build)=$(boot)/dts/auto-generate/overlay dtbs
+#	$(Q)$(MAKE) $(build)=$(boot)/dts/auto-generate/config dtbs
+#	$(Q)$(MAKE) $(build)=$(boot)/dts/auto-generate/overlay dtbs
 
-Image-dtb Image.gz-dtb: vmlinux scripts dtbs
+Image-dtb Image.gz-dtb: vmlinux scripts
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
 
 PHONY += vdso_install

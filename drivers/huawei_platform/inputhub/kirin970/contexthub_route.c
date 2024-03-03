@@ -324,13 +324,6 @@ t_ap_sensor_ops_record all_ap_sensor_operations[TAG_SENSOR_END] = {
 		.ops = {.setdelay = ak8789_register_report_data},
 	},
 #endif
-#ifdef CONFIG_SENSORS_COLOR_AP
-	[TAG_COLOR] = {
-		.work_on_ap = true,
-		.ops = {//.setdelay = ams_tcs3430_setdelay,
-				.enable = color_sensor_enable},
-	},
-#endif
 };
 
 int register_ap_sensor_operations(int tag, sensor_operation_t *ops)

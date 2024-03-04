@@ -39,12 +39,9 @@ struct kernel_dump_cb
 	u32 crc;
 	u32 resv;
 };
-#ifdef CONFIG_KERNELDUMP_KO_DBG
-extern int ko_dump(void);
-#else
+
 static inline int ko_dump(void)
 {
 	return 0;
 }
-#endif
 #endif

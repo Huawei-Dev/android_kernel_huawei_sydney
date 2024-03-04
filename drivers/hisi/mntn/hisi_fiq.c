@@ -25,7 +25,6 @@
 #include <libhwsecurec/securec.h>
 #include <linux/hisi/rdr_pub.h>
 #include <linux/version.h>
-#include <linux/hisi/hisi_bbox_diaginfo.h>
 #include <linux/hisi/hisi_log.h>
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0))
 #include <linux/sched/debug.h>
@@ -125,7 +124,6 @@ asmlinkage void fiq_dump(struct pt_regs *regs, unsigned int esr)
 	}
 
 	rdr_hisiap_dump_root_head(MODID_AP_S_WDT, AP_S_AWDT, RDR_AP);
-	bbox_diaginfo_dump_lastmsg();
 	pr_crit("fiq_dump end\n");
 	l3cache_ecc_get_status(&err1_status, &err1_misc0, 1);
 	mntn_show_stack_cpustall();

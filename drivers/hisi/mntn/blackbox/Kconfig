@@ -42,13 +42,6 @@ config HISI_MNTN_ESUBTYPE
 	help
 	  This module can record exception subtype.
 
-config HISI_BB_DIAGINFO
-	bool "hisi diaginfo"
-	depends on HISI_BB
-	default n
-	help
-	  This module used to record nonreset exception.
-
 source "drivers/hisi/mntn/blackbox/platform_ap/Kconfig"
 source "drivers/hisi/hifi_dsp/Kconfig"
 endmenu

@@ -31,9 +31,6 @@
 #include <trace/events/cpuhp.h>
 
 #include "smpboot.h"
-#ifdef CONFIG_HISI_BB
-#include <linux/hisi/hisi_bbox_diaginfo.h>
-#endif
 
 /**
  * cpuhp_cpu_state - Per cpu hotplug state storage
@@ -1204,10 +1201,6 @@ static int do_cpu_up(unsigned int cpu, enum cpuhp_state target)
 	}
 
 	err = _cpu_up(cpu, 0, target);
-
-#ifdef CONFIG_HISI_BB
-    cpu_up_diaginfo_record(cpu, err);
-#endif
 
 out:
 	cpu_maps_update_done();

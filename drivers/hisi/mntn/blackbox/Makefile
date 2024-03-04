@@ -12,7 +12,6 @@ obj-$(CONFIG_HISI_BB) += rdr_field_core.o
 obj-$(CONFIG_HISI_BB) += rdr_bootcheck.o
 
 obj-$(CONFIG_HISI_BB) += platform_ap/
-obj-$(CONFIG_HISI_BB) += diaginfo/
 obj-$(CONFIG_HISI_LPMCU_BB) += platform_lpm3/
 
 obj-$(CONFIG_HISI_HIFI_BB) += platform_hifi/

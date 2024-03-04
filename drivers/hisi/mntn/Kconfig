@@ -45,10 +45,3 @@ config HISI_MNTNDUMP
         default n
         help
            Say 'Y' here if you want to support mntn dump.
-
-config HISI_RECORD_SP
-        bool "Hisilicon platform mntn record sp"
-		depends on FUNCTION_TRACER
-		default n
-        help
-           Say 'Y' here if you want to support record sp.

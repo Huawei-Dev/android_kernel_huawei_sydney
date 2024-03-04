@@ -26,9 +26,6 @@ typedef enum _HISEE_AT_TYPE {
 } hisee_at_type;
 
 int hisee_parallel_manufacture_func(void *buf, int para);
-#ifdef CONFIG_HISI_HISEE_NVMFORMAT_TEST
-int hisee_nvmformat_func(void *buf, int para);
-#endif
 
 #ifdef CONFIG_HISI_HISEE_CHIPTEST_SLT
 int hisee_parallel_total_slt_func(void *buf, int para);

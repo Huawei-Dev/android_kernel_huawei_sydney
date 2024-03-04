@@ -28,11 +28,6 @@ config HISI_ISP_RDR
 	depends on HISI_BB
 	default n
 
-config HISI_MEM_TRACE
-	bool "hisi mem trace"
-	depends on HISI_BB
-	default n
-
 config HISI_DFX_CORE
 	bool "hisi dfx core"
 	depends on HISI_BB

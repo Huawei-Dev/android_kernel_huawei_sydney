@@ -4140,7 +4140,6 @@ CONFIG_HISI_RPROC=y
 #
 # bsp_reset_core_notify to support modem compile
 #
-# CONFIG_BSP_RESET_CORE_NOTIFY is not set
 CONFIG_HISILICON_PLATFORM_MAINTAIN=y
 
 #

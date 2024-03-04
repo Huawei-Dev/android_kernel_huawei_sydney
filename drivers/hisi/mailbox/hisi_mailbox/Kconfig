@@ -35,10 +35,3 @@ config HISI_RPROC_TESTFILE
 	default n
 	help
 	  debug for hisi_rproc
-
-comment "bsp_reset_core_notify to support modem compile"
-config BSP_RESET_CORE_NOTIFY
-	bool "bsp_reset_core_notify"
-	default n
-	help
-	  to support modem compile

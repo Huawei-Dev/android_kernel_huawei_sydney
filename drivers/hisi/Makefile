@@ -55,7 +55,6 @@ obj-$(CONFIG_HISI_TIMEKEEPER) += timekeeper/
 obj-$(CONFIG_TLB_CONFLICT_WORKAROUND) += tlb_conflict/
 obj-$(CONFIG_HISI_ICS_IPU_PLATFORM) += ics/
 obj-y += hisi_lmk/
-obj-$(CONFIG_HISI_GETSPINLOCK_TEST) += test_spinlock/
 ifeq ($(TARGET_VERSION_MODE),factory)
 obj-$(CONFIG_HISI_DIEID) += dieid/
 endif

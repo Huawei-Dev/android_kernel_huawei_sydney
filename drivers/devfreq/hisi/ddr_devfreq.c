@@ -21,16 +21,6 @@
 #include "governor_pm_qos.h"
 #include <linux/clk.h>
 
-/*lint -save -e715 -e785 -e747*/
-
-/*===tele_mntn===*/
-#if defined (CONFIG_HISILICON_PLATFORM_TELE_MNTN)
-/*===tele_mntn===*/
-#include <linux/hisi/hisi_tele_mntn.h>
-extern unsigned int get_slice_time(void);
-
-#endif
-
 #define MODULE_NAME "DDR_DEVFREQ"
 
 typedef unsigned long (*calc_vote_value_func)(struct devfreq *devfreq, unsigned long freq);
@@ -170,38 +160,6 @@ static struct input_handler ddrfreq_input_handler = {
 };
 
 #endif /*CONFIG_INPUT_PULSE_SUPPORT*/
-/*===tele_mntn===*/
-
-
-
-/*===tele_mntn===*/
-#if defined (CONFIG_HISILICON_PLATFORM_TELE_MNTN)
-static void tele_mntn_ddrfreq_setrate(struct devfreq *devfreq, unsigned int new_freq)
-{
-    ACORE_TELE_MNTN_DFS_DDR_QOS_STRU *qos = NULL;
-    ACORE_TELE_MNTN_DFS_DDR_QOSINFO_STRU * info = NULL;
-    struct devfreq_pm_qos_data *data = devfreq->data;
-
-    if(!p_acore_tele_mntn)
-        return;
-
-    qos = &(p_acore_tele_mntn->dfsDdr.qos);
-    info = &(qos->info);
-    info->qos_id = (short)data->pm_qos_class;
-    if(current) {
-        info->pid = current->pid;
-        if(current->parent)
-            info->ppid = current->parent->pid;
-    }
-
-    info->new_freq = new_freq;
-    info->min_freq = (unsigned int)devfreq->min_freq;
-    info->max_freq = (unsigned int)devfreq->max_freq;
-    qos->qosSliceTime = get_slice_time();
-    (void)tele_mntn_write_log(TELE_MNTN_QOS_DDR_ACPU, sizeof(ACORE_TELE_MNTN_DFS_DDR_QOS_STRU), (void *)qos);
-}
-
-#endif
 
 static struct devfreq_pm_qos_data ddr_devfreq_latency_pm_qos_data = {
 	.pm_qos_class = PM_QOS_MEMORY_LATENCY,
@@ -338,13 +296,6 @@ static int ddr_devfreq_target(struct device *dev, unsigned long *freq, u32 flags
 	pr_err("------- end ------\n");
 
 out:
-/*===tele_mntn===*/
-/*===tele_mntn===*/
-
-#if defined (CONFIG_HISILICON_PLATFORM_TELE_MNTN)
-    tele_mntn_ddrfreq_setrate(devfreq, (unsigned int)ddev->freq);
-#endif
-
 	return 0;
 }
 

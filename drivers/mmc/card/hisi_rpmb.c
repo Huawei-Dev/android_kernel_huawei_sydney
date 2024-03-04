@@ -53,7 +53,6 @@
 /*avoid to invoke mainline code,we can only use this ugly code*/
 #include "mmc_hisi_card.h"
 
-#include <linux/hisi/hisi_tele_mntn.h>
 extern u64 hisi_getcurtime(void);
 struct rpmb_config_info rpmb_device_info = {0};
 /* external function declaration */

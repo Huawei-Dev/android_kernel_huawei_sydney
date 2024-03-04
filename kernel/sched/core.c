@@ -3551,9 +3551,6 @@ static noinline void __schedule_bug(struct task_struct *prev)
 		print_ip_sym(preempt_disable_ip);
 		pr_cont("\n");
 	}
-#ifndef CONFIG_HISI_BB_DEBUG
-	if (panic_on_warn)
-#endif
 		panic("scheduling while atomic\n");
 
 	dump_stack();

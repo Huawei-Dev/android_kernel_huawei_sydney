@@ -4,10 +4,7 @@ config HIFI_DSP_ONE_TRACK
      bool "hifi low power play device support"
      help
           hifi lpp device provide service for HIFI and AP, in case of HIFI ultra-low power audio play.
-config HIFI_MEMORY_21M
-    bool "hifi memory is 21M"
-    help
-         hifi memory is 21M
+
 config HISI_AUDIO_DEBUG
     bool "support audio debug function"
     help

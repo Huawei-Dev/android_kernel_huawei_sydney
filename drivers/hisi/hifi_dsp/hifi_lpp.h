@@ -159,11 +159,7 @@ extern "C" {
 #define HIFI_SEC_HEAD_SIZE              (0x1000)
 #ifdef CONFIG_HIFI_IPC_3660
 #define HIFI_SEC_REGION_SIZE            (HISI_RESERVED_HIFI_PHYMEM_SIZE)
-#ifdef CONFIG_HIFI_MEMORY_21M
-#define HIFI_RUN_SIZE                   (0xF00000)
-#else
 #define HIFI_RUN_SIZE                   (0xB00000)
-#endif
 #define HIFI_IMAGE_TCMBAK_SIZE          (0x34000)
 
 #define HIFI_RUN_ITCM_SIZE              (0x9000)

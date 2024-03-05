@@ -72,12 +72,6 @@ config HISI_THERMAL_SHELL
 	default n
 	help
 	  Enable shell temp calculation
-config HISI_SHELL_TEMP_DEBUG
-	bool "Hisi shell temp debug configuration"
-	depends on HISI_THERMAL_SHELL
-	default n
-	help
-	  Enable debug node for shell temp calculation
 
 config HISI_THERMAL_AMBIENT
 	bool "Hisi ambient temp calculation"

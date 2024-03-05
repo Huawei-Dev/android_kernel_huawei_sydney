@@ -81,10 +81,6 @@ struct hisi_shell_t {
 	int old_temp;
 	int index;
 	int valid_flag;
-#ifdef CONFIG_HISI_SHELL_TEMP_DEBUG
-	int channel;
-	int debug_temp;
-#endif
 	struct thermal_zone_device	*tz_dev;
 	struct delayed_work work;
 	struct hisi_shell_sensor_t hisi_shell_sensor[0];
@@ -109,38 +105,8 @@ hisi_shell_show_temp(struct device *dev, struct device_attribute *devattr,
 static DEVICE_ATTR(temp, S_IWUSR | S_IRUGO,
            hisi_shell_show_temp, NULL);
 
-#ifdef CONFIG_HISI_SHELL_TEMP_DEBUG
-static ssize_t
-hisi_shell_store_debug_temp(struct device *dev, struct device_attribute *devattr,
-						   const char *buf, size_t count)
-{
-	int channel, temp;
-	struct platform_device *pdev;
-	struct hisi_shell_t *hisi_shell;
-	if (dev == NULL || devattr == NULL)
-		return 0;
-
-	if (!sscanf(buf, "%d %d\n", &channel, &temp)) {
-		pr_err("%s Invalid input para\n", __func__);
-		return -EINVAL;
-	}
-
-	pdev = container_of(dev, struct platform_device, dev);
-	hisi_shell = platform_get_drvdata(pdev);
-
-	hisi_shell->channel = channel;
-	hisi_shell->debug_temp = temp;
-
-	return (ssize_t)count;
-}
-static DEVICE_ATTR(debug_temp, S_IWUSR, NULL, hisi_shell_store_debug_temp);
-#endif
-
 static struct attribute *hisi_shell_attributes[] = {
     &dev_attr_temp.attr,
-#ifdef CONFIG_HISI_SHELL_TEMP_DEBUG
-	&dev_attr_debug_temp.attr,
-#endif
     NULL
 };
 
@@ -459,13 +425,6 @@ static void hkadc_sample_temp(struct work_struct *work)
 		if (ret)
 			temp = DEFAULT_SHELL_TEMP;
 
-#ifdef CONFIG_HISI_SHELL_TEMP_DEBUG
-		if ((i == hisi_shell->channel - 1) && (hisi_shell->debug_temp)) {
-			pr_err("%s, %s, sensor_name=%s, temp=%d\n", __func__, hisi_shell->tz_dev->type, shell_sensor->sensor_name, hisi_shell->debug_temp);
-			temp = hisi_shell->debug_temp;
-		}
-#endif
-
 		shell_sensor->temp_tracing[hisi_shell->index].temp = temp;
 		have_invalid_temp = hkadc_handle_temp_data(hisi_shell, shell_sensor, (int)temp);
 	}
@@ -642,10 +601,6 @@ static int hisi_shell_probe(struct platform_device *pdev)
 	hisi_shell->old_temp = 0;
 	hisi_shell->sensor_count = sensor_count;
 	hisi_shell->sample_count = sample_count;
-#ifdef CONFIG_HISI_SHELL_TEMP_DEBUG
-	hisi_shell->channel = 0;
-	hisi_shell->debug_temp = 0;
-#endif
 
 	ret = of_property_read_u32(dev_node, "interval", &hisi_shell->interval);
 	if (ret) {
@@ -741,10 +696,6 @@ int shell_temp_pm_resume(struct platform_device *pdev)
 		hisi_shell->index = 0;
 		hisi_shell->valid_flag = 0;
 		hisi_shell->old_temp = 0;
-#ifdef CONFIG_HISI_SHELL_TEMP_DEBUG
-		hisi_shell->channel = 0;
-		hisi_shell->debug_temp = 0;
-#endif
 	}
 	pr_info("%s-\n", __func__);
 

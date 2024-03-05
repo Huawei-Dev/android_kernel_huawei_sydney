@@ -3268,16 +3268,6 @@ force_ro_fail:
 	return ret;
 }
 
-#ifdef CONFIG_HISI_MMC_FLUSH_REDUCE_WHITE_LIST
-static inline void __maybe_unused en_emmc_flush_reduce(struct mmc_card *card, int data)
-{
-        /*only eMMC support flush reduce*/
-        if (0 == card->host->index)
-                card->host->mmc_flush_reduce_enable = 1;
-} /*lint !e715*/
-#endif
-
-/*lint -e501*/
 static const struct mmc_fixup blk_fixups[] =
 {
 	MMC_FIXUP("SEM02G", CID_MANFID_SANDISK, 0x100, add_quirk,
@@ -3383,26 +3373,9 @@ static const struct mmc_fixup blk_fixups[] =
 		add_quirk_mmc, MMC_QUIRK_DISABLE_CMD_SEVEN_FIVE_INSUSPEND),
 	MMC_FIXUP("S0J9D8", CID_MANFID_MICRON, CID_OEMID_ANY,
 		add_quirk_mmc, MMC_QUIRK_DISABLE_CMD_SEVEN_FIVE_INSUSPEND),
-
-#ifdef CONFIG_HISI_MMC_FLUSH_REDUCE_WHITE_LIST
-        MMC_FIXUP("Q3J97V", CID_MANFID_MICRON, CID_OEMID_ANY, en_emmc_flush_reduce,
-                  0),
-        MMC_FIXUP("HAG4a2", CID_MANFID_HYNIX, CID_OEMID_ANY, en_emmc_flush_reduce,
-                  0),
-        MMC_FIXUP("HDG8a4", CID_MANFID_HYNIX, CID_OEMID_ANY, en_emmc_flush_reduce,
-                  0),
-        MMC_FIXUP("HCG4a2", CID_MANFID_HYNIX, CID_OEMID_ANY, en_emmc_flush_reduce,
-                  0),
-        MMC_FIXUP("DF4064", CID_MANFID_SANDISK_V2, CID_OEMID_ANY, en_emmc_flush_reduce,
-                  0),
-        MMC_FIXUP("064G30", CID_MANFID_TOSHIBA, CID_OEMID_ANY, en_emmc_flush_reduce,
-                  0),
-        MMC_FIXUP("128G32", CID_MANFID_TOSHIBA, CID_OEMID_ANY, en_emmc_flush_reduce,
-                  0),
-#endif
 	END_FIXUP
 };
-/*lint +e501*/
+
 #ifdef CONFIG_HISI_MMC_FLUSH_REDUCE
 static int mmc_blk_direct_flush(struct request_queue *q)
 {
@@ -3486,11 +3459,9 @@ static int mmc_blk_probe(struct mmc_card *card)
 #endif
 
 #ifdef CONFIG_HISI_MMC_FLUSH_REDUCE
-#ifndef CONFIG_HISI_MMC_FLUSH_REDUCE_WHITE_LIST
 	/*only eMMC support flush reduce*/
 	if (0 == card->host->index)
 		card->host->mmc_flush_reduce_enable = 1;
-#endif
 
 	hisi_blk_flush_ctrl(md, card);
 #endif

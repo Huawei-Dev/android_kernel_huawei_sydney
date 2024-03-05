@@ -1,7 +1,6 @@
 obj-$(CONFIG_HISI_HKADC) += adc/
 obj-$(CONFIG_HISI_CCI_EXTRA)		+= cci_extra/
 obj-$(CONFIG_HISI_CMDLINE_PARSE)	+= cmdline/
-obj-$(CONFIG_HISI_IRQ_AFFINITY)	+= irq_affinity/
 obj-$(CONFIG_HISILICON_PLATFORM_MAILBOX)	+= mailbox/
 ifeq ($(CLT_IV), true)
 obj-$(CONFIG_SND_SOC_HI6XXX_MBHC)            += fake_hi6xxx_test/

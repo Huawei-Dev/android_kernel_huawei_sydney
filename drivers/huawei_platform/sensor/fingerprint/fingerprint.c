@@ -22,7 +22,6 @@
 #include <media/huawei/hw_extern_pmic.h>
 #include <linux/slab.h>
 #include <linux/atomic.h>
-#include <linux/hisi/hisi_cpufreq_lowtemp.h>
 #include <huawei_platform/fingerprint_interface/fingerprint_interface.h>
 #include <huawei_platform/sensor/hw_comm_pmic.h>
 #include "fingerprint.h"
@@ -115,6 +114,11 @@ struct regulator *fp_ex_regulator = NULL;
 #define HBM_WAIT_TIMEOUT (550 * HZ / 1000)
 extern unsigned int get_pd_charge_flag(void);
 extern int tp_gpio_num;
+
+static inline bool is_low_temprature(void) { 
+    return false; 
+}
+
 /**
  * sysf node to check the interrupt status of the sensor, the interrupt
  * handler should perform sysf_notify to allow userland to poll the node.

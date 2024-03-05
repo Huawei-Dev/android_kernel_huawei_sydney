@@ -73,18 +73,3 @@ config HISI_CPU_FREQ_LOCK_DETECT
 	default n
 	help
 	  This extends min_sample_time when boost scene finish
-
-
-config HISI_CPUFREQ_LOWTEMP
-	bool "Hisilicon low temperature cpu frequency set enable"
-	depends on CPUFREQ_DT
-	default n
-	help
-	  Hisilicon low temperature cpu frequency set enable.
-
-config HISI_CPUFREQ_LOWTEMP_DEBUG
-	bool "Hisilicon low temperature cpu frequency set debug enable"
-	depends on HISI_CPUFREQ_LOWTEMP && HISI_DEBUG_FS
-	default n
-	help
-	  Hisilicon low temperature cpu frequency set debug enable.

@@ -44,10 +44,6 @@
 #include <linux/hisi/hisi_adc.h>
 #include "hisi_peripheral_tm.h"
 
-#ifdef CONFIG_HISI_HKADC_MODEM
-#include "modem_hkadc_temp.h"
-#endif
-
 #define PRORATE_OF_INIT	1000 /*in order to resolve divisor less than zero*/
 #define NCP_GENERAL1_NUM	34
 
@@ -301,31 +297,6 @@ int hisi_peripheral_ntc_2_temp(struct periph_tsens_tm_device_sensor *chip, int *
 	*temp = tempdata;
 	return 0;
 }
-
-#ifdef CONFIG_HISI_HKADC_MODEM
-int hisi_mdm_ntc_2_temp(struct hisi_mdm_adc_t *mdm_sensor, int *temp, int ntc)
-{
-	int tempdata = 0;
-	*temp = tempdata;
-
-	if (mdm_sensor->ntc_name == NULL) {
-		pr_err("ntc_name is NULL\n\r");
-		return -EINVAL;
-	}
-
-	if (strncmp(mdm_sensor->ntc_name, "austin_hkadc_adc_temp_table", strlen(mdm_sensor->ntc_name)) == 0)
-		tempdata = get_ntc_temperature(ntc, mdm_sensor->channel, (int **)austin_hkadc_volt_temp_table, austin_adc2temp_flag);
-	else if (strncmp(mdm_sensor->ntc_name, "austin_hkadc_pa_temp_table", strlen(mdm_sensor->ntc_name)) == 0)
-		tempdata = get_ntc_temperature(ntc, mdm_sensor->channel, (int **)austin_pa_volt_temp_table, austin_pa_volt2temp_flag);
-	else if (strncmp(mdm_sensor->ntc_name, "austin_hkadc_soc_temp_table", strlen(mdm_sensor->ntc_name)) == 0)
-		tempdata = get_ntc_temperature(ntc, mdm_sensor->channel, (int **)austin_soc_volt_temp_table, austin_soc_volt2temp_flag);
-	else
-		pr_err("input ntc name was not found!\n\r");
-
-	*temp = tempdata;
-	return 0;
-}
-#endif
 
 int hisi_peripheral_get_table_info(const char* ntc_name, unsigned long* dest,
 	enum hkadc_table_id* table_id)

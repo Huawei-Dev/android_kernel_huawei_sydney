@@ -86,9 +86,3 @@ config HISI_THERMAL_AMBIENT
 	default n
 	help
 	  Enable ambient temp calculation
-
-config HISI_HKADC_MODEM
-	bool "Hisi hkadc modem temp"
-	default n
-	help
-	  Enable hkadc modem temp

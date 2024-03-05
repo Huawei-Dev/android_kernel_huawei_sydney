@@ -112,17 +112,6 @@ static const struct file_operations kbasep_trace_timeline_debugfs_fops = {
 	.release = seq_release,
 };
 
-#ifdef CONFIG_HISI_DEBUG_FS
-
-void kbasep_trace_timeline_debugfs_init(struct kbase_device *kbdev)
-{
-	debugfs_create_file("mali_timeline_defs",
-			S_IRUGO, kbdev->mali_debugfs_directory, NULL,
-			&kbasep_trace_timeline_debugfs_fops);
-}
-
-#endif /* CONFIG_HISI_DEBUG_FS */
-
 void kbase_timeline_job_slot_submit(struct kbase_device *kbdev, struct kbase_context *kctx,
 		struct kbase_jd_atom *katom, int js)
 {

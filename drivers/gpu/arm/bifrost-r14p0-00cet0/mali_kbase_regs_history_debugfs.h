@@ -37,19 +37,6 @@
 
 struct kbase_device;
 
-#if defined(CONFIG_HISI_DEBUG_FS) && !defined(CONFIG_MALI_NO_MALI)
-
-/**
- * kbasep_regs_history_debugfs_init - add debugfs entries for register history
- *
- * @kbdev: Pointer to kbase_device containing the register history
- */
-void kbasep_regs_history_debugfs_init(struct kbase_device *kbdev);
-
-#else /* CONFIG_HISI_DEBUG_FS */
-
 #define kbasep_regs_history_debugfs_init CSTD_NOP
-
-#endif /* CONFIG_HISI_DEBUG_FS */
 
 #endif  /*_KBASE_REGS_HISTORY_DEBUGFS_H*/

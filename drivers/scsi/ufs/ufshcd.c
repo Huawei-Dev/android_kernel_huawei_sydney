@@ -66,7 +66,6 @@
 #include "ufs-kirin.h"
 #include "unipro.h"
 #include "ufs_quirks.h"
-#include "ufs_debugfs.h"
 #include "dsm_ufs.h"
 #include "ufs_vendor_mode.h"
 #include "ufs-kirin-lib.h"
@@ -88,9 +87,6 @@
 	defined CONFIG_SCSI_UFS_LIBRA)
 #define OLD_DEVICE_CONSTRAINT
 #endif
-
-
-
 
 /* UIC command timeout, unit: ms */
 #define UIC_CMD_TIMEOUT	500
@@ -1008,7 +1004,6 @@ void ufshcd_send_command(struct ufs_hba *hba, unsigned int task_tag)
 
 	/* Make sure that doorbell is committed immediately */
 	wmb();
-	ufshcd_update_tag_stats(hba, task_tag);
 
 }
 /*lint -restore*/
@@ -4111,7 +4106,6 @@ int ufshcd_change_power_mode(struct ufs_hba *hba,
 			| pwr_mode->pwr_tx);
 
 	if (ret) {
-		ufshcd_update_error_stats(hba, UFS_ERR_POWER_MODE_CHANGE);
 		dev_err(hba->dev,
 			"%s: power mode change failed %d\n", __func__, ret);
 	} else {
@@ -4433,7 +4427,6 @@ static int ufshcd_link_startup(struct ufs_hba *hba)
 			}
 
 		} else {
-			ufshcd_update_error_stats(hba, UFS_ERR_LINKSTARTUP);
 			ret = ufshcd_wait_for_register(hba, REG_INTERRUPT_STATUS,
 						 UIC_LINK_STARTUP,
 						 UIC_LINK_STARTUP, 1000, 50, false);
@@ -4985,7 +4978,6 @@ check:
 
 		cmd = lrbp->cmd;
 		if (cmd && lrbp->command_type != UTP_CMD_TYPE_DEV_MANAGE) {
-			ufshcd_update_tag_stats_completion(hba, cmd);
 			result = ufshcd_transfer_rsp_status(hba, lrbp);
 			if (!(hba->host->queue_quirk_flag & SHOST_QUIRK(SHOST_QUIRK_UNMAP_IN_SOFTIRQ)))
 				scsi_dma_unmap(cmd);
@@ -5025,7 +5017,6 @@ check:
 				complete(hba->dev_cmd.complete);
 		}
 		lrbp->complete_time_stamp = hisi_getcurtime();
-		update_req_stats(hba, lrbp);
 	}
 	/* clear corresponding bits of completed commands */
 	hba->outstanding_reqs ^= completed_reqs;
@@ -5406,13 +5397,6 @@ static void ufshcd_err_handler_do_reset(
 		(ufshcd_is_auto_hibern8_allowed(hba) &&
 			(hba->saved_err &
 				(UIC_HIBERNATE_ENTER | UIC_HIBERNATE_EXIT))))
-		ufshcd_update_error_stats(hba, UFS_ERR_INT_FATAL_ERRORS);
-
-	if (hba->saved_err & UIC_ERROR)
-		ufshcd_update_error_stats(hba, UFS_ERR_INT_UIC_ERROR);
-
-	if (err_xfer || err_tm)
-		ufshcd_update_error_stats(hba, UFS_ERR_CLEAR_PEND_XFER_TM);
 
 	/*
 	 * ufshcd_reset_and_restore() does the link reinitialization
@@ -6149,8 +6133,6 @@ static int ufshcd_abort(struct scsi_cmnd *cmd)
 	}
 
 	lrbp = &hba->lrb[tag];
-
-	ufshcd_update_error_stats(hba, UFS_ERR_TASK_ABORT);
 
 	/* Print Transfer Request of aborted task */
 	dev_err(hba->dev, "%s: Device abort task at tag %d, lun = %d\n",
@@ -8719,7 +8701,6 @@ set_link_active:
 	if (ufshcd_is_link_hibern8(hba) && !ufshcd_uic_hibern8_exit(hba))
 		ufshcd_set_link_active(hba);
 	else if (ufshcd_is_link_off(hba)) {
-		ufshcd_update_error_stats(hba, UFS_ERR_VOPS_SUSPEND);
 		ret = ufshcd_host_reset_and_restore(hba);
 	}
 vops_resume_after_set_link_state:
@@ -8736,9 +8717,6 @@ enable_gating:
 		ufshcd_enable_auto_hibern8(hba);
 out:
 	hba->pm_op_in_progress = 0;
-
-	if (ret)
-		ufshcd_update_error_stats(hba, UFS_ERR_SUSPEND);
 
 	return ret;
 }
@@ -8827,9 +8805,6 @@ vendor_suspend:
 disable_vreg:
 out:
 	hba->pm_op_in_progress = 0;
-
-	if (ret)
-		ufshcd_update_error_stats(hba, UFS_ERR_RESUME);
 
 	return ret;
 }
@@ -9068,7 +9043,6 @@ void ufshcd_remove(struct ufs_hba *hba)
 
 	ufshcd_hba_exit(hba);
 	ufs_fault_inject_fs_remove();
-	ufsdbg_remove_debugfs(hba);
 }
 EXPORT_SYMBOL_GPL(ufshcd_remove);
 
@@ -9321,7 +9295,6 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq, 
 
 	async_schedule(ufshcd_async_scan, hba);
 
-	ufsdbg_add_debugfs(hba);
 	ufs_fault_inject_fs_setup();
 
 	return 0;

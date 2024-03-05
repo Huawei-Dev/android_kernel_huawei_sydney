@@ -412,9 +412,6 @@ static int kbase_open(struct inode *inode, struct file *filp)
 	struct kbase_device *kbdev = NULL;
 	struct kbase_context *kctx;
 	int ret = 0;
-#ifdef CONFIG_HISI_DEBUG_FS
-	char kctx_name[64];
-#endif
 
 	kbdev = kbase_find_device(iminor(inode));
 
@@ -437,41 +434,6 @@ static int kbase_open(struct inode *inode, struct file *filp)
 
 	if (kbdev->infinite_cache_active_default)
 		kbase_ctx_flag_set(kctx, KCTX_INFINITE_CACHE);
-
-#ifdef CONFIG_HISI_DEBUG_FS
-	snprintf(kctx_name, 64, "%d_%d", kctx->tgid, kctx->id); /* unsafe_function_ignore: snprintf */
-
-	kctx->kctx_dentry = debugfs_create_dir(kctx_name,
-			kbdev->debugfs_ctx_directory);
-
-	if (IS_ERR_OR_NULL(kctx->kctx_dentry)) {
-		ret = -ENOMEM;
-		goto out;
-	}
-
-	debugfs_create_file("infinite_cache", 0644, kctx->kctx_dentry,
-			kctx, &kbase_infinite_cache_fops);
-	debugfs_create_file("force_same_va", S_IRUSR | S_IWUSR,
-			kctx->kctx_dentry, kctx, &kbase_force_same_va_fops);
-
-	mutex_init(&kctx->mem_profile_lock);
-
-	kbasep_jd_debugfs_ctx_init(kctx);
-	kbase_debug_mem_view_init(filp);
-
-	kbase_debug_job_fault_context_init(kctx);
-
-	kbase_mem_pool_debugfs_init(kctx->kctx_dentry, &kctx->mem_pool, &kctx->lp_mem_pool);
-
-#ifdef CONFIG_MALI_LAST_BUFFER
-	ret = kbase_lb_ctx_pool_debugfs_init(kctx);
-	if (ret) {
-		dev_warn(kbdev->dev, "Create lb_mem_pools debugfs failed.\n");
-	}
-#endif
-
-	kbase_jit_debugfs_init(kctx);
-#endif /* CONFIG_HISI_DEBUG_FS */
 
 	dev_dbg(kbdev->dev, "created base context\n");
 
@@ -508,12 +470,6 @@ static int kbase_release(struct inode *inode, struct file *filp)
 	bool found_element = false;
 
 	KBASE_TLSTREAM_TL_DEL_CTX(kctx);
-	//!e648
-
-#ifdef CONFIG_HISI_DEBUG_FS
-	kbasep_mem_profile_debugfs_remove(kctx);
-	kbase_debug_job_fault_context_term(kctx);
-#endif
 
 	mutex_lock(&kbdev->kctx_list_lock);
 	list_for_each_entry_safe(element, tmp, &kbdev->kctx_list, link) {
@@ -3032,130 +2988,6 @@ static ssize_t set_js_ctx_scheduling_mode(struct device *dev,
 static DEVICE_ATTR(js_ctx_scheduling_mode, S_IRUGO | S_IWUSR,
 		show_js_ctx_scheduling_mode,
 		set_js_ctx_scheduling_mode);
-#ifdef CONFIG_HISI_DEBUG_FS
-
-/* Number of entries in serialize_jobs_settings[] */
-#define NR_SERIALIZE_JOBS_SETTINGS 5
-/* Maximum string length in serialize_jobs_settings[].name */
-#define MAX_SERIALIZE_JOBS_NAME_LEN 16
-
-static struct
-{
-	char *name;
-	u8 setting;
-} serialize_jobs_settings[NR_SERIALIZE_JOBS_SETTINGS] = {
-	{"none", 0},
-	{"intra-slot", KBASE_SERIALIZE_INTRA_SLOT},
-	{"inter-slot", KBASE_SERIALIZE_INTER_SLOT},
-	{"full", KBASE_SERIALIZE_INTRA_SLOT | KBASE_SERIALIZE_INTER_SLOT},
-	{"full-reset", KBASE_SERIALIZE_INTRA_SLOT | KBASE_SERIALIZE_INTER_SLOT |
-			KBASE_SERIALIZE_RESET}
-};
-
-/**
- * kbasep_serialize_jobs_seq_show - Show callback for the serialize_jobs debugfs
- *                                  file
- * @sfile: seq_file pointer
- * @data:  Private callback data
- *
- * This function is called to get the contents of the serialize_jobs debugfs
- * file. This is a list of the available settings with the currently active one
- * surrounded by square brackets.
- *
- * Return: 0 on success, or an error code on error
- */
-static int kbasep_serialize_jobs_seq_show(struct seq_file *sfile, void *data)
-{
-	struct kbase_device *kbdev = sfile->private;
-	int i;
-
-	CSTD_UNUSED(data);
-
-	for (i = 0; i < NR_SERIALIZE_JOBS_SETTINGS; i++) {
-		if (kbdev->serialize_jobs == serialize_jobs_settings[i].setting)
-			seq_printf(sfile, "[%s] ",
-					serialize_jobs_settings[i].name);
-		else
-			seq_printf(sfile, "%s ",
-					serialize_jobs_settings[i].name);
-	}
-
-	seq_puts(sfile, "\n");
-
-	return 0;
-}
-
-/**
- * kbasep_serialize_jobs_debugfs_write - Store callback for the serialize_jobs
- *                                       debugfs file.
- * @file:  File pointer
- * @ubuf:  User buffer containing data to store
- * @count: Number of bytes in user buffer
- * @ppos:  File position
- *
- * This function is called when the serialize_jobs debugfs file is written to.
- * It matches the requested setting against the available settings and if a
- * matching setting is found updates kbdev->serialize_jobs.
- *
- * Return: @count if the function succeeded. An error code on failure.
- */
-static ssize_t kbasep_serialize_jobs_debugfs_write(struct file *file,
-		const char __user *ubuf, size_t count, loff_t *ppos)
-{
-	struct seq_file *s = file->private_data;
-	struct kbase_device *kbdev = s->private;
-	char buf[MAX_SERIALIZE_JOBS_NAME_LEN];
-	int i;
-	bool valid = false;
-
-	CSTD_UNUSED(ppos);
-
-	count = min_t(size_t, sizeof(buf) - 1, count);
-	if (copy_from_user(buf, ubuf, count))
-		return -EFAULT;
-
-	buf[count] = 0;
-
-	for (i = 0; i < NR_SERIALIZE_JOBS_SETTINGS; i++) {
-		if (sysfs_streq(serialize_jobs_settings[i].name, buf)) {
-			kbdev->serialize_jobs =
-					serialize_jobs_settings[i].setting;
-			valid = true;
-			break;
-		}
-	}
-
-	if (!valid) {
-		dev_err(kbdev->dev, "serialize_jobs: invalid setting\n");
-		return -EINVAL;
-	}
-
-	return count;
-}
-
-/**
- * kbasep_serialize_jobs_debugfs_open - Open callback for the serialize_jobs
- *                                     debugfs file
- * @in:   inode pointer
- * @file: file pointer
- *
- * Return: Zero on success, error code on failure
- */
-static int kbasep_serialize_jobs_debugfs_open(struct inode *in,
-		struct file *file)
-{
-	return single_open(file, kbasep_serialize_jobs_seq_show, in->i_private);
-}
-
-static const struct file_operations kbasep_serialize_jobs_debugfs_fops = {
-	.open = kbasep_serialize_jobs_debugfs_open,
-	.read = seq_read,
-	.write = kbasep_serialize_jobs_debugfs_write,
-	.llseek = seq_lseek,
-	.release = single_release,
-};
-
-#endif /* CONFIG_HISI_DEBUG_FS */
 
 static int kbasep_protected_mode_init(struct kbase_device *kbdev)
 {
@@ -3434,207 +3266,8 @@ static void power_control_term(struct kbase_device *kbdev)
 		clk_put(kbdev->clock);
 		kbdev->clock = NULL;
 	}
-#if 0// move this to mali_kbase_config_hisilicon.c
-(LINUX_VERSION_CODE >= KERNEL_VERSION(3, 12, 0)) && defined(CONFIG_OF) \
-			&& defined(CONFIG_REGULATOR)
-	if (kbdev->regulator) {
-		regulator_put(kbdev->regulator);
-		kbdev->regulator = NULL;
-	}
-#endif /* LINUX_VERSION_CODE >= 3, 12, 0 */
 }
 
-#ifdef CONFIG_HISI_DEBUG_FS
-
-#if KBASE_GPU_RESET_EN
-#include <mali_kbase_hwaccess_jm.h>
-
-static void trigger_quirks_reload(struct kbase_device *kbdev)
-{
-	kbase_pm_context_active(kbdev);
-	if (kbase_prepare_to_reset_gpu(kbdev))
-		kbase_reset_gpu(kbdev);
-	kbase_pm_context_idle(kbdev);
-}
-
-#define MAKE_QUIRK_ACCESSORS(type) \
-static int type##_quirks_set(void *data, u64 val) \
-{ \
-	struct kbase_device *kbdev; \
-	kbdev = (struct kbase_device *)data; \
-	kbdev->hw_quirks_##type = (u32)val; \
-	trigger_quirks_reload(kbdev); \
-	return 0;\
-} \
-\
-static int type##_quirks_get(void *data, u64 *val) \
-{ \
-	struct kbase_device *kbdev;\
-	kbdev = (struct kbase_device *)data;\
-	*val = kbdev->hw_quirks_##type;\
-	return 0;\
-} \
-DEFINE_SIMPLE_ATTRIBUTE(fops_##type##_quirks, type##_quirks_get,\
-		type##_quirks_set, "%llu\n")
-
-MAKE_QUIRK_ACCESSORS(sc);
-MAKE_QUIRK_ACCESSORS(tiler);
-MAKE_QUIRK_ACCESSORS(mmu);
-MAKE_QUIRK_ACCESSORS(jm);
-
-#endif /* KBASE_GPU_RESET_EN */
-
-/**
- * debugfs_protected_debug_mode_read - "protected_debug_mode" debugfs read
- * @file: File object to read is for
- * @buf:  User buffer to populate with data
- * @len:  Length of user buffer
- * @ppos: Offset within file object
- *
- * Retrieves the current status of protected debug mode
- * (0 = disabled, 1 = enabled)
- *
- * Return: Number of bytes added to user buffer
- */
-static ssize_t debugfs_protected_debug_mode_read(struct file *file,
-				char __user *buf, size_t len, loff_t *ppos)
-{
-	struct kbase_device *kbdev = (struct kbase_device *)file->private_data;
-	u32 gpu_status;
-	ssize_t ret_val;
-
-	kbase_pm_context_active(kbdev);
-	gpu_status = kbase_reg_read(kbdev, GPU_CONTROL_REG(GPU_STATUS));
-	kbase_pm_context_idle(kbdev);
-
-	if (gpu_status & GPU_DBGEN)
-		ret_val = simple_read_from_buffer(buf, len, ppos, "1\n", 2);
-	else
-		ret_val = simple_read_from_buffer(buf, len, ppos, "0\n", 2);
-
-	return ret_val;
-}
-
-/*
- * struct fops_protected_debug_mode - "protected_debug_mode" debugfs fops
- *
- * Contains the file operations for the "protected_debug_mode" debugfs file
- */
-static const struct file_operations fops_protected_debug_mode = {
-	.open = simple_open,
-	.read = debugfs_protected_debug_mode_read,
-	.llseek = default_llseek,
-};
-
-static int kbase_device_debugfs_init(struct kbase_device *kbdev)
-{
-	struct dentry *debugfs_ctx_defaults_directory;
-	int err;
-
-	kbdev->mali_debugfs_directory = debugfs_create_dir(kbdev->devname,
-			NULL);
-	if (!kbdev->mali_debugfs_directory) {
-		dev_err(kbdev->dev, "Couldn't create mali debugfs directory\n");
-		err = -ENOMEM;
-		goto out;
-	}
-
-	kbdev->debugfs_ctx_directory = debugfs_create_dir("ctx",
-			kbdev->mali_debugfs_directory);
-	if (!kbdev->debugfs_ctx_directory) {
-		dev_err(kbdev->dev, "Couldn't create mali debugfs ctx directory\n");
-		err = -ENOMEM;
-		goto out;
-	}
-
-	debugfs_ctx_defaults_directory = debugfs_create_dir("defaults",
-			kbdev->debugfs_ctx_directory);
-	if (!debugfs_ctx_defaults_directory) {
-		dev_err(kbdev->dev, "Couldn't create mali debugfs ctx defaults directory\n");
-		err = -ENOMEM;
-		goto out;
-	}
-
-#ifdef CONFIG_MALI_LAST_BUFFER
-	err = kbase_lb_dev_pool_debugfs_init(kbdev);
-	if (err) {
-		dev_warn(kbdev->dev, "Create lb_mem_pools debugfs for device pools failed.\n");
-	}
-#endif
-
-#if !MALI_CUSTOMER_RELEASE
-	kbasep_regs_dump_debugfs_init(kbdev);
-#endif /* !MALI_CUSTOMER_RELEASE */
-	kbasep_regs_history_debugfs_init(kbdev);
-
-	kbase_debug_job_fault_debugfs_init(kbdev);
-	kbasep_gpu_memory_debugfs_init(kbdev);
-	kbase_as_fault_debugfs_init(kbdev);
-#if KBASE_GPU_RESET_EN
-	/* fops_* variables created by invocations of macro
-	 * MAKE_QUIRK_ACCESSORS() above. */
-	debugfs_create_file("quirks_sc", 0644,
-			kbdev->mali_debugfs_directory, kbdev,
-			&fops_sc_quirks);
-	debugfs_create_file("quirks_tiler", 0644,
-			kbdev->mali_debugfs_directory, kbdev,
-			&fops_tiler_quirks);
-	debugfs_create_file("quirks_mmu", 0644,
-			kbdev->mali_debugfs_directory, kbdev,
-			&fops_mmu_quirks);
-	debugfs_create_file("quirks_jm", 0644,
-			kbdev->mali_debugfs_directory, kbdev,
-			&fops_jm_quirks);
-#endif /* KBASE_GPU_RESET_EN */
-
-	debugfs_create_bool("infinite_cache", 0644,
-			debugfs_ctx_defaults_directory,
-			&kbdev->infinite_cache_active_default);
-
-	debugfs_create_size_t("mem_pool_max_size", 0644,
-			debugfs_ctx_defaults_directory,
-			&kbdev->mem_pool_max_size_default);
-
-	if (kbase_hw_has_feature(kbdev, BASE_HW_FEATURE_PROTECTED_DEBUG_MODE)) {
-		debugfs_create_file("protected_debug_mode", S_IRUGO,
-				kbdev->mali_debugfs_directory, kbdev,
-				&fops_protected_debug_mode);
-	}
-
-#if KBASE_TRACE_ENABLE
-	kbasep_trace_debugfs_init(kbdev);
-#endif /* KBASE_TRACE_ENABLE */
-
-#ifdef CONFIG_MALI_TRACE_TIMELINE
-	kbasep_trace_timeline_debugfs_init(kbdev);
-#endif /* CONFIG_MALI_TRACE_TIMELINE */
-
-#ifdef CONFIG_MALI_DEVFREQ
-#ifdef CONFIG_DEVFREQ_THERMAL
-	if (kbdev->inited_subsys & inited_devfreq)
-		kbase_ipa_debugfs_init(kbdev);
-#endif /* CONFIG_DEVFREQ_THERMAL */
-#endif /* CONFIG_MALI_DEVFREQ */
-
-#ifdef CONFIG_HISI_DEBUG_FS
-	debugfs_create_file("serialize_jobs", S_IRUGO | S_IWUSR,
-			kbdev->mali_debugfs_directory, kbdev,
-			&kbasep_serialize_jobs_debugfs_fops);
-#endif /* CONFIG_HISI_DEBUG_FS */
-
-	return 0;
-
-out:
-	debugfs_remove_recursive(kbdev->mali_debugfs_directory);
-	return err;
-}
-
-static void kbase_device_debugfs_term(struct kbase_device *kbdev)
-{
-	debugfs_remove_recursive(kbdev->mali_debugfs_directory);
-}
-
-#else /* CONFIG_HISI_DEBUG_FS */
 static inline int kbase_device_debugfs_init(struct kbase_device *kbdev)
 {
 	kbasep_gpu_memory_debugfs_init(kbdev);
@@ -3642,7 +3275,6 @@ static inline int kbase_device_debugfs_init(struct kbase_device *kbdev)
 }
 
 static inline void kbase_device_debugfs_term(struct kbase_device *kbdev) { }
-#endif /* CONFIG_HISI_DEBUG_FS */
 
 static void kbase_device_coherency_init(struct kbase_device *kbdev,
 		unsigned prod_id)

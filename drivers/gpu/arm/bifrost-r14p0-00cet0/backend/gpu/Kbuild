@@ -24,7 +24,6 @@ BACKEND += \
 	backend/gpu/mali_kbase_device_hw.c \
 	backend/gpu/mali_kbase_gpu.c \
 	backend/gpu/mali_kbase_gpuprops_backend.c \
-	backend/gpu/mali_kbase_debug_job_fault_backend.c \
 	backend/gpu/mali_kbase_irq_linux.c \
 	backend/gpu/mali_kbase_instr_backend.c \
 	backend/gpu/mali_kbase_jm_as.c \

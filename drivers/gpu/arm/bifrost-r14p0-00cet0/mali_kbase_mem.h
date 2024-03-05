@@ -1361,14 +1361,6 @@ void kbase_sync_single_for_device(struct kbase_device *kbdev, dma_addr_t handle,
 void kbase_sync_single_for_cpu(struct kbase_device *kbdev, dma_addr_t handle,
 		size_t size, enum dma_data_direction dir);
 
-#ifdef CONFIG_HISI_DEBUG_FS
-/**
- * kbase_jit_debugfs_init - Add per context debugfs entry for JIT.
- * @kctx: kbase context
- */
-void kbase_jit_debugfs_init(struct kbase_context *kctx);
-#endif /* CONFIG_HISI_DEBUG_FS */
-
 /**
  * kbase_jit_init - Initialize the JIT memory pool management
  * @kctx: kbase context

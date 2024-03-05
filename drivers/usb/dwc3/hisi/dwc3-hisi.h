@@ -1,4 +1,3 @@
-
 #ifndef _DWC3_HISI_H_
 #define _DWC3_HISI_H_
 

@@ -61,7 +61,6 @@ config MALI_MIDGARD_ENABLE_TRACE
 	default n
 	help
 	  Enables tracing in kbase.  Trace log available through
-	  the "mali_trace" debugfs file, when the CONFIG_HISI_DEBUG_FS is enabled
 
 config MALI_MIDGARD_DEBUG_SYS
 	bool "Enable sysfs for the Mali Midgard DDK "

@@ -20,7 +20,6 @@
 #include "hifi-usb-urb-buf.h"
 #include "hifi-usb-stat.h"
 #include "hifi-usb.h"
-#include "hifi-usb-debugfs.h"
 
 #ifdef CONFIG_HUAWEI_DSM
 #include <dsm_audio/dsm_audio.h>
@@ -1318,14 +1317,9 @@ static int hifi_usb_init(struct proxy_hcd_client *client)
 	hifi_usb_hibernation_init(proxy);
 	hifi_usb_dts_config(proxy);
 
-	/* create debugfs node */
-	if (hifi_usb_debugfs_init(proxy))
-		ERR("hifi_usb_debugfs_init failed\n");
-
 	ret = hifi_usb_mailbox_init();
 	if (ret) {
 		ERR("hifi_usb_mailbox_init failed\n");
-		hifi_usb_debugfs_exit(proxy);
 		hifi_usb_hibernation_exit(proxy);
 		urb_buf_destroy(&proxy->urb_bufs);
 		kfree(proxy);
@@ -1365,7 +1359,6 @@ static void hifi_usb_exit(struct proxy_hcd_client *client)
 	hifi_usb_mailbox_exit();
 
 	/* remove debugfs node */
-	hifi_usb_debugfs_exit(proxy);
 	hifi_usb_hibernation_exit(proxy);
 
 	urb_buf_destroy(&proxy->urb_bufs);
@@ -1787,8 +1780,6 @@ void hifi_usb_msg_receiver(struct hifi_usb_op_msg *__msg)
 		schedule_work(&proxy->msg_work);
 		break;
 	case ID_AP_HIFI_USB_TEST:
-		hifi_usb_handle_test_mesg(proxy,
-				(struct hifi_usb_test_msg *)__msg);
 		break;
 	default:
 		ERR("Unsupported mesg_id 0x%x\n", msg_header->msg_id);

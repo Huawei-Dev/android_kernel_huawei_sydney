@@ -300,6 +300,5 @@ config USB_DFU
 
 config USB_SOURCESINK
 	tristate "Client driver for sourcesink device"
-	depends on HISI_DEBUG_FS
 	help
 	  Say Y here if you want to connect f_sourcesink device.

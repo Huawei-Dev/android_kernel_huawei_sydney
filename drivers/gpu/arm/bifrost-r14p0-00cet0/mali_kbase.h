@@ -603,45 +603,6 @@ void kbasep_trace_clear(struct kbase_device *kbdev);
 /** PRIVATE - do not use directly. Use KBASE_TRACE_DUMP() instead */
 void kbasep_trace_dump(struct kbase_device *kbdev);
 
-#if defined(CONFIG_HISI_DEBUG_FS) && !defined(CONFIG_MALI_NO_MALI)
-
-/* kbase_io_history_init - initialize data struct for register access history
- *
- * @kbdev The register history to initialize
- * @n The number of register accesses that the buffer could hold
- *
- * @return 0 if successfully initialized, failure otherwise
- */
-int kbase_io_history_init(struct kbase_io_history *h, u16 n);
-
-/* kbase_io_history_term - uninit all resources for the register access history
- *
- * @h The register history to terminate
- */
-void kbase_io_history_term(struct kbase_io_history *h);
-
-/* kbase_io_history_dump - print the register history to the kernel ring buffer
- *
- * @kbdev Pointer to kbase_device containing the register history to dump
- */
-void kbase_io_history_dump(struct kbase_device *kbdev);
-
-/**
- * kbase_io_history_resize - resize the register access history buffer.
- *
- * @h: Pointer to a valid register history to resize
- * @new_size: Number of accesses the buffer could hold
- *
- * A successful resize will clear all recent register accesses.
- * If resizing fails for any reason (e.g., could not allocate memory, invalid
- * buffer size) then the original buffer will be kept intact.
- *
- * @return 0 if the buffer was resized, failure otherwise
- */
-int kbase_io_history_resize(struct kbase_io_history *h, u16 new_size);
-
-#else /* CONFIG_HISI_DEBUG_FS */
-
 #define kbase_io_history_init(...) ((int)0)
 
 #define kbase_io_history_term CSTD_NOP
@@ -650,10 +611,5 @@ int kbase_io_history_resize(struct kbase_io_history *h, u16 new_size);
 
 #define kbase_io_history_resize CSTD_NOP
 
-#endif /* CONFIG_HISI_DEBUG_FS */
-
 
 #endif
-
-
-

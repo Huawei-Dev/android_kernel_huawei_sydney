@@ -24,7 +24,7 @@
 #include "xhci-plat.h"
 #include "xhci-mvebu.h"
 #include "xhci-rcar.h"
-#include "xhci-debugfs.h"
+
 static struct hc_driver __read_mostly xhci_plat_hc_driver;
 
 static int xhci_plat_setup(struct usb_hcd *hcd);
@@ -322,16 +322,7 @@ static int xhci_plat_probe(struct platform_device *pdev)
 	if (ret)
 		goto dealloc_usb2_hcd;
 
-	ret = xhci_create_debug_file(xhci);
-	if (ret) {
-		dev_err(&pdev->dev, "failed to initialize debugfs\n");
-		goto dealloc_usb3_hcd;
-	}
-
 	return 0;
-
-dealloc_usb3_hcd:
-	usb_remove_hcd(xhci->shared_hcd);
 
 dealloc_usb2_hcd:
 	usb_remove_hcd(hcd);
@@ -359,9 +350,6 @@ static int xhci_plat_remove(struct platform_device *dev)
 	struct clk *clk = xhci->clk;
 
 	xhci->xhc_state |= XHCI_STATE_REMOVING;
-
-	/* add for xhci debug */
-	xhci_remove_debug_file(xhci);
 
 	usb_remove_hcd(xhci->shared_hcd);
 	usb_phy_shutdown(hcd->usb_phy);

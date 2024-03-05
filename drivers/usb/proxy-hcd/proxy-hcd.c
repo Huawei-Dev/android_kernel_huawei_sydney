@@ -1723,9 +1723,6 @@ static int phcd_plat_probe(struct platform_device *pdev)
 		return ret;
 	}
 
-	if (phcd_debugfs_init(phcd))
-		DBG("phcd_debugfs_init failed\n");
-
 	INFO("-\n");
 
 	return 0;
@@ -1738,7 +1735,6 @@ static int phcd_plat_remove(struct platform_device *dev)
 
 	INFO("+\n");
 
-	phcd_debugfs_exit(phcd);
 	usb_remove_hcd(hcd);
 	usb_put_hcd(hcd);
 	phcd_client_exit(phcd->client);

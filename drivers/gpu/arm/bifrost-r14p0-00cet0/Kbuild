@@ -89,7 +89,6 @@ SRC := \
 	mali_kbase_mmu.c \
 	mali_kbase_ctx_sched.c \
 	mali_kbase_jd.c \
-	mali_kbase_jd_debugfs.c \
 	mali_kbase_jm.c \
 	mali_kbase_gpuprops.c \
 	mali_kbase_js.c \
@@ -114,15 +113,12 @@ SRC := \
 	mali_kbase_mmu_mode_aarch64.c \
 	mali_kbase_disjoint_events.c \
 	mali_kbase_gator_api.c \
-	mali_kbase_debug_mem_view.c \
 	mali_kbase_debug_job_fault.c \
 	mali_kbase_smc.c \
 	mali_kbase_mem_pool.c \
-	mali_kbase_mem_pool_debugfs.c \
 	mali_kbase_tlstream.c \
 	mali_kbase_strings.c \
 	mali_kbase_as_fault_debugfs.c \
-	mali_kbase_regs_history_debugfs.c \
 	thirdparty/mali_kbase_mmap.c
 
 ifeq ($(MALI_GMC),1)

@@ -142,12 +142,6 @@ int armpmu_event_set_period(struct perf_event *event)
 	 */
 	if (left > (armpmu->max_period >> 1))
 		left = armpmu->max_period >> 1;
-#ifdef CONFIG_HISI_HW_PERF_EVENTS
-	if (left < (s64)armpmu->min_period){
-		left = (s64)armpmu->min_period;
-		local64_set(&hwc->period_left, left);
-	}
-#endif
 	local64_set(&hwc->prev_count, (u64)-left);
 
 	armpmu->write_counter(event, (u64)(-left) & 0xffffffff);
@@ -466,11 +460,6 @@ __hw_perf_event_init(struct perf_event *event)
 		hwc->last_period    = hwc->sample_period;
 		local64_set(&hwc->period_left, hwc->sample_period);
 	}
-#ifdef CONFIG_HISI_HW_PERF_EVENTS
-	if (hwc->sample_period < armpmu->min_period){
-		hwc->sample_period = armpmu->min_period;
-	}
-#endif
 	if (event->group_leader != event) {
 		if (validate_group(event) != 0)
 			return -EINVAL;

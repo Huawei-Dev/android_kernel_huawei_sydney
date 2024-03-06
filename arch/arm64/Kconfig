@@ -685,11 +685,6 @@ config HW_PERF_EVENTS
 	def_bool y
 	depends on ARM_PMU
 
-config HISI_HW_PERF_EVENTS
-	bool "HISI perf PMU event debug"
-	depends on HW_PERF_EVENTS
-	default n
-
 config SYS_SUPPORTS_HUGETLBFS
 	def_bool y
 

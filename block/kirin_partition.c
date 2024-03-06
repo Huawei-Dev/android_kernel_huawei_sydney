@@ -22,14 +22,6 @@
 #include <partition.h>
 #include <linux/hisi/kirin_partition.h>
 
-#ifdef CONFIG_HISI_AB_PARTITION
-#define BOOT_XLOADER_A                 (0x1)
-#define BOOT_XLOADER_B                 (0x2)
-
-extern int ufs_set_boot_partition_type(int boot_partition_type);
-extern int mmc_set_boot_partition_type(int boot_partition_type);
-#endif
-
 int get_cunrrent_total_ptn_num(void)
 {
 	int current_ptn_num = 0;
@@ -87,9 +79,6 @@ int flash_find_ptn(const char* str, char* pblkname)
 	struct partition *current_partition_table = NULL;
 	enum bootdevice_type boot_device_type = BOOT_DEVICE_EMMC;
 	char partition_name_tmp[MAX_PARTITION_NAME_LENGTH];
-#ifdef CONFIG_HISI_AB_PARTITION
-	enum AB_PARTITION_TYPE storage_boot_partition_type;
-#endif
 
 	if ((NULL == pblkname) || (NULL == str)) {
 		pr_err("Input partition name or device path buffer is NULL\n");
@@ -129,25 +118,6 @@ int flash_find_ptn(const char* str, char* pblkname)
 	memset(partition_name_tmp,0,sizeof(partition_name_tmp));/* unsafe_function_ignore: memset */
 	strncpy(partition_name_tmp, str, sizeof(partition_name_tmp) - 3);/* unsafe_function_ignore: strncpy */
 
-#ifdef CONFIG_HISI_AB_PARTITION
-	storage_boot_partition_type = get_device_boot_partition_type();
-	if (BOOT_XLOADER_A == storage_boot_partition_type) {
-		strncpy(partition_name_tmp + strlen(partition_name_tmp), "_a", (unsigned long)3);/* unsafe_function_ignore: strncpy */
-	} else if (BOOT_XLOADER_B == storage_boot_partition_type) {
-		strncpy(partition_name_tmp + strlen(partition_name_tmp), "_b", (unsigned long)3);/* unsafe_function_ignore: strncpy */
-	} else {
-		return -1;
-	}
-
-	current_ptn_num = get_cunrrent_total_ptn_num();
-	for(n = 0; n < current_ptn_num; n++) {
-		if(!strcmp((current_partition_table + n)->name, partition_name_tmp)) {/*[false alarm]:current_partition_table!=NULL*/
-			strncpy(pblkname, device_path, strlen(device_path));/* unsafe_function_ignore: strncpy */
-			strncpy(pblkname + strlen(device_path), partition_name_tmp, strlen(partition_name_tmp)+1);/* unsafe_function_ignore: strncpy */
-			return 0;
-		}
-	}
-#else
 	strncpy(partition_name_tmp + strlen(partition_name_tmp), "_a", (unsigned long)3);/* unsafe_function_ignore: strncpy */
 	current_ptn_num = get_cunrrent_total_ptn_num();
 
@@ -158,7 +128,6 @@ int flash_find_ptn(const char* str, char* pblkname)
 			return 0;
 		}
 	}
-#endif
 	pr_err("[%s]partition is not found, str = %s, pblkname = %s\n",__func__,str, pblkname);
 	return -1;
 }
@@ -174,9 +143,7 @@ int flash_get_ptn_index(const char* pblkname)
 	struct partition *current_partition_table = NULL;
 	enum bootdevice_type boot_device_type;
 	char partition_name_tmp[MAX_PARTITION_NAME_LENGTH];
-#ifdef CONFIG_HISI_AB_PARTITION
-	enum AB_PARTITION_TYPE storage_boot_partition_type;
-#endif
+
 	if (NULL == pblkname) {
 		pr_err("Input partition name is NULL\n");
 		return -1;
@@ -219,19 +186,7 @@ int flash_get_ptn_index(const char* pblkname)
 	memset(partition_name_tmp,0,sizeof(partition_name_tmp));/* unsafe_function_ignore: memset */
 	strncpy(partition_name_tmp, pblkname, sizeof(partition_name_tmp) - 3);/* unsafe_function_ignore: strncpy */
 
-#ifdef CONFIG_HISI_AB_PARTITION
-	/*A/B partition*/
-	storage_boot_partition_type = get_device_boot_partition_type();
-	if (BOOT_XLOADER_A == storage_boot_partition_type) {
-		strncpy(partition_name_tmp + strlen(partition_name_tmp), "_a", 3);/* unsafe_function_ignore: strncpy */
-	} else if (BOOT_XLOADER_B == storage_boot_partition_type) {
-		strncpy(partition_name_tmp + strlen(partition_name_tmp), "_b", 3);/* unsafe_function_ignore: strncpy */
-	} else {
-		return -1;
-	}
-#else
 	strncpy(partition_name_tmp + strlen(partition_name_tmp), "_a", 3);/* unsafe_function_ignore: strncpy */
-#endif
 
 	for(n = 0; n < current_ptn_num; n++) {
 		if (!strcmp((current_partition_table + n)->name, partition_name_tmp)) {
@@ -252,27 +207,8 @@ enum AB_PARTITION_TYPE ufs_boot_partition_type = XLOADER_A;
  */
 enum AB_PARTITION_TYPE get_device_boot_partition_type(void)
 {
-#ifdef CONFIG_HISI_AB_PARTITION
-	enum bootdevice_type boot_device_type;
-
-	boot_device_type = get_bootdevice_type();
-
-	if (BOOT_DEVICE_EMMC == boot_device_type) {
-		return emmc_boot_partition_type;
-	}
-#ifdef CONFIG_HISI_STORAGE_UFS_PARTITION
-	else if (BOOT_DEVICE_UFS  == boot_device_type){
-		return ufs_boot_partition_type;
-	}
-#endif
-	else {
-		pr_err("invalid boot device type\n");
-		return ERROR_VALUE;
-	}
-#else
 	pr_info("Not support AB partition\n");
 	return NO_SUPPORT_AB;
-#endif
 }
 
 /*
@@ -280,37 +216,7 @@ enum AB_PARTITION_TYPE get_device_boot_partition_type(void)
  */
 int set_device_boot_partition_type(char boot_partition_type)
 {
-#ifdef CONFIG_HISI_AB_PARTITION
-	int ret;
-	enum bootdevice_type boot_device_type;
-
-	boot_device_type = get_bootdevice_type();
-
-	if (BOOT_DEVICE_EMMC == boot_device_type) {
-		ret = mmc_set_boot_partition_type(boot_partition_type);
-		if (ret) {
-			pr_err("set boot device type failed\n");
-			return -1;
-		}
-		emmc_boot_partition_type = boot_partition_type;
-	}
-#ifdef CONFIG_HISI_STORAGE_UFS_PARTITION
-	else if (BOOT_DEVICE_UFS  == boot_device_type) {
-		ret = ufs_set_boot_partition_type(boot_partition_type);
-		if (ret) {
-			pr_err("set boot device type failed\n");
-			return -1;
-		}
-		ufs_boot_partition_type = boot_partition_type;
-	}
-#endif
-	else {
-		pr_err("invalid boot device type\n");
-		return -1;
-	}
-#else
 	pr_err("Not support AB partition writing\n");
-#endif
 
 	return 0;
 }

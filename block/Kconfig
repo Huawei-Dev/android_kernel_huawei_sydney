@@ -223,12 +223,6 @@ config HISI_PARTITION
 	bool "hisi partition"
 	default n
 
-config HISI_AB_PARTITION
-        bool "AB partition support"
-        default n
-        help
-          Say Y here if storage uses ab partition table.
-
 menu "Partition Types"
 
 source "block/partitions/Kconfig"

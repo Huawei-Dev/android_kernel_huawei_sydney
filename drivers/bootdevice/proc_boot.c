@@ -23,9 +23,7 @@ struct __bootdevice {
 	u8 life_time_est_typ_a;
 	u8 life_time_est_typ_b;
 	unsigned int manfid;
-#ifdef CONFIG_HISI_AB_PARTITION
-	enum AB_PARTITION_TYPE ab_partition_support;
-#endif
+
 	u8 ptn_index;
 	/* UFS and EMMC all */
 	struct rpmb_config_info rpmb_config;
@@ -405,69 +403,6 @@ static const struct file_operations manfid_proc_fops = {
 	.release	= single_release,
 };
 
-#ifdef CONFIG_HISI_AB_PARTITION
-/*lint -save -e715 -e818*/
-static int ab_partition_support_proc_show(struct seq_file *m, void *v)
-{
-	bootdevice.ab_partition_support = get_device_boot_partition_type();
-
-	if (ERROR_VALUE == bootdevice.ab_partition_support) {
-		seq_printf(m, "get device boot partition type error\n");
-		return -1;
-	}
-
-	seq_printf(m, "%d\n", bootdevice.ab_partition_support);
-
-	return 0;
-}
-
-static int ab_partition_support_proc_open(struct inode *p_inode, struct file *p_file)
-{
-	return single_open(p_file, ab_partition_support_proc_show, NULL);
-}
-
-static ssize_t ab_partition_support_proc_write(struct file *p_file, const char __user * userbuf, size_t count, loff_t * ppos)/*lint !e40*/
-{
-/*We have no B partition in Chicago,disable setting B partition*/
-#if 0
-	char buf;
-	char getvalue;
-	int ret;
-
-
-	if (count == 0)
-		return -1;
-
-	if(copy_from_user(&buf, userbuf, sizeof(char)))
-		return -1;
-
-	getvalue = buf - 48;
-
-	if ((XLOADER_A != getvalue) && (XLOADER_B != getvalue)) {
-		pr_err("Input only support 1 or 2, please try again\n");
-		return -1;
-	}
-
-	ret = set_device_boot_partition_type(getvalue);
-	if (ret < 0) {
-		pr_err("boot partition type set error\n");
-		return -1;
-	}
-#endif
-	return (ssize_t)count;
-}
-
-/*lint -save -e785*/
-static const struct file_operations ab_partition_support_proc_fops = {
-	.open		= ab_partition_support_proc_open,
-	.read		= seq_read,
-	.write          = ab_partition_support_proc_write,
-	.llseek		= seq_lseek,/*lint !e64 !e65*/ 
-	.release	= single_release,
-};
-#endif
-/*lint -restore*/
-
 static int flash_find_index_proc_show(struct seq_file *m, void *v)
 {
 	seq_printf(m, "%d\n", bootdevice.ptn_index);
@@ -550,9 +485,6 @@ static int __init proc_bootdevice_init(void)
 	proc_create("bootdevice/life_time_est_typ_b", 0, NULL,
 		&life_time_est_typ_b_proc_fops);
 	proc_create("bootdevice/manfid", 0, NULL, &manfid_proc_fops);
-#ifdef CONFIG_HISI_AB_PARTITION
-	proc_create("bootdevice/ab_partition_support", 0660, (struct proc_dir_entry *)NULL, &ab_partition_support_proc_fops);
-#endif
 	sema_init(&flash_find_index_sem, 1);
 	proc_create("bootdevice/flash_find_index", 0660, (struct proc_dir_entry *)NULL, &flash_find_index_proc_fops);
 

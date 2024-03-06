@@ -58,7 +58,6 @@
 #include <linux/sched.h>
 #include <linux/wakelock.h>
 
-
 #include <linux/cpu.h>
 #include <linux/delay.h>
 
@@ -68,7 +67,7 @@
 #include "ufs_quirks.h"
 #include "dsm_ufs.h"
 #include "ufs_vendor_mode.h"
-#include "ufs-kirin-lib.h"
+
 #ifdef CONFIG_HISI_BOOTDEVICE
 #include "ufs-rpmb.h"
 #endif
@@ -145,9 +144,6 @@ static int is_fsr_read_failed;
 #define UFS_FLASH_VENDOR_T 0x98
 #define UFS_FLASH_VENDOR_M 0x2c
 #endif
-
-/*disable auto bkops on kirin*/
-/*#define FEATURE_UFS_AUTO_BKOPS*/
 
 /* define the max hardware slots for each CPU */
 #define UFS_MQ_MAX_HARDWARE_SLOTS_PER_CPU 8
@@ -5195,108 +5191,11 @@ out:
 	return err;
 }
 
-#ifdef FEATURE_UFS_AUTO_BKOPS
-/**
- * ufshcd_force_reset_auto_bkops - force reset auto bkops state
- * @hba: per adapter instance
- *
- * After a device reset the device may toggle the BKOPS_EN flag
- * to default value. The s/w tracking variables should be updated
- * as well. This function would change the auto-bkops state based on
- * UFSHCD_CAP_KEEP_AUTO_BKOPS_ENABLED_EXCEPT_SUSPEND.
- */
-static void  ufshcd_force_reset_auto_bkops(struct ufs_hba *hba)
-{
-	if (ufshcd_keep_autobkops_enabled_except_suspend(hba)) {
-		hba->auto_bkops_enabled = false;
-		hba->ee_ctrl_mask |= MASK_EE_URGENT_BKOPS;
-		ufshcd_enable_auto_bkops(hba);
-	} else {
-		hba->auto_bkops_enabled = true;
-		hba->ee_ctrl_mask &= ~MASK_EE_URGENT_BKOPS;
-		ufshcd_disable_auto_bkops(hba);
-	}
-}
-#endif
-
 static inline int ufshcd_get_bkops_status(struct ufs_hba *hba, u32 *status)
 {
 	return ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
 			QUERY_ATTR_IDN_BKOPS_STATUS, 0, 0, status);
 }
-#ifdef FEATURE_UFS_AUTO_BKOPS
-
-/**
- * ufshcd_bkops_ctrl - control the auto bkops based on current bkops status
- * @hba: per-adapter instance
- * @status: bkops_status value
- *
- * Read the bkops_status from the UFS device and Enable fBackgroundOpsEn
- * flag in the device to permit background operations if the device
- * bkops_status is greater than or equal to "status" argument passed to
- * this function, disable otherwise.
- *
- * Returns 0 for success, non-zero in case of failure.
- *
- * NOTE: Caller of this function can check the "hba->auto_bkops_enabled" flag
- * to know whether auto bkops is enabled or disabled after this function
- * returns control to it.
- */
-static int ufshcd_bkops_ctrl(struct ufs_hba *hba,
-			     enum bkops_status status)
-{
-	int err;
-	u32 curr_status = 0;
-
-	err = ufshcd_get_bkops_status(hba, &curr_status);
-	if (err) {
-		dev_err(hba->dev, "%s: failed to get BKOPS status %d\n",
-				__func__, err);
-		goto out;
-	} else if (curr_status > BKOPS_STATUS_MAX) {
-		dev_err(hba->dev, "%s: invalid BKOPS status %d\n",
-				__func__, curr_status);
-		err = -EINVAL;
-		goto out;
-	}
-
-	if (curr_status >= status) {
-		if (ufshcd_is_auto_hibern8_allowed(hba)) {
-			ufshcd_disable_auto_hibern8(hba);
-		}
-		err = ufshcd_enable_auto_bkops(hba);
-		if (err) {
-			if (ufshcd_is_auto_hibern8_allowed(hba)) {
-				ufshcd_enable_auto_hibern8(hba);
-			}
-		}
-	} else {
-		err = ufshcd_disable_auto_bkops(hba);
-		if (!err) {
-			if (ufshcd_is_auto_hibern8_allowed(hba)) {
-				ufshcd_enable_auto_hibern8(hba);
-			}
-		}
-	}
-out:
-	return err;
-}
-
-/**
- * ufshcd_urgent_bkops - handle urgent bkops exception event
- * @hba: per-adapter instance
- *
- * Enable fBackgroundOpsEn flag in the device to permit background
- * operations.
- *
- * If BKOPs is enabled, this function returns 0, 1 if the bkops in not enabled
- * and negative error value for any other failure.
- */
-static int ufshcd_urgent_bkops(struct ufs_hba *hba)
-{
-	return ufshcd_bkops_ctrl(hba, hba->urgent_bkops_lvl);
-}
-#endif
 
 static inline int ufshcd_get_ee_status(struct ufs_hba *hba, u32 *status)
 {
@@ -7000,14 +6899,8 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
 	if (ret)
 		goto out;
 
-#ifdef CONFIG_HISI_AB_PARTITION
-	ufs_get_boot_partition_type(hba);
-#endif
 	/* UFS device is also active now */
 	ufshcd_set_ufs_dev_active(hba);
-#ifdef FEATURE_UFS_AUTO_BKOPS
-	ufshcd_force_reset_auto_bkops(hba);
-#endif
 
 #ifdef CONFIG_HISI_BOOTDEVICE
 	if (get_bootdevice_type() == BOOT_DEVICE_UFS) {
@@ -8632,30 +8525,6 @@ static int ufshcd_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
 	if (ufshcd_is_auto_hibern8_allowed(hba))
 		ufshcd_disable_auto_hibern8(hba);
 
-#ifdef FEATURE_UFS_AUTO_BKOPS
-	if (ufshcd_is_runtime_pm(pm_op)) {
-		if (ufshcd_can_autobkops_during_suspend(hba)) {
-			/*
-			 * The device is idle with no requests in the queue,
-			 * allow background operations if bkops status shows
-			 * that performance might be impacted.
-			 */
-			ret = ufshcd_urgent_bkops(hba);
-			if (ret)
-				goto enable_gating;
-		} else {
-			/* make sure that auto bkops is disabled */
-			if (!ufshcd_disable_auto_bkops(hba)) {
-				if (ufshcd_is_auto_hibern8_allowed(hba)) {
-					ufshcd_enable_auto_hibern8(hba);
-				}
-			}
-		}
-		if (ufshcd_is_auto_hibern8_allowed(hba)) {
-			goto out;
-		}
-	}
-#endif
 	if ((req_dev_pwr_mode != hba->curr_dev_pwr_mode) &&
 	     ((ufshcd_is_runtime_pm(pm_op) && !hba->auto_bkops_enabled) ||
 	       !ufshcd_is_runtime_pm(pm_op))) {
@@ -8784,13 +8653,6 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
 	if (ufshcd_is_auto_hibern8_allowed(hba)) {
 		ufshcd_enable_auto_hibern8(hba);
 	}
-#ifdef FEATURE_UFS_AUTO_BKOPS
-	/*
-	 * If BKOPs operations are urgently needed at this moment then
-	 * keep auto-bkops enabled or else disable it.
-	 */
-	ret = ufshcd_urgent_bkops(hba);
-#endif
 	ufs_idle_intr_toggle(hba, 1);
 
 	goto out;

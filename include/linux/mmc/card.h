@@ -153,9 +153,6 @@ struct mmc_ext_csd {
 	u8			cache_flush_barrier_en;	/* barrier enable */
 	u8			cache_flush_policy;		/* 240 */
 	u8			bkops_auto_en;			/* 163 bit(1) background op auto enable */
-#ifdef CONFIG_HISI_AB_PARTITION
-	u8			partition_config;		/* 179 partition config */
-#endif
 	unsigned int            feature_support;
 #define MMC_DISCARD_FEATURE	BIT(0)                  /* CMD38 feature */
 };

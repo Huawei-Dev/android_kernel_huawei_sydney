@@ -36,9 +36,6 @@
 #include <linux/bootdevice.h>
 #include "emmc-rpmb.h"
 #endif
-#ifdef CONFIG_HISI_AB_PARTITION
-#include "mmc-kirin-lib.h"
-#endif
 
 #define DEFAULT_CMD6_TIMEOUT_MS	500
 
@@ -745,10 +742,6 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
 #ifdef CONFIG_HISI_MMC
 	/*new feature for emmc v5.0*/
 	mmc_decode_ext_csd_emmc51(card, ext_csd);
-#endif
-
-#ifdef CONFIG_HISI_AB_PARTITION
-	mmc_get_boot_partition_type(card, ext_csd);
 #endif
 
 #ifdef CONFIG_HISI_BOOTDEVICE

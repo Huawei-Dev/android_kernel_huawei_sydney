@@ -23,9 +23,6 @@
 #include <linux/scatterlist.h>
 #include <linux/vmalloc.h>
 #include <linux/ion-iommu.h>
-#ifdef CONFIG_HISI_SVM
-#include <linux/hisi/hisi_svm.h>
-#endif
 
 #include "ion.h"
 #include "ion_priv.h"
@@ -108,14 +105,6 @@ int ion_heap_map_user(struct ion_heap *heap, struct ion_buffer *buffer,
 	}
 
 done:
-#ifdef CONFIG_HISI_SVM
-		if (test_bit(MMF_SVM, &vma->vm_mm->flags)) {
-			hisi_svm_flush_cache(vma->vm_mm,
-					vma->vm_start,
-					vma->vm_end - vma->vm_start);
-		}
-#endif
-
 	return 0;
 }
 

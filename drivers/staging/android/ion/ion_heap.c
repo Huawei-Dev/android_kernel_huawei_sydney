@@ -23,9 +23,6 @@
 #include <linux/scatterlist.h>
 #include <linux/vmalloc.h>
 #include <linux/ion-iommu.h>
-#ifdef CONFIG_HISI_LB
-#include <linux/hisi/hisi_lb.h>
-#endif
 #ifdef CONFIG_HISI_SVM
 #include <linux/hisi/hisi_svm.h>
 #endif
@@ -52,11 +49,6 @@ void *ion_heap_map_kernel(struct ion_heap *heap,
 		pgprot = PAGE_KERNEL;
 	else
 		pgprot = pgprot_writecombine(PAGE_KERNEL);
-
-#ifdef CONFIG_HISI_LB
-	if (buffer->plc_id)
-		lb_pid_prot_build(buffer->plc_id, &pgprot);
-#endif
 
 	for_each_sg(table->sgl, sg, table->nents, i) {/*lint !e574*/
 		int npages_this_entry = PAGE_ALIGN(sg->length) / PAGE_SIZE;
@@ -91,12 +83,7 @@ int ion_heap_map_user(struct ion_heap *heap, struct ion_buffer *buffer,
 	int i;
 	int ret;
 
-#ifdef CONFIG_HISI_LB
-	if (buffer->plc_id)
-		lb_pid_prot_build(buffer->plc_id, &vma->vm_page_prot);
-#endif
-
-	for_each_sg(table->sgl, sg, table->nents, i) {/*lint !e574*/
+	for_each_sg(table->sgl, sg, table->nents, i) {
 		struct page *page = sg_page(sg);
 		unsigned long remainder = vma->vm_end - addr;
 		unsigned long len = sg->length;
@@ -138,9 +125,6 @@ int ion_heap_map_iommu(struct ion_buffer *buffer,
 	struct sg_table *table = buffer->sg_table;
 	int ret;
 
-#ifdef CONFIG_HISI_LB
-	map_data->format.prot |= (unsigned long)buffer->plc_id << IOMMU_PORT_SHIFT;
-#endif
 	ret = hisi_iommu_map_domain(table->sgl, &map_data->format);
 	if (ret) {
 		pr_err("%s: iommu map failed, heap: %s\n", __func__,

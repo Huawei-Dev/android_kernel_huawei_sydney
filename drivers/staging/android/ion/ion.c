@@ -44,9 +44,6 @@
 #include <linux/ion-iommu.h>
 #include <linux/atomic.h>
 #include <linux/platform_device.h>
-#ifdef CONFIG_HISI_LB
-#include <linux/hisi/hisi_lb.h>
-#endif
 #include <linux/hisi/rdr_hisi_ap_hook.h>
 #include "ion.h"
 #include "ion_priv.h"
@@ -260,30 +257,11 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 		}
 	}
 
-#ifdef CONFIG_HISI_LB
-	if (flags & ION_FLAG_HISI_LB_MASK) {
-		buffer->plc_id = ION_FLAG_2_PLC_ID(flags);
-		pr_err("HISI ION LB %lx\n", flags);
-		/*
-		 * will inv cache with normal va,
-		 * and need before zero
-		 */
-		if (lb_sg_attach(buffer->plc_id, buffer->sg_table->sgl,
-				 buffer->sg_table->nents))
-			goto err0;
-	}
-#endif
-
 	mutex_lock(&dev->buffer_lock);
 	ion_buffer_add(dev, buffer);
 	mutex_unlock(&dev->buffer_lock);
 	return buffer;
 
-#ifdef CONFIG_HISI_LB
-err0:
-	if (ion_buffer_fault_user_mappings(buffer))
-		vfree(buffer->pages);
-#endif
 err1:
 	heap->ops->free(buffer);
 err2:
@@ -310,15 +288,6 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
 	if (WARN_ON(buffer->kmap_cnt > 0))
 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
 
-#ifdef CONFIG_HISI_LB
-	/*
-	 * will inv cache with gid va,
-	 * and need before free
-	 */
-	if (buffer->plc_id)
-		(void)lb_sg_detach(buffer->plc_id, buffer->sg_table->sgl,
-				 buffer->sg_table->nents);
-#endif
 	buffer->heap->ops->free(buffer);
 	vfree(buffer->pages);
 	kfree(buffer);

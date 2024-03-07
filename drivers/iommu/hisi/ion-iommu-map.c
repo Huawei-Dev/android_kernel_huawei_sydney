@@ -339,9 +339,6 @@ unsigned long hisi_iommu_idle_display_map(u32 pid, phys_addr_t paddr,
 	 * map lb second
 	 */
 	prot = IOMMU_READ|IOMMU_WRITE;
-#ifdef CONFIG_HISI_LB
-	prot |= pid << IOMMU_PORT_SHIFT;
-#endif
 	if (lbsize) {
 		ret = iommu_map(ion_domain->domain, iova, paddr,
 			lbsize, prot);

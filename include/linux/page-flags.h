@@ -114,9 +114,6 @@ enum pageflags {
 #ifdef CONFIG_TASK_PROTECT_LRU
 	PG_protect,
 #endif
-#ifdef CONFIG_HISI_LB
-	PG_lb,
-#endif
 	__NR_PAGEFLAGS,
 
 	/* Filesystems */
@@ -372,9 +369,6 @@ TESTCLEARFLAG(Young, young, PF_ANY)
 PAGEFLAG(Idle, idle, PF_ANY)
 #endif
 
-#ifdef CONFIG_HISI_LB
-PAGEFLAG(LB, lb, PF_ANY)
-#endif
 /*
  * On an anonymous page mapped into a user virtual memory area,
  * page->mapping points to its anon_vma, not to a struct address_space;

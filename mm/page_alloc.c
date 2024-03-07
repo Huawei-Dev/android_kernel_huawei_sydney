@@ -4055,11 +4055,8 @@ EXPORT_SYMBOL(get_zeroed_page);
 
 void __free_pages(struct page *page, unsigned int order)
 {
-#ifdef CONFIG_HISI_LB
-	BUG_ON(PageLB(page) || PageLB(page + ((1 << order) - 1)));	/*lint !e679*/
-#endif
 	if (put_page_testzero(page)) {
-		page_trace_hook(__GFP_HIGHMEM, (unsigned char)MEM_FREE, _RET_IP_, page, order);/*lint !e571*/
+		page_trace_hook(__GFP_HIGHMEM, (unsigned char)MEM_FREE, _RET_IP_, page, order);
 		if (order == 0)
 			free_hot_cold_page(page, false);
 		else

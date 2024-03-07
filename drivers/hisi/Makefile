@@ -30,7 +30,6 @@ obj-$(CONFIG_DRMDRIVER)                         += drmdriver/
 obj-$(CONFIG_HI3XXX_EFUSE)                      += efuse/
 obj-$(CONFIG_HISI_CMA)                          += hisi_cma/
 obj-y                                           += tzdriver/
-obj-$(CONFIG_HISI_LB)                           += hisi_lb/
 obj-$(CONFIG_LOAD_IMAGE) += load_image/
 obj-$(CONFIG_HISI_SECS_CTRL) += secs_power_ctrl/
 obj-$(CONFIG_HISI_SR)                      += pm/

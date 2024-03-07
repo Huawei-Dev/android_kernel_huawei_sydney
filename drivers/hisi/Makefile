@@ -43,7 +43,6 @@ obj-y += modem/
 endif
 endif
 obj-$(CONFIG_HISI_AXI) += axi/
-obj-$(CONFIG_HISI_HMPTH_SET) += hmpthresholds/
 obj-$(CONFIG_HISI_PAGE_TRACKER) += hisi_page_tracker/
 obj-$(CONFIG_HISI_PAGE_EXT) += hisi_page_ext/
 obj-$(CONFIG_HISI_PERFHUB) += perfhub/

@@ -4,12 +4,6 @@ ifeq ($(CLT_IV),true)
 EXTRA_CFLAGS += -DCLT_VOICE
 endif
 
-# hifi dsp device driver
-ifeq ($(CONFIG_HIFI_IPC_3650),y)
-EXTRA_CFLAGS += -Iinclude/modem/include/config/hi365x
-EXTRA_CFLAGS += -Iinclude/modem/include/drv/hi365x
-endif
-
 ifeq ($(CFG_CONFIG_HISI_FAMA),true)
 LOCAL_CFLAGS += -DCONFIG_HISI_FAMA
 endif
@@ -25,12 +19,6 @@ endif
 ifeq ($(CONFIG_HIFI_IPC_3660),y)
 EXTRA_CFLAGS += -Iinclude/modem/include/config/hi365x
 EXTRA_CFLAGS += -Iinclude/modem/include/drv/hi365x
-endif
-ifeq ($(CONFIG_HIFI_IPC_6250),y)
-EXTRA_CFLAGS += -DPLATFORM_HI6250
-EXTRA_CFLAGS += -DEXPAND_HIFI_RUNNING_REGION
-EXTRA_CFLAGS += -Iinclude/modem/include/config/hi62x0
-EXTRA_CFLAGS += -Iinclude/modem/include/drv/hi62x0
 endif
 
 ifeq ($(CONFIG_SND_SOC_HI6402),y)

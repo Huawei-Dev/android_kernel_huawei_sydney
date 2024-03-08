@@ -1547,7 +1547,7 @@ int ts_chip_detect(struct ts_cmd_node *in_cmd, struct ts_cmd_node *out_cmd)
 		atomic_set(&g_ts_kit_platform_data.register_flag, TS_REGISTER_DONE);
 		atomic_set(&g_ts_kit_platform_data.state, TS_WORK);
 		wake_up_process(g_ts_kit_platform_data.ts_init_task);
-#if defined(CONFIG_HUAWEI_DEV_SELFCHECK) || defined(CONFIG_HUAWEI_HW_DEV_DCT)
+#ifdef CONFIG_HUAWEI_HW_DEV_DCT
 		/* detect current device successful, set the flag as present */
 		set_tp_dev_flag();
 #endif

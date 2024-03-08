@@ -918,11 +918,7 @@ static int dsu_pmu_device_probe(struct platform_device *pdev)
 		irq_set_affinity_hint(dsu_pmu->irq, NULL);
 	}
 
-#ifdef CONFIG_HISI_L3C_DEVFREQ
-	rc = perf_pmu_register(&dsu_pmu->pmu, name, PERF_TYPE_DSU);
-#else
 	rc = perf_pmu_register(&dsu_pmu->pmu, name, -1);
-#endif
 	if (rc) {
 		cpu_pm_dsu_pmu_unregister(dsu_pmu);
 		cpuhp_state_remove_instance(dsu_pmu_cpuhp_state,

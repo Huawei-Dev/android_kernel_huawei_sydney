@@ -12,9 +12,6 @@
 */
 #ifndef HISI_FB_VIDEO_IDLE_H
 #define HISI_FB_VIDEO_IDLE_H
-#ifdef CONFIG_HISI_L3CACHE_SHARE
-#include <linux/hisi/hisi_l3share.h>
-#endif
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
 #include <linux/ion-iommu.h>
@@ -75,10 +72,6 @@ struct hisifb_video_idle_ctrl {
 	uint64_t wb_vir_addr;
 
 	bool buffer_alloced;
-#ifdef CONFIG_HISI_L3CACHE_SHARE
-	struct l3_cache_request_params request_params;
-	struct l3_cache_release_params release_params;
-#endif
 	struct workqueue_struct *idle_wb_err_wq;
 	struct work_struct idle_wb_err_work;
 	struct work_struct wb_err_work;

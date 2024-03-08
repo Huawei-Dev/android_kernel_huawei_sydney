@@ -86,6 +86,3 @@ config DDR_HW_VOTE_15BITS
         default n
         help
           Hisilicon ddr dfs "hardware vote 15 bits" enbale.
-
-source "drivers/devfreq/hisi/dsu_pctrl/Kconfig"
-source "drivers/devfreq/hisi/l3c_devfreq/Kconfig"

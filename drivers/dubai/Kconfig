@@ -6,11 +6,4 @@ config HUAWEI_DUBAI
 	help
 	  This driver provides DUBAI feature
 
-config HUAWEI_DUBAI_TASK_CPU_POWER
-	bool "Huawei DUBAI Task CPU Power"
-	default n
-	depends on HUAWEI_DUBAI && ARCH_MSM
-	help
-	  Get task cpu power
-
 endmenu

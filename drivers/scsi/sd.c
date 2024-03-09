@@ -908,32 +908,6 @@ static int sd_setup_flush_cmnd(struct scsi_cmnd *cmd)
 	return BLKPREP_OK;
 }
 
-#ifdef CONFIG_HISI_SCSI_VENDOR_CMD_HOTCOLD
-int is_hotcold_device(void)
-{
-	return 0;
-}
-
-void scsi_hotcold_cmnd(struct scsi_cmnd *SCpnt)
-{
-	struct request *rq = SCpnt->request;
-
-#ifdef CONFIG_HISI_BLK
-#ifdef CONFIG_HISI_SCSI_VENDOR_CMD_DEBUG
-	pr_devel("<%s, %d> rq->cmd_flags=0x%llX, HOTCOLD_ID=0x%X\n",
-			__func__, __LINE__,
-			rq->cmd_flags, req_get_streamid(rq));
-
-#endif
-	if (is_hotcold_device()) {
-		if (rq_data_dir(rq) == WRITE) {
-			SCpnt->cmnd[6] |= req_get_streamid(rq) << SCSI_HOTCOLD_ID_OFFSET;
-		}
-	}
-#endif
-}
-#endif
-
 static int sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
 {
 	struct request *rq = SCpnt->request;
@@ -1134,9 +1108,6 @@ static int sd_setup_read_write_cmnd(struct scsi_cmnd *SCpnt)
 		SCpnt->cmnd[6] = SCpnt->cmnd[9] = 0;
 		SCpnt->cmnd[7] = (unsigned char) (this_count >> 8) & 0xff;
 		SCpnt->cmnd[8] = (unsigned char) this_count & 0xff;
-#ifdef CONFIG_HISI_SCSI_VENDOR_CMD_HOTCOLD
-		scsi_hotcold_cmnd(SCpnt);
-#endif
 	} else {
 		if (unlikely(rq->cmd_flags & REQ_FUA)) {
 			/*

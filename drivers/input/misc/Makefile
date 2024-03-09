@@ -94,5 +94,4 @@ obj-$(CONFIG_INPUT_XEN_KBDDEV_FRONTEND)	+= xen-kbdfront.o
 obj-$(CONFIG_INPUT_YEALINK)		+= yealink.o
 obj-$(CONFIG_INPUT_IDEAPAD_SLIDEBAR)	+= ideapad_slidebar.o
 obj-$(CONFIG_HISI_VIBRATOR)		+= hisi_vibrator.o
-obj-$(CONFIG_HISI_PMIC_VIBRATOR)        += hisi_pmic_vibrator.o
 obj-$(CONFIG_MINI_BUGREPORT)		+= mini_bugreport_notifier.o

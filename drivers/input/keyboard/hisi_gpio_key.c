@@ -62,11 +62,6 @@
 #define GPIO_LOW_VOLTAGE    	 	(0)
 #define TIMER_DEBOUNCE				(15)
 
-#ifdef CONFIG_HISI_PMIC_VIBRATOR
-#define HISI_PMIC_VIBRATOR_SMARTKEY   	 	(3)
-extern int hisi_pmic_vibrator_haptics_set_type(int type);
-#endif
-
 static struct wake_lock volume_up_key_lock;
 static struct wake_lock volume_down_key_lock;
 static int support_smart_key = 0;
@@ -340,11 +335,6 @@ static void hisi_gpio_keysmart_work(struct work_struct *work)
 	/*judge key is pressed or released.*/
 	if (keysmart_value == GPIO_LOW_VOLTAGE) {
 		report_action = GPIO_KEY_PRESS;
-#ifdef CONFIG_HISI_PMIC_VIBRATOR
-		/* vibrator for vitrual btn */
-		if(smart_key_vibrate)
-			hisi_pmic_vibrator_haptics_set_type(HISI_PMIC_VIBRATOR_SMARTKEY);
-#endif
 	} else if (keysmart_value == GPIO_HIGH_VOLTAGE) {
 		report_action = GPIO_KEY_RELEASE;
 	} else {
@@ -448,7 +438,6 @@ static void gpio_keysmart_timer(unsigned long data)
 }
 #endif
 
-/*以下接口变量只用于组合键进入fastboot模式，完成dump功能*/
 static unsigned char s_vol_down_hold = 0;
 static int vol_up_gpio = -1;
 static int vol_up_active_low = -1;

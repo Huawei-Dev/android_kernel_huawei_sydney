@@ -1828,12 +1828,6 @@ static int dwc3_gadget_pullup(struct usb_gadget *g, int is_on)
 		if (ret)
 			pr_err("%s: dwc3_gadget_restart failed\n", __func__);
 	}
-#ifdef CONFIG_HISI_USB_DWC3_MASK_IRQ_WORKAROUND
-	else if (dwc->irq_state == 1) {
-		disable_irq_nosync(dwc->irq_gadget);
-		dwc->irq_state = 0;
-	}
-#endif
 
 	ret = dwc3_gadget_run_stop(dwc, is_on, false);
 	spin_unlock_irqrestore(&dwc->lock, flags);
@@ -1883,24 +1877,10 @@ static void dwc3_gadget_enable_irq(struct dwc3 *dwc)
 			DWC3_DEVTEN_DISCONNEVTEN);
 
 	dwc3_writel(dwc->regs, DWC3_DEVTEN, reg);
-#ifdef CONFIG_HISI_USB_DWC3_MASK_IRQ_WORKAROUND
-	if (dwc->irq_state == 0) {
-		enable_irq(dwc->irq_gadget);
-		dwc->irq_state = 1;
-		pr_info("[%s]enable irq\n", __func__);
-	}
-#endif
 }
 
 static void dwc3_gadget_disable_irq(struct dwc3 *dwc)
 {
-#ifdef CONFIG_HISI_USB_DWC3_MASK_IRQ_WORKAROUND
-	if (dwc->irq_state == 1) {
-		disable_irq_nosync(dwc->irq_gadget);
-		dwc->irq_state = 0;
-		pr_info("[%s]disable irq\n", __func__);
-	}
-#endif
 	/* mask all interrupts */
 	dwc3_writel(dwc->regs, DWC3_DEVTEN, 0x00);
 }
@@ -3372,10 +3352,6 @@ int dwc3_gadget_init(struct dwc3 *dwc)
 	}
 
 	dwc->irq_gadget = irq;
-#ifdef CONFIG_HISI_USB_DWC3_MASK_IRQ_WORKAROUND
-	dwc->irq_state = 0;
-#endif
-
 	dwc->ctrl_req = dma_alloc_coherent(dwc->dev, sizeof(*dwc->ctrl_req),
 			&dwc->ctrl_req_addr, GFP_KERNEL);
 	if (!dwc->ctrl_req) {
@@ -3464,9 +3440,6 @@ int dwc3_gadget_init(struct dwc3 *dwc)
 	if (ret)
 		goto err5;
 
-#ifdef CONFIG_HISI_USB_DWC3_MASK_IRQ_WORKAROUND
-	irq_set_status_flags(dwc->irq_gadget, IRQ_NOAUTOEN);/*lint !e747 */
-#endif
 	ret = request_irq(dwc->irq_gadget, dwc3_interrupt, IRQF_SHARED, "dwc3", dwc->ev_buf);
 	if (ret) {
 		dev_err(dwc->dev, "failed to request irq #%d --> %d\n",

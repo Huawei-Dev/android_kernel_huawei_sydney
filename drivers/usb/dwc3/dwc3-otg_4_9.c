@@ -59,14 +59,6 @@ static int dwc3_otg_start_host(struct dwc3 *dwc)
 
 	spin_unlock_irqrestore(&dwc->lock, flags);
 
-#ifdef CONFIG_HISI_USB_DWC3_MASK_IRQ_WORKAROUND
-	if (dwc->irq_state == 0) {
-		enable_irq(dwc->irq_gadget);
-		dwc->irq_state = 1;
-		DBG("enable irq\n");
-	}
-#endif
-
 	ret = dwc3_host_init(dwc);
 	if (ret) {
 		pr_err("%s: failed to register xHCI device\n", __func__);

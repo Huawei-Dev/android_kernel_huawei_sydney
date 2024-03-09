@@ -1005,9 +1005,6 @@ struct dwc3 {
 	const char		*hsphy_interface;
 
 	struct dwc3_otg *dwc_otg;
-#ifdef CONFIG_HISI_USB_DWC3_MASK_IRQ_WORKAROUND
-	int irq_state;
-#endif
 	struct tasklet_struct	bh;
 
 	unsigned		connected:1;

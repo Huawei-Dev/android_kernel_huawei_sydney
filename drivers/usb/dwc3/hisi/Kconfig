@@ -72,24 +72,11 @@ config USB_DWC3_NYET_ABNORMAL
 
 endif # USB_DWC3_HISI
 
-config HISI_USB_DWC3_MASK_IRQ_WORKAROUND
-	bool "Enable workaround for hisi dwc3 mask irq bug"
-	depends on USB_DWC3_HISI
-	default n
-	help
-	  For some hisi dwc3, masking dwc3 irq can't work well.
-	  Say Y here if you have such problem.
-
-comment "Debugging features"
-
-
-
 config USB_DWC3_OTG
 	bool "Enable DWC3 OTG"
 	default n
 	help
 	  Say Y here to enable DWC3 OTG feature.
-
 
 config CONTEXTHUB_PD
 	bool "Sensor CONTEXTHUB PD driver"

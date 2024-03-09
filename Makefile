@@ -822,14 +822,6 @@ KBUILD_CFLAGS += -fplugin-arg-hashlog-genkeyfile
 endif
 endif
 
-ifdef CONFIG_GCC_PLUGIN_STRUCTLEAK
-KBUILD_CFLAGS += -fplugin=$(srctree)/../../prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/libexec/gcc/aarch64-linux-android/4.9.x/structleak.so
-KBUILD_CFLAGS += -fplugin-arg-structleak-verbose
-##byref-all means all struct should be forcibly initialized, default initialized struct copy to user
-##KBUILD_CFLAGS += -fplugin-arg-structleak-byref-all
-
-KBUILD_CFLAGS += -DSTRUCTLEAK_PLUGIN
-endif
 # This selects the stack protector compiler flag. Testing it is delayed
 # until after .config has been reprocessed, in the prepare-compiler-check
 # target.

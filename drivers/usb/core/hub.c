@@ -35,12 +35,6 @@
 
 #include <linux/hisi/usb/hisi_usb.h>
 
-#ifdef CONFIG_HUAWEI_DOCK_HEADSET_QUIRK
-#include <huawei_platform/usb/hw_pd_dev.h>
-#define HUAWEI_DOCK_VID 0x0bda
-#define HUAWEI_DOCK_PID 0x5411
-#endif
-
 #define USB_VENDOR_GENESYS_LOGIC		0x05e3
 #define HUB_QUIRK_CHECK_PORT_AUTOSUSPEND	0x01
 
@@ -5156,25 +5150,6 @@ static void port_event(struct usb_hub *hub, int port1)
 		hub_port_connect_change(hub, port1, portstatus, portchange);
 }
 
-#ifdef CONFIG_HUAWEI_DOCK_HEADSET_QUIRK
-static bool check_huawei_dock_quirk(struct usb_device *hdev,
-		struct usb_hub *hub, int port1)
-{
-	struct usb_port *port2_dev;
-
-	if (unlikely(port1 == 3 &&
-				hdev->descriptor.idVendor == HUAWEI_DOCK_VID &&
-				hdev->descriptor.idProduct == HUAWEI_DOCK_PID &&
-				pd_dpm_get_hw_dock_svid_exist())) {
-		port2_dev = hub->ports[1];
-		if (port2_dev->child)
-			return false;
-	}
-
-	return true;
-}
-#endif
-
 static void hub_event(struct work_struct *work)
 {
 	struct usb_device *hdev;
@@ -5252,10 +5227,7 @@ static void hub_event(struct work_struct *work)
 			pm_runtime_get_noresume(&port_dev->dev);
 			pm_runtime_barrier(&port_dev->dev);
 			usb_lock_port(port_dev);
-#ifdef CONFIG_HUAWEI_DOCK_HEADSET_QUIRK
-			if (check_huawei_dock_quirk(hdev, hub, i))
-#endif
-				port_event(hub, i);
+			port_event(hub, i);
 			usb_unlock_port(port_dev);
 			pm_runtime_put_sync(&port_dev->dev);
 		}

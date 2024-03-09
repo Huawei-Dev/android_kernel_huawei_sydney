@@ -376,9 +376,6 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
 		trace_suspend_resume(TPS("machine_suspend"), state, false);
 		goto Platform_wake;
 	}
-#ifdef CONFIG_HISI_DPM_PLATFORM_VENUS
-	cpuidle_pause();
-#endif
 	error = disable_nonboot_cpus();
 	if (error || suspend_test(TEST_CPUS)) {
 		log_suspend_abort_reason("Disabling non-boot cpus failed");

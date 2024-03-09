@@ -125,10 +125,6 @@ extern int sysctl_nr_trim_pages;
 /* Constants used for minimum and  maximum */
 static int __maybe_unused neg_one = -1;
 
-#ifdef CONFIG_HISI_SCSI_UFS_DUMP
-unsigned int ufs_dump = 0;
-#endif
-
 static int zero;
 static int __maybe_unused one = 1;
 static int __maybe_unused two = 2;
@@ -1579,16 +1575,6 @@ static struct ctl_table vm_table[] = {
 		.proc_handler	= proc_dointvec,
 		.extra1		= &zero,
 	},
-#ifdef CONFIG_HISI_SCSI_UFS_DUMP
-	{
-		.procname	= "ufs_dump",
-		.data		= &ufs_dump,
-		.maxlen		= sizeof(ufs_dump),
-		.mode		= 0644,
-		.proc_handler	= proc_dointvec,
-		.extra1		= &zero,
-	},
-#endif
 	{
 		.procname	= "vfs_cache_pressure",
 		.data		= &sysctl_vfs_cache_pressure,

@@ -279,8 +279,3 @@ config SCSI_UFS_CUST_MAX_SECTORS
         default n
         help
                 enable custom max sectors in UFS
-
-config HISI_SCSI_UFS_DUMP
-	bool "hisi ufs_dump support"
-	depends on  SCSI_UFSHCD
-	default n

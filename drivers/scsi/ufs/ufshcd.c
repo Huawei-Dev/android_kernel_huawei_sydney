@@ -222,9 +222,6 @@ enum {
 	((h)->curr_dev_pwr_mode == UFS_ACTIVE_PWR_MODE)
 #define ufshcd_is_ufs_dev_poweroff(h) \
 	((h)->curr_dev_pwr_mode == UFS_POWERDOWN_PWR_MODE)
-#ifdef CONFIG_HISI_SCSI_UFS_DUMP
-extern unsigned int ufs_dump;
-#endif
 
 static struct ufs_pm_lvl_states ufs_pm_lvl_states[] = {
 	{UFS_ACTIVE_PWR_MODE, UIC_LINK_ACTIVE_STATE},
@@ -933,49 +930,6 @@ static bool ufshcd_is_unipro_pa_params_tuning_req(struct ufs_hba *hba)
 		return false;
 }
 
-#ifdef CONFIG_HISI_SCSI_UFS_DUMP
-static inline void ufshcd_dump_scsi_command(struct ufs_hba *hba, unsigned int task_tag)
-{
-	if (unlikely(ufs_dump)) {
-		switch ((int)hba->lrb[task_tag].cmd->cmnd[0]) {
-		case 0x28:
-			printk(KERN_DEBUG "ufs read10 addr:%d, length:%d\n",
-				(int)hba->lrb[task_tag].cmd->cmnd[2] * 0x1000000 +
-				(int)hba->lrb[task_tag].cmd->cmnd[3] * 0x10000 +
-				(int)hba->lrb[task_tag].cmd->cmnd[4] * 0x100 +
-				(int)hba->lrb[task_tag].cmd->cmnd[5] * 0x1,
-				(int)hba->lrb[task_tag].cmd->cmnd[7] * 0x100 +
-				(int)hba->lrb[task_tag].cmd->cmnd[8] * 0x1);
-			break;
-		case 0x2A:
-			printk(KERN_DEBUG "ufs write10 addr:%d, length:%d\n",
-				(int)hba->lrb[task_tag].cmd->cmnd[2] * 0x1000000 +
-				(int)hba->lrb[task_tag].cmd->cmnd[3] * 0x10000 +
-				(int)hba->lrb[task_tag].cmd->cmnd[4] * 0x100 +
-				(int)hba->lrb[task_tag].cmd->cmnd[5] * 0x1,
-				(int)hba->lrb[task_tag].cmd->cmnd[7] * 0x100 +
-				(int)hba->lrb[task_tag].cmd->cmnd[8] * 0x1);
-			break;
-		case 0x35:
-			printk(KERN_DEBUG "ufs sync10 addr:%d, block num:%d\n",
-				(int)hba->lrb[task_tag].cmd->cmnd[2] * 0x1000000 +
-				(int)hba->lrb[task_tag].cmd->cmnd[3] * 0x10000 +
-				(int)hba->lrb[task_tag].cmd->cmnd[4] * 0x100 +
-				(int)hba->lrb[task_tag].cmd->cmnd[5] * 0x1,
-				(int)hba->lrb[task_tag].cmd->cmnd[7] * 0x100 +
-				(int)hba->lrb[task_tag].cmd->cmnd[8] * 0x1);
-			break;
-		case 0x42:
-			printk(KERN_DEBUG "ufs unmap(discard)\n");
-			break;
-		default:
-			printk(KERN_DEBUG "ufs cmd (0x%x)\n",
-				hba->lrb[task_tag].cmd->cmnd[0]);
-			break;
-		}
-	}
-}
-#endif
 /**
  * ufshcd_send_command - Send SCSI or device management commands
  * @hba: per adapter instance
@@ -1979,10 +1933,6 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 		spin_lock_irqsave(hba->host->host_lock, flags);
 	}
 
-
-#ifdef CONFIG_HISI_SCSI_UFS_DUMP
-	ufshcd_dump_scsi_command(hba, tag);
-#endif
 	ufshcd_send_command(hba, tag);
 out_unlock:
 	spin_unlock_irqrestore(hba->host->host_lock, flags);
@@ -7938,9 +7888,6 @@ static int __ufshcd_queuecommand_directly(struct ufs_hba *hba,
 	wmb();
 
 	spin_lock_irqsave(hba->host->host_lock, flags);
-#ifdef CONFIG_HISI_SCSI_UFS_DUMP
-	ufshcd_dump_scsi_command(hba, (unsigned int)tag);
-#endif
 	/* issue command to the controller */
 	ufshcd_send_command(hba, (unsigned int)tag);
 	spin_unlock_irqrestore(hba->host->host_lock, flags);

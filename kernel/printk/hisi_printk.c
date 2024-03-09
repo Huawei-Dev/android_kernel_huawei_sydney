@@ -121,37 +121,6 @@ static int __init uniformity_timer_init(void)
 	init_time_addr = 1;
 	return 0;
 }
-#ifdef CONFIG_HISI_APANIC
-void panic_print_msg(struct printk_log *msg)
-{
-	char *text = (char *)msg + sizeof(struct printk_log);
-	size_t text_size = msg->text_len;
-	char time_log[80] = "";
-	size_t tlen = 0;
-	char *ptime_log;
-	ptime_log = time_log;
-
-	do {
-			const char *next = memchr(text, '\n', text_size);
-			size_t text_len;
-
-			if (next) {
-				text_len = next - text;
-				next++;
-				text_size -= next - text;
-			} else {
-				text_len = text_size;
-			}
-			tlen = print_time(msg->ts_nsec, ptime_log);
-			apanic_console_write(ptime_log, tlen);
-			apanic_console_write(text, text_len);
-			apanic_console_write("\n", 1);
-
-			text = (char *) next;
-	} while (text);
-
-}
-#endif
 void hisi_log_store_add_time(char *hisi_char, u32 sizeof_hisi_char, u16 *hisi_len) {
 	struct tm tm_rtc;
 	unsigned long cur_secs = 0;

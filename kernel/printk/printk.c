@@ -60,10 +60,6 @@
 extern void printascii(char *);
 #endif
 
-#ifdef CONFIG_HISI_APANIC
-extern void apanic_console_write(char *s, unsigned c);
-#endif
-
 int console_printk[4] = {
 	CONSOLE_LOGLEVEL_DEFAULT,	/* console_loglevel */
 	MESSAGE_LOGLEVEL_DEFAULT,	/* default_message_loglevel */
@@ -614,12 +610,6 @@ static int log_store(int facility, int level,
 #endif
 	memset(log_dict(msg) + dict_len, 0, pad_len);
 	msg->len = size;
-
-	/* insert message */
-#ifdef CONFIG_HISI_APANIC
-	if (msg->level < CONSOLE_LOGLEVEL_DEFAULT)
-		panic_print_msg(msg);
-#endif
 
 	log_next_idx += msg->len;
 	log_next_seq++;

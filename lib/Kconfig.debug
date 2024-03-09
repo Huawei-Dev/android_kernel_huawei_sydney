@@ -123,11 +123,6 @@ config HISI_PRINTK_EXTENSION
 	default n
 	depends on HISI_TIME
 
-config HISI_APANIC
-	bool "Enable Hisi apanic function in printk"
-	default n
-	depends on HISI_TIME
-
 endmenu # "printk and dmesg options"
 
 menu "Compile-time checks and compiler options"

@@ -920,13 +920,6 @@ config IP_PLATFORM_COMMON
         help
           This driver provides system interior bus switch for the IP regulator after ORLA AND PHON HiSilicon system.
 
-config HISI_IP_REGULATOR
-	tristate "HiSilicon system 950 interior voltage PMIC"
-	depends on HISI_IP_CORE
-	help
-	  This driver provides support for the IP regulator on the
-	  HiSilicon system.
-
 config REGULATOR_HI6250
 	tristate "HiSilicon system interior voltage PMIC"
 	help

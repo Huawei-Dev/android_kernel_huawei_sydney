@@ -1613,12 +1613,6 @@ config MFD_HISI_IP_CORE
 	help
 	  This driver control HiSilicon system interior area power management from atf.
 
-config HISI_IP_CORE
-	tristate "Control HiSilicon 950 system interior area"
-	depends on OF
-	help
-	  This driver control HiSilicon system interior area power management.
-
 config HISI_FREQ_AUTODOWN
 	tristate "Support HiSilicon Bus automatic frequency reduction"
 	depends on OF

@@ -684,9 +684,6 @@ struct cpufreq_frequency_table {
 	unsigned int	driver_data; /* driver specific data, not used by core */
 	unsigned int	frequency; /* kHz - doesn't need to be in ascending
 				    * order */
-#ifdef CONFIG_CPU_FREQ_POWER_STAT
-	unsigned int	electric_current; /*mircoamp*/
-#endif
 };
 
 #if defined(CONFIG_CPU_FREQ) && defined(CONFIG_PM_OPP)

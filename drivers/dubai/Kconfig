@@ -9,7 +9,7 @@ config HUAWEI_DUBAI
 config HUAWEI_DUBAI_TASK_CPU_POWER
 	bool "Huawei DUBAI Task CPU Power"
 	default n
-	depends on HUAWEI_DUBAI && (CPU_FREQ_POWER_STAT || ARCH_MSM)
+	depends on HUAWEI_DUBAI && ARCH_MSM
 	help
 	  Get task cpu power
 

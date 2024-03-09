@@ -1668,9 +1668,6 @@ static __latent_entropy struct task_struct *copy_process(
 	p->utimescaled = p->stimescaled = 0;
 	prev_cputime_init(&p->prev_cputime);
 
-#ifdef CONFIG_CPU_FREQ_POWER_STAT
-	p->cpu_power = 0;
-#endif
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
 	seqcount_init(&p->vtime_seqcount);
 	p->vtime_snap = 0;

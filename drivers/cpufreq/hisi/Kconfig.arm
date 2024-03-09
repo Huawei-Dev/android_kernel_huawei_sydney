@@ -19,14 +19,6 @@ config HISI_CPUDDR_FREQ_LINK
 	help
 	  Hisilicon cpu ddr freq link enable.
 
-config CPU_FREQ_POWER_STAT
-	bool "Estimation of task power consumption"
-	depends on CPU_FREQ_STAT
-	select CPU_FREQ_TIMES
-	default n
-	help
-	  Keep track of amount of power each task consumes and report power per uid
-
 config HISI_CPU_FREQ_GOV_SCHEDUTIL
 	bool "Hisilicon 'schedutil' cpufreq governor optimize"
 	depends on CPU_FREQ_GOV_SCHEDUTIL

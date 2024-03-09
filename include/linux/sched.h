@@ -2021,9 +2021,6 @@ struct task_struct {
 	u64 *time_in_state;
 	unsigned int max_state;
 #endif
-#ifdef CONFIG_CPU_FREQ_POWER_STAT
-	unsigned long long cpu_power;
-#endif
 	struct prev_cputime prev_cputime;
 #ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
 	seqcount_t vtime_seqcount;

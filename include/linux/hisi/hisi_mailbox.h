@@ -48,29 +48,9 @@
 /* IPC_DEFAULT_BOARD_TYPE means hardware_board_type is not UDP&FPGA */
 #define IPC_DEFAULT_BOARD_TYPE	0
 
-#ifdef CONFIG_HISI_MAILBOX_PERFORMANCE_DEBUG
-enum {
-	PERFORMANCE_DEBUG_OFF = 0,
-	PERFORMANCE_DEBUG_ON
-};
-
-enum {
-	IPC_START = 0,
-	IPC_SEND,
-	IPC_RECEIVE,
-	IPC_BH,
-	IPC_COMPLETE,
-	IPC_TTS_MAX
-};
-
-#define MBOX_DEBUG_ON(mbox)	(mbox->perf_debug = PERFORMANCE_DEBUG_ON)
-#define MBOX_DEBUG_OFF(mbox)	(mbox->perf_debug = PERFORMANCE_DEBUG_OFF)
-#define MBOX_IS_DEBUG_ON(mbox)	(mbox->perf_debug == PERFORMANCE_DEBUG_ON ? 1 : 0)
-#else
 #define MBOX_DEBUG_ON(mbox)	do {} while (0)
 #define MBOX_DEBUG_OFF(mbox)	do {} while (0)
 #define MBOX_IS_DEBUG_ON(mbox)	(0)
-#endif
 
 #define IDLE_STATUS				(1 << 4)
 #define SOURCE_STATUS			(1 << 5)
@@ -122,11 +102,6 @@ struct hisi_mbox_task {
 	mbox_msg_len_t			tx_buffer_len;
 	mbox_msg_len_t			ack_buffer_len;
 	int				need_auto_ack;
-	/* for performance */
-#ifdef CONFIG_HISI_MAILBOX_PERFORMANCE_DEBUG
-	int				perf_debug;
-	struct timespec			tts[IPC_TTS_MAX];
-#endif
 };
 
 struct hisi_mbox_device {
@@ -202,10 +177,6 @@ struct hisi_mbox {
 	struct hisi_mbox_device		*tx;
 	struct hisi_mbox_device		*rx;
 	struct notifier_block		*nb;
-
-#ifdef CONFIG_HISI_MAILBOX_PERFORMANCE_DEBUG
-	int				perf_debug;
-#endif
 };
 
 extern void hisi_mbox_task_free(struct hisi_mbox_task **tx_task);

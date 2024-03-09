@@ -177,13 +177,6 @@ config HARDENED_USERCOPY_PAGESPAN
 	  been removed. This config is intended to be used only while
 	  trying to find such users.
 
-config HISI_HARDENED_USERCOPY_REPLACE_DIVISION
-	bool "Replace division operator in __check_heap_object"
-	depends on HARDENED_USERCOPY
-	help
-	  For improve the efficiency, this option use bitwise AND operator
-	  replace division operator in __check_heap_object.
-
 source security/selinux/Kconfig
 source security/smack/Kconfig
 source security/tomoyo/Kconfig

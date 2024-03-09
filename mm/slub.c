@@ -4012,14 +4012,7 @@ const char *__check_heap_object(const void *ptr, unsigned long n,
 	}
 
 	/* Find offset within object. */
-#ifdef CONFIG_HISI_HARDENED_USERCOPY_REPLACE_DIVISION
-	if ((s->size & (s->size - 1)) == 0)
-		offset = (ptr - page_address(page)) & (s->size - 1);
-	else
-		offset = (ptr - page_address(page)) % s->size;
-#else
 	offset = (ptr - page_address(page)) % s->size;
-#endif
 
 	/* Adjust for redzone and reject if within the redzone. */
 	if (kmem_cache_debug(s) && s->flags & SLAB_RED_ZONE) {

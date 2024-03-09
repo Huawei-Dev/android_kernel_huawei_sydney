@@ -822,30 +822,6 @@ KBUILD_CFLAGS += -fplugin-arg-hashlog-genkeyfile
 endif
 endif
 
-## kernel struct layout randomize
-ifdef CONFIG_GCC_PLUGIN_RANDSTRUCT
-###!!!!!! only support 100 white list ,and etch item must less than 64 ,split by ,
-rand_struct_whitelist=/rand_struct_whitelist_do_nothing/
-#rand_struct_whitelist=/modem/,/hisi/,/connectivity/,/wifi/,drivers/spmi_hisi/,drivers/hwusb/,drivers/rphone/,drivers/media/,drivers/vcodec/
-KBUILD_CFLAGS += -fplugin=$(srctree)/../../prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/libexec/gcc/aarch64-linux-android/4.9.x/randomize_layout.so
-RANDSTRUCT_SEED_VALUE = $(shell cat $(srctree)/randomize_layout_seed)
-KBUILD_CFLAGS += -fplugin-arg-randomize_layout-seed=$(RANDSTRUCT_SEED_VALUE)
-KBUILD_CFLAGS += -fplugin-arg-randomize_layout-whitelist=$(rand_struct_whitelist)
-
-ifdef CONFIG_GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
-KBUILD_CFLAGS += -fplugin-arg-randomize_layout-performance-mode
-endif
-#KBUILD_CFLAGS += -fplugin-arg-randomize_layout-check_duplicate
-
-ifneq ($(RANDSTRUCT_SEED_VALUE),)
-ifdef CONFIG_GCC_PLUGIN_RANDSTRUCT_OPERATIONS
-KBUILD_CFLAGS += -fplugin-arg-randomize_layout-include_operations_struct
-endif
-KBUILD_CFLAGS += -DRANDSTRUCT_PLUGIN
-endif
-
-endif
-
 ifdef CONFIG_GCC_PLUGIN_STRUCTLEAK
 KBUILD_CFLAGS += -fplugin=$(srctree)/../../prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/libexec/gcc/aarch64-linux-android/4.9.x/structleak.so
 KBUILD_CFLAGS += -fplugin-arg-structleak-verbose
@@ -1209,9 +1185,6 @@ else
 	+$(call if_changed,link-vmlinux)
 endif
 endif
-#ifdef CONFIG_GCC_PLUGIN_RANDSTRUCT
-#	$(hide) $(PYTHON) $(srctree)/scripts/duplicated_struct_definition.py -s $(srctree) -w $(rand_struct_whitelist)
-#endif
 
 # Build samples along the rest of the kernel
 ifdef CONFIG_SAMPLES
@@ -1463,9 +1436,6 @@ modules: $(vmlinux-dirs) $(if $(KBUILD_BUILTIN),vmlinux) modules.builtin
 	@$(kecho) '  Building modules, stage 2.';
 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.fwinst obj=firmware __fw_modbuild
-#ifdef CONFIG_GCC_PLUGIN_RANDSTRUCT
-#	$(hide) $(PYTHON) $(srctree)/scripts/duplicated_struct_definition.py -s $(srctree) -w $(rand_struct_whitelist)
-#endif
 
 modules.builtin: $(vmlinux-dirs:%=%/modules.builtin)
 	$(Q)$(AWK) '!x[$$0]++' $^ > $(objtree)/modules.builtin

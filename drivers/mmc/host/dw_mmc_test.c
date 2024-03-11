@@ -7,8 +7,7 @@
  * (at your option) any later version.
  */
 #include "dw_mmc_hisi.h"
-
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/fs.h>
@@ -19,7 +18,6 @@
 #include <linux/hisi/kirin_partition.h>
 #include <linux/uaccess.h>
 #include <linux/printk.h>
-#include <linux/bootdevice.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/clk.h>

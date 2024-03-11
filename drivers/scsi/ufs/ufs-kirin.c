@@ -14,7 +14,7 @@
 
 #define pr_fmt(fmt) "ufshcd :" fmt
 
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include <linux/time.h>
 #include <linux/of.h>
 #include <linux/of_address.h>

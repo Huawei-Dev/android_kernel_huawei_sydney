@@ -12,7 +12,7 @@
 #include <linux/vmstat.h>
 #include <linux/atomic.h>
 #include <linux/vmalloc.h>
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 
 #ifdef CONFIG_CMA
 #include <linux/cma.h>

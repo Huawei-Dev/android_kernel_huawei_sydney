@@ -44,7 +44,7 @@
 #include <linux/nls.h>
 #include <linux/of.h>
 #include <linux/blkdev.h>
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include <scsi/ufs/ioctl.h>
 #include <scsi/ufs/ufs.h>
 #include <scsi/scsi_device.h>

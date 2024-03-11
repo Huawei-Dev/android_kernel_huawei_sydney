@@ -3,7 +3,7 @@
 #include <linux/mmc/mmc.h>
 #include "emmc-rpmb.h"
 #ifdef CONFIG_HISI_BOOTDEVICE
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #endif
 /**
  * emmc_get_rpmb_info - get rpmb info from emmc device and set the rpmb config

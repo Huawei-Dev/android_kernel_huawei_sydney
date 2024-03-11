@@ -13,7 +13,7 @@
 #include <linux/mmc/dw_mmc_mux_sdsim.h>
 
 
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/clk.h>

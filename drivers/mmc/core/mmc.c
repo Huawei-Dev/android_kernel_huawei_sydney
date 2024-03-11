@@ -30,7 +30,7 @@
 #include <linux/mmc/dsm_emmc.h>
 #endif
 #ifdef CONFIG_HISI_BOOTDEVICE
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include "emmc-rpmb.h"
 #endif
 

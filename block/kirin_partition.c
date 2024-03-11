@@ -17,7 +17,7 @@
 #include <linux/kernel.h>
 #include <linux/types.h>
 #include <linux/err.h>
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include <asm/uaccess.h>
 #include <partition.h>
 #include <linux/hisi/kirin_partition.h>

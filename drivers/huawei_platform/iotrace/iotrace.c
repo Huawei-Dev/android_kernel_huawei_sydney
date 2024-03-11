@@ -1,4 +1,3 @@
-
 #include <linux/kernel.h>
 #include <linux/version.h>
 #include <linux/module.h>
@@ -16,7 +15,7 @@
 #include <linux/sched.h>
 #include <linux/kthread.h>
 #include <linux/err.h>
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include <scsi/ufs/ufs.h>
 #include <scsi/ufs/ufshcd.h>
 #include <scsi/ufs/ufs-kirin.h>

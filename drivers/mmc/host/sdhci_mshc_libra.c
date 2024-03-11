@@ -17,8 +17,8 @@
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  */
-/*lint --e{750}*/
-#include <linux/bootdevice.h>
+
+#include <linux/hisi/bootdevice.h>
 #include <linux/module.h>
 #include "sdhci-pltfm.h"
 #include <linux/dma-mapping.h>

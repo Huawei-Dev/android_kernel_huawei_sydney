@@ -44,7 +44,7 @@
 #include <linux/syscalls.h>
 #include <linux/delay.h>
 #include <scsi/sg.h>
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include <linux/kthread.h>
 #include <linux/freezer.h>
 #define UFS_RPMB_BLOCK_DEVICE_NAME "/dev/0:0:0:49476"

@@ -17,7 +17,7 @@
 #include "ufs_quirks.h"
 #include "dsm_ufs.h"
 #ifdef CONFIG_HISI_BOOTDEVICE
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #endif
 #include <linux/of.h>
 #include <linux/string.h>

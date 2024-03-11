@@ -18,8 +18,8 @@
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  */
-/*lint --e{750}*/
-#include <linux/bootdevice.h>
+
+#include <linux/hisi/bootdevice.h>
 #include <linux/module.h>
 #include "sdhci-pltfm.h"
 #include <linux/dma-mapping.h>
@@ -391,9 +391,7 @@ static void sdhci_of_arasan_update_phy_control(struct sdhci_host *host, unsigned
 	static unsigned char old_bus_mode = MMC_BUSMODE_OPENDRAIN;
 
 	pr_debug("%s: timing=%d, host->clock=%d\n", __func__, timing, host->clock);
-/*
-DLL支持50MHz 到 200MHz时钟配置。0: 200-170MHz, 1: 170-140MHz, 2: 140-110MHz, 3: 110-80MHz, 4: 80-50MHz, 7: 200-225MHz
-*/
+
 	if ((host->clock <= 200000000) && (host->clock >= 190000000)) {
 		if (freq_sel_efuse_enable)
 			dll_freq_data = freq_sel_efuse_value;
@@ -419,19 +417,7 @@ DLL支持50MHz 到 200MHz时钟配置。0: 200-170MHz, 1: 170-140MHz, 2: 140-110MHz, 3: 
 		}
 		old_bus_mode = host->mmc->ios.bus_mode;
 	}
-/*
-SDHCI_PHY_CTRL3_OTAPDLYENA:使能手动调整TX时钟相位
-SDHCI_PHY_CTRL3_OTAPDLYSEL:TX时钟相位:0-0xF，默认值0
-SDHCI_PHY_CTRL3_ITAPDLYENA:使能手动调整RX时钟相位,不使能使使用自动tuning的相位值
-初始化时软件配置为不使能
-SDHCI_PHY_CTRL3_ITAPDLYSEL:RX时钟相位:0-0x1F，默认值0
-SDHCI_PHY_CTRL1_DR_TY:阻抗值，驱动力调整，支持如下四种，默认值0x0
-0x0-50欧
-0x1-33欧驱动力最强
-0x2-66欧
-0x3-100欧驱动力最弱
-0x4-40欧
-*/
+
 	if (timing == MMC_TIMING_MMC_HS400) {
 		tx_phase = hs400_tx_phase;
 		rx_phase = sdhci_arasan->tuning_move_sample;

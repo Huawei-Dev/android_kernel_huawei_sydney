@@ -988,7 +988,7 @@ __key.33408:
 	.file 124 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/irq_work.h"
 	.file 125 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/perf_regs.h"
 	.file 126 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/trace_events.h"
-	.file 127 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/bootdevice.h"
+	.file 127 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi/bootdevice.h"
 	.file 128 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/bitops/builtin-__fls.h"
 	.file 129 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/bitops/fls64.h"
 	.file 130 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/jiffies.h"

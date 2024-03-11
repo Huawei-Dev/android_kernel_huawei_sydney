@@ -25,9 +25,6 @@
 #include <linux/reboot.h>
 #include <linux/hisi/rdr_pub.h>
 #include <linux/hisi/rdr_hisi_platform.h>
-#ifdef CONFIG_EMMC_FAULT_INJECT
-#include <linux/mmc/emmc_fault_inject.h>
-#endif
 
 /*avoid to invoke mainline code,we can only use this ugly code*/
 #include "mmc_hisi_card.h"
@@ -1196,11 +1193,6 @@ void mmc_blk_cmdq_req_done(struct mmc_request *mrq)
 	record_cmdq_rw_data(mrq);
 #endif
 
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	if (mmcdbg_cq_timeout_inj(mrq, ERR_INJECT_CMDQ_TIMEOUT)) {
-		return;
-	}
-#endif
 	blk_complete_request(req);
 }
 EXPORT_SYMBOL(mmc_blk_cmdq_req_done);

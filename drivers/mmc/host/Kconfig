@@ -806,13 +806,3 @@ config MMC_SDHCI_MSHC_CAPRICORN
 	help
 	  If you have a controller for capricorn, say Y or M here.
 	  If unsure, say N.
-
-config EMMC_FAULT_INJECT
-	tristate "eMMC Fault Inject"
-	depends on FAULT_INJECTION && FAULT_INJECTION_DEBUG_FS
-	help
-	  The infrastructure can be used for debugging the driver from user space
-	  by injecting fault to the driver.
-
-	  Select this if you want to enable fault injection.
-	  If unsure, say N.

@@ -36,16 +36,11 @@
 #include <linux/mmc/dsm_sdcard.h>
 #endif
 #include <linux/hisi/util.h>
-#ifdef CONFIG_EMMC_FAULT_INJECT
-#include <linux/mmc/emmc_fault_inject.h>
-#endif
-
 
 #define DRIVER_NAME "sdhci"
 
 #define DBG(f, x...) \
 	pr_debug(DRIVER_NAME " [%s()]: " f, __func__,## x)
-
 
 #ifdef CONFIG_MMC_SDHCI_DWC_MSHC
 #define MAX_TUNING_LOOP 64
@@ -3010,13 +3005,6 @@ static irqreturn_t sdhci_irq(int irq, void *dev_id)
 		if (result == IRQ_HANDLED)
 			goto out;
 	}
-#endif
-
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	 (void)mmcdbg_error_inject_dispatcher(host->mmc,
-			ERR_INJECT_LEGACY_INTR,
-			intmask & 0x0000FFFF, &intmask,
-			mmc_is_reset());
 #endif
 
 	do {

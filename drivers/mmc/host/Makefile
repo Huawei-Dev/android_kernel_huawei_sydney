@@ -86,4 +86,3 @@ obj-$(CONFIG_MMC_CQ_HCI)        += hisi_sdhci_cmdq.o
 ifeq ($(CONFIG_CB710_DEBUG),y)
 	CFLAGS-cb710-mmc	+= -DDEBUG
 endif
-obj-$(CONFIG_EMMC_FAULT_INJECT) += emmc_fault_inject.o

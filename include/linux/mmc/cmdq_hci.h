@@ -12,9 +12,6 @@
 #ifndef LINUX_MMC_CQ_HCI_H
 #define LINUX_MMC_CQ_HCI_H
 #include <linux/mmc/core.h>
-#ifdef CONFIG_EMMC_FAULT_INJECT
-#include <linux/mmc/emmc_fault_inject.h>
-#endif
 #ifdef CONFIG_MMC_SDHCI_OF_ARASAN
 /*fix the soc bug that the qbr task can't be cleared*/
 #define CMDQ_FIX_CLEAR_QBRTASK
@@ -179,10 +176,6 @@ struct cmdq_host {
 	struct work_struct      work_resend;
 	struct timer_list *timer;      /* Timer for timeouts */
 	unsigned long     *timeout;    /* timeout value for timer unit:jiffies*/
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	struct cmdq_inject_para *inject_para;/*inject fault*/
-#endif
-
 	void *private;
 };
 

@@ -15,16 +15,11 @@
 #include <linux/slab.h>
 #include <linux/stat.h>
 #include <linux/fault-inject.h>
-
 #include <linux/mmc/card.h>
 #include <linux/mmc/host.h>
 
 #include "core.h"
 #include "mmc_ops.h"
-#ifdef CONFIG_EMMC_FAULT_INJECT
-#include <linux/mmc/emmc_fault_inject.h>
-#endif
-
 
 #ifdef CONFIG_FAIL_MMC_REQUEST
 
@@ -291,10 +286,6 @@ void mmc_add_host_debugfs(struct mmc_host *host)
 					     root,
 					     &host->fail_mmc_request)))
 		goto err_node;
-#endif
-
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	mmc_fault_inject_fs_setup();
 #endif
 
 	return;

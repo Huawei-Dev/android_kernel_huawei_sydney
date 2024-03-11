@@ -33,9 +33,6 @@ extern void mmc_blk_cmdq_dishalt(struct mmc_card *card);
 extern int cmdq_is_reset(struct mmc_host *host);
 extern int mmc_blk_cmdq_halt(struct mmc_card *card);
 #endif
-#ifdef CONFIG_EMMC_FAULT_INJECT
-bool g_mmc_reset_status;
-#endif
 
 void mmc_power_up_vcc(struct mmc_host *host,u32 ocr)
 {
@@ -484,9 +481,6 @@ int hisi_mmc_reset(struct mmc_host *host)
 	struct mmc_card *card = host->card;
 
 	pr_err("%s enter\n", __func__);
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	g_mmc_reset_status = true;
-#endif
 
 	if (!host->ops->hw_reset)
 		return -EOPNOTSUPP;
@@ -520,9 +514,6 @@ int hisi_mmc_reset(struct mmc_host *host)
 	}
 
 	pr_err("%s exit\n", __func__);
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	g_mmc_reset_status = false;
-#endif
 	return ret;
 }
 #pragma GCC diagnostic pop

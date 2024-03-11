@@ -1093,13 +1093,8 @@ struct mmc_request* get_mrq_by_tag(struct cmdq_host *cq_host, u32 *tag)
 }
 
 
-#ifdef CONFIG_EMMC_FAULT_INJECT
-int cmdq_interrupt_errors_handle(struct mmc_host *mmc, u32 intmask,
-					u32 status, int err, bool do_inj)
-#else
 int cmdq_interrupt_errors_handle(struct mmc_host *mmc, u32 intmask,
 					u32 status, int err)
-#endif
 {
 	struct cmdq_host *cq_host = (struct cmdq_host *)mmc_cmdq_private(mmc);
 	struct mmc_request *mrq;
@@ -1129,13 +1124,6 @@ int cmdq_interrupt_errors_handle(struct mmc_host *mmc, u32 intmask,
 		pr_err("%s: %s: halt failed ret=%d\n",
 				mmc_hostname(mmc), __func__, poll_ret);
 
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	if (do_inj) {
-		mmcdbg_cmdq_inj_fill_errinfo(cq_host, &err_info);
-		pr_err("err_info is 0x%x\n", err_info);
-	}
-#endif
-
 	if (err_info & CQTERRI_RES_ERR) {
 		tag = CQTERRI_RES_TASK(err_info);
 		pr_err("%s: CMD err tag: %lu\n", __func__, tag);
@@ -1152,12 +1140,6 @@ int cmdq_interrupt_errors_handle(struct mmc_host *mmc, u32 intmask,
 		mrq = get_mrq_by_tag(cq_host, (u32 *)&tag);
 		mrq->data->error = err;
 	} else {
-#ifdef CONFIG_EMMC_FAULT_INJECT
-		if (do_inj) {
-			mmcdbg_cmdq_inj_fake_dbl(cq_host, &dbr_set);
-			pr_err("fake dbl is 0x%x\n", dbr_set);
-		}
-#endif
 		if (!dbr_set) {
 			pr_err("%s: spurious/force error interrupt, err_info = 0x%x!!!\n",
 					mmc_hostname(mmc), err_info);
@@ -1212,9 +1194,6 @@ irqreturn_t cmdq_irq(struct mmc_host *mmc, u32 intmask)
 	u32 reg_val = 0;
 	int err = 0;
 	int ret = 0;
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	bool do_inj = false;
-#endif
 
 	if (intmask & SDHCI_INT_CMD_MASK)
 		err = sdhci_get_cmd_err(intmask);
@@ -1226,14 +1205,6 @@ irqreturn_t cmdq_irq(struct mmc_host *mmc, u32 intmask)
 	}
 
 	status = cmdq_readl(cq_host, CQIS);
-
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	do_inj = mmcdbg_error_inject_dispatcher(mmc,
-			ERR_INJECT_CMDQ_INTR, 0, (u32*)&err, false);
-	if (do_inj) {
-		mmcdbg_cmdq_inj_fill_status(cq_host, &status);
-	}
-#endif
 
 	if (!status && !err) {
 		pr_err("%s: no irq\n", __func__);
@@ -1255,11 +1226,7 @@ irqreturn_t cmdq_irq(struct mmc_host *mmc, u32 intmask)
 
 	if ((status & CQIS_RED) || err) {
 		pr_err("%s: interrupt of errors detected. status = 0x%x, err = 0x%x\n", __func__, status, err);
-#ifdef CONFIG_EMMC_FAULT_INJECT
-		ret = cmdq_interrupt_errors_handle(mmc, intmask, status, err, do_inj);
-#else
 		ret = cmdq_interrupt_errors_handle(mmc, intmask, status, err);
-#endif
 		if(ret)
 			return IRQ_HANDLED;
 	}
@@ -1506,12 +1473,6 @@ struct cmdq_host *cmdq_pltfm_init(struct platform_device *pdev, void __iomem *cm
 	}
 
 	cmdq_populate_dt(pdev, cq_host);
-#ifdef CONFIG_EMMC_FAULT_INJECT
-	cq_host->inject_para = kzalloc(sizeof(struct cmdq_inject_para), GFP_KERNEL);
-	if (!cq_host->inject_para) {
-		dev_err(&pdev->dev, "failed to alloc mem for inject_para\n");
-	}
-#endif
 	return cq_host;
 }
 

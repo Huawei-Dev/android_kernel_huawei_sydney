@@ -115,9 +115,6 @@ extern void gic_reg_dump(void);
 
 
 extern void dw_mci_reg_dump(struct dw_mci *host);
-#ifdef CONFIG_MMC_HISI_TRACE
-extern void dw_mci_reg_dump_fortrace(struct mmc_host *mmc);
-#endif
 extern void dw_mci_set_timeout(struct dw_mci *host);
 extern bool dw_mci_stop_abort_cmd(struct mmc_command *cmd);
 extern bool dw_mci_wait_reset(struct device *dev, struct dw_mci *host,unsigned int reset_val);

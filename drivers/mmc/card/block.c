@@ -1540,19 +1540,6 @@ static int mmc_blk_cmd_recovery(struct mmc_card *card, struct request *req,
 			return ERR_NOMEDIUM;
 		return ERR_ABORT;
 	}
-#ifdef CONFIG_MMC_HISI_TRACE
-	if (status & (R1_CARD_ECC_FAILED | R1_ERROR) ||
-		!(status & R1_READY_FOR_DATA)) {
-		pr_err("%s: card status is %x \n", req->rq_disk->disk_name, status);
-		pr_err("%s: card CURRENT_STATE is %x \n", req->rq_disk->disk_name, R1_CURRENT_STATE(status));
-		if(status & R1_CARD_ECC_FAILED)
-			pr_err("%s: card ECC \n", req->rq_disk->disk_name);
-		if(!(status & R1_READY_FOR_DATA))
-			pr_err("%s: card not ready \n", req->rq_disk->disk_name);
-		if(status & R1_ERROR)
-			pr_err("%s: card general or unknown \n", req->rq_disk->disk_name);
-	}
-#endif
 	/* Flag ECC errors */
 	if ((status & R1_CARD_ECC_FAILED) ||
 	    (brq->stop.resp[0] & R1_CARD_ECC_FAILED) ||

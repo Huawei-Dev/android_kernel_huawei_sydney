@@ -751,13 +751,6 @@ config MMC_CQ_HCI
 
 	  If unsure, say N.
 
-config MMC_HISI_TRACE
-	tristate "hisi mmc trace"
-	depends on HISI_MMC
-	default n
-	help
-	  This selects support the hisi mmc trace.
-
 config MMC_MTK
 	tristate "MediaTek SD/MMC Card Interface support"
 	depends on HAS_DMA

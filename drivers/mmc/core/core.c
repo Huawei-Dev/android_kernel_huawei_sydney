@@ -821,9 +821,6 @@ EXPORT_SYMBOL(mmc_is_req_done);
 static void mmc_pre_req(struct mmc_host *host, struct mmc_request *mrq,
 		 bool is_first_req)
 {
-#ifdef CONFIG_MMC_HISI_TRACE
-	mmc_trace_record(host, mrq);
-#endif
 	if (host->ops->pre_req)
 		host->ops->pre_req(host, mrq, is_first_req);
 }
@@ -3213,10 +3210,7 @@ void mmc_rescan(struct work_struct *work)
 	}
 #endif
 
-#ifdef CONFIG_MMC_HISI_TRACE
-	mmc_trace_init_begin(host);
-#endif
-	for (i = 0; i < ARRAY_SIZE(freqs); i++) {/*lint !e574*/
+	for (i = 0; i < ARRAY_SIZE(freqs); i++) {
 		if (!mmc_rescan_try_freq(host, max(freqs[i], host->f_min))){
 			extend_wakelock = true;
 			break;
@@ -3233,11 +3227,6 @@ void mmc_rescan(struct work_struct *work)
 		if (freqs[i] <= host->f_min)
 			break;
 	}
-#ifdef CONFIG_MMC_HISI_TRACE
-	if ((host->index == 0) && ARRAY_SIZE(freqs) == i) {
-		mmc_trace_emmc_init_fail_reset(); /*emmc init failed, bug_on*/
-	}
-#endif
 #ifdef CONFIG_MMC_DW_MUX_SDSIM
 	if (host->index == 1) {
 		if(ARRAY_SIZE(freqs) == i)
@@ -3247,19 +3236,16 @@ void mmc_rescan(struct work_struct *work)
 	}
 #endif
 	mmc_release_host(host);
-#ifdef CONFIG_MMC_HISI_TRACE
-	mmc_trace_init_end(host);
-#endif
  out:
 	if (extend_wakelock)
 		wake_lock_timeout(&host->detect_wake_lock, HZ / 2);
 	else
 		wake_unlock(&host->detect_wake_lock);
-	if (host->caps & MMC_CAP_NEEDS_POLL) {/*lint !e456*/
+	if (host->caps & MMC_CAP_NEEDS_POLL) {
 		wake_lock(&host->detect_wake_lock);
 		mmc_schedule_delayed_work(&host->detect, HZ);
 	}
-}/*lint !e454*//*lint !e456*/
+}
 
 void mmc_start_host(struct mmc_host *host)
 {

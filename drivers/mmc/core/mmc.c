@@ -21,9 +21,6 @@
 #include <linux/mmc/host.h>
 #include <linux/mmc/card.h>
 #include <linux/mmc/mmc.h>
-#ifdef CONFIG_MMC_HISI_TRACE
-#include <linux/hisi/mmc_trace.h>
-#endif
 #include "core.h"
 #include "host.h"
 #include "bus.h"

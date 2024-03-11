@@ -35,9 +35,6 @@
 #ifdef CONFIG_HUAWEI_SDCARD_DSM
 #include <linux/mmc/dsm_sdcard.h>
 #endif
-#ifdef CONFIG_MMC_HISI_TRACE
-#include <linux/hisi/mmc_trace.h>
-#endif
 #include <linux/hisi/util.h>
 #ifdef CONFIG_EMMC_FAULT_INJECT
 #include <linux/mmc/emmc_fault_inject.h>
@@ -4119,9 +4116,6 @@ EXPORT_SYMBOL_GPL(sdhci_free_host);
 
 static int __init sdhci_drv_init(void)
 {
-#ifdef CONFIG_MMC_HISI_TRACE
-	mmc_trace_fd_init();
-#endif
 	pr_info(DRIVER_NAME
 		": Secure Digital Host Controller Interface driver\n");
 	pr_info(DRIVER_NAME ": Copyright(c) Pierre Ossman\n");

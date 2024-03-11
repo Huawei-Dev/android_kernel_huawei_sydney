@@ -83,8 +83,6 @@ obj-$(CONFIG_MMC_SDHCI_BRCMSTB)		+= sdhci-brcmstb.o
 obj-$(CONFIG_MMC_CQ_HCI)		+= cmdq_hci.o
 obj-$(CONFIG_MMC_CQ_HCI)        += hisi_sdhci_cmdq.o
 
-obj-$(CONFIG_MMC_HISI_TRACE)    += mmc_trace.o
-
 ifeq ($(CONFIG_CB710_DEBUG),y)
 	CFLAGS-cb710-mmc	+= -DDEBUG
 endif

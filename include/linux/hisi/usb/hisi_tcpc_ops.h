@@ -22,13 +22,8 @@ struct hisi_tcpc_reg_ops {
 	int (*block_write)(u16 reg, u8 *src, unsigned len);
 };
 
-#ifdef CONFIG_HISI_TCPC
-void hisi_tcpc_reg_ops_register(struct i2c_client *client, struct hisi_tcpc_reg_ops *reg_ops);
-void hisi_tcpc_irq_gpio_register(struct i2c_client *client, int irq_gpio);
-#else
 static inline void hisi_tcpc_reg_ops_register(struct i2c_client *client,
 		struct hisi_tcpc_reg_ops *reg_ops){}
 static inline void hisi_tcpc_irq_gpio_register(struct i2c_client *client, int irq_gpio){}
-#endif
 
 #endif /* _HISI_TCPC_REG_OPS_H_ */

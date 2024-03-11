@@ -32,11 +32,6 @@
 void sdhci_dsm_report(struct mmc_host *host, struct mmc_request *mrq);
 #endif
 
-
-#ifdef CONFIG_HW_MMC_MAINTENANCE_DATA
-extern void record_cmdq_rw_data(struct mmc_request *mrq);
-#endif
-
 #define INAND_CMD38_ARG_EXT_CSD  113
 #define INAND_CMD38_ARG_ERASE    0x00
 #define INAND_CMD38_ARG_TRIM     0x01
@@ -1188,10 +1183,6 @@ enum blk_eh_timer_return mmc_blk_cmdq_req_timed_out(struct request *req)
 void mmc_blk_cmdq_req_done(struct mmc_request *mrq)
 {
 	struct request *req = mrq->req;
-
-#ifdef CONFIG_HW_MMC_MAINTENANCE_DATA
-	record_cmdq_rw_data(mrq);
-#endif
 
 	blk_complete_request(req);
 }

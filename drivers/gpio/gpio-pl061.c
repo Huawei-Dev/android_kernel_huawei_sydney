@@ -413,9 +413,6 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
 
 	/* clear sec-flag of the controller */
 	chip->sec_status = 0;
-#ifdef CONFIG_HISI_TUI_PL061
-	pl061_register_TUI_driver(np, dev);
-#endif
 	/* Hook the request()/free() for pinctrl operation */
 	if (of_get_property(dev->of_node, "gpio-ranges", NULL)) {
 		chip->uses_pinctrl = true;

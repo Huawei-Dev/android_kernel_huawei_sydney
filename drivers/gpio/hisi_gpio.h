@@ -5,9 +5,6 @@
 #include <linux/of_address.h>
 #include <linux/version.h>
 
-#ifdef CONFIG_HISI_TUI_PL061
-#include "../hisi/tzdriver/tui.h"
-#endif
 #define GPIODATA 0x3fc
 #define	GPIO_HWLOCK_ID	1
 #define	LOCK_TIMEOUT	1000
@@ -54,9 +51,3 @@ struct pl061_gpio {
 int pl061_check_security_status(struct pl061_gpio *chip);
 #endif
 int pl061_parse_gpio_base(struct device *dev);
-#ifdef CONFIG_HISI_TUI_PL061
-int pl061_tui_request(struct device *dev);
-int pl061_tui_release(struct device *dev);
-int pl061_tui_switch_func(void *pdata, int secure);
-void pl061_register_TUI_driver(struct device_node *np, struct device *dev);
-#endif

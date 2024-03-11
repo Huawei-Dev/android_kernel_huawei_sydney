@@ -360,11 +360,6 @@ config GPIO_PL061
 	help
 	  Say yes here to support the PrimeCell PL061 GPIO device
 
-config HISI_TUI_PL061
-	bool "TUI PL061 GPIO support"
-	help
-	  Say yes here to support the TUI for PL061 GPIO
-
 config GPIO_PXA
 	bool "PXA GPIO support"
 	depends on ARCH_PXA || ARCH_MMP

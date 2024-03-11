@@ -119,8 +119,6 @@ source "drivers/usb/dwc2/Kconfig"
 
 source "drivers/usb/proxy-hcd/Kconfig"
 
-source "drivers/usb/hisi-usb-typec/Kconfig"
-
 source "drivers/usb/chipidea/Kconfig"
 
 source "drivers/usb/isp1760/Kconfig"

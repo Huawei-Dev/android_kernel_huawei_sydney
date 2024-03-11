@@ -11,7 +11,7 @@
 #include <linux/vmstat.h>
 #include <linux/init.h>
 #include <linux/page-isolation.h>
-#include <linux/unmovable_isolate.h>
+#include <chipset_common/mm/unmovable_isolate.h>
 
 /*
  * The switch of unmovable_isolate function, expect 0 or 1.

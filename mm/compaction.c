@@ -23,7 +23,7 @@
 #include "internal.h"
 
 #ifdef CONFIG_HUAWEI_UNMOVABLE_ISOLATE
-#include <linux/unmovable_isolate.h>
+#include <chipset_common/mm/unmovable_isolate.h>
 #endif
 
 #ifdef CONFIG_COMPACTION

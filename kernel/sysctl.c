@@ -97,7 +97,7 @@
 #include <linux/hisi/pagecache_debug.h>
 
 #ifdef CONFIG_HUAWEI_UNMOVABLE_ISOLATE
-#include <linux/unmovable_isolate.h>
+#include <chipset_common/mm/unmovable_isolate.h>
 #endif
 
 #if defined(CONFIG_SYSCTL)

@@ -26,7 +26,7 @@
 #endif
 
 #ifdef CONFIG_HUAWEI_UNMOVABLE_ISOLATE
-#include <linux/unmovable_isolate.h>
+#include <chipset_common/mm/unmovable_isolate.h>
 #endif
 
 void __attribute__((weak)) arch_report_meminfo(struct seq_file *m)

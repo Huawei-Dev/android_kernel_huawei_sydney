@@ -1,5 +1,5 @@
 /*
- * include/linux/unmovable_isolate.h
+ * include/chipset_common/mm/unmovable_isolate.h
  *
  * MIGRATE_UNMOVABLE_ISOLATE function
  *

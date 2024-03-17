@@ -268,7 +268,6 @@ void __init arm64_enable_wa2_handling(struct alt_instr *alt,
 
 void arm64_set_ssbd_mitigation(bool state)
 {
-#ifndef CONFIG_HISI_BYPASS_SSBS
 	if (this_cpu_has_cap(ARM64_SSBS)) {
 		if (state)
 			asm volatile(SET_PSTATE_SSBS(0));
@@ -276,7 +275,6 @@ void arm64_set_ssbd_mitigation(bool state)
 			asm volatile(SET_PSTATE_SSBS(1));
 		return;
 	}
-#endif
 
 #ifdef CONFIG_ARCH_HISI
 	switch (PSCI_CONDUIT_SMC) {
@@ -306,12 +304,10 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
 
 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
 
-#ifndef CONFIG_HISI_BYPASS_SSBS
 	if (this_cpu_has_cap(ARM64_SSBS)) {
 		required = false;
 		goto out_printmsg;
 	}
-#endif
 
 #ifndef CONFIG_ARCH_HISI
 	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
@@ -395,9 +391,7 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
 		break;
 	}
 
-#ifndef CONFIG_HISI_BYPASS_SSBS
 out_printmsg:
-#endif
 	switch (ssbd_state) {
 	case ARM64_SSBD_FORCE_DISABLE:
 		pr_info_once("%s disabled from command-line\n", entry->desc);

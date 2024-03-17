@@ -924,7 +924,6 @@ static struct undef_hook ssbs_emulation_hook = {
 
 static int cpu_enable_ssbs(void *__unused)
 {
-#ifndef CONFIG_HISI_BYPASS_SSBS
 	static bool undef_hook_registered = false;
 	static DEFINE_SPINLOCK(hook_lock);
 
@@ -941,9 +940,6 @@ static int cpu_enable_ssbs(void *__unused)
 	} else {
 		arm64_set_ssbd_mitigation(true);
 	}
-#else
-	sysreg_clear_set(sctlr_el1, 0, SCTLR_ELx_DSSBS);
-#endif
 	return 0;
 }
 #endif /* CONFIG_ARM64_SSBD */

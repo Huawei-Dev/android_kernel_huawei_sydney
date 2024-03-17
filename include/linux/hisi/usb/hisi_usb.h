@@ -41,7 +41,7 @@ enum otg_dev_event_type {
 	MAX_EVENT_TYPE = BITS_PER_LONG,
 };
 
-#if defined(CONFIG_USB_SUSB_HDRC) || defined(CONFIG_USB_DWC3)
+#ifdef CONFIG_USB_DWC3
 int hisi_charger_type_notifier_register(struct notifier_block *nb);
 int hisi_charger_type_notifier_unregister(struct notifier_block *nb);
 enum hisi_charger_type hisi_get_charger_type(void);
@@ -95,7 +95,7 @@ static inline int hisi_usb_otg_get_typec_orien(void){return 0;}
 static inline void hisi_usb_cancel_bc_again(int sync)
 {
 }
-#endif /* CONFIG_USB_SUSB_HDRC || CONFIG_USB_DWC3 */
+#endif /* CONFIG_USB_DWC3 */
 
 static inline int hisi_usb_id_change(enum otg_dev_event_type event)
 {

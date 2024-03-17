@@ -1670,11 +1670,6 @@ struct xhci_hcd {
 #define XHCI_ASMEDIA_MODIFY_FLOWCONTROL	(1 << 28)
 
 #define XHCI_CTRL_NYET_ABNORMAL	(1 << 29)
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-#define XHCI_DISABLE_LPM	(1 << 30)
-#define XHCI_NOT_SUP_SG		(1ULL << 31)
-#define XHCI_HCD_LOCAL_MEM	(1ULL << 32)
-#endif
 #define XHCI_WARM_RESET_AFTER_INIT	(1ULL << 33)
 #define XHCI_DELAY_CTRL_DATA_STAGE	(1ULL << 34)
 
@@ -1704,12 +1699,6 @@ struct xhci_hcd {
 	u32			port_status_u0;
 /* Compliance Mode Timer Triggered every 2 seconds */
 #define COMP_MODE_RCVRY_MSECS 2000
-
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-#define XHCI_DMA_POOL_NUM (9)
-	struct dma_pool		*pool[XHCI_DMA_POOL_NUM];
-	struct xhci_local_dma_manager dma_manager;
-#endif
 
 	/* platform-specific data -- must come last */
 	unsigned long		priv[0] __aligned(sizeof(s64));

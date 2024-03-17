@@ -1,5 +1,3 @@
-
-
 #ifndef __LINUX_XHCI_LOCAL_MEM_H
 #define __LINUX_XHCI_LOCAL_MEM_H
 
@@ -21,13 +19,6 @@ struct xhci_local_dma {
 	size_t size;
 };
 
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-int xhci_create_dma_pool(struct xhci_hcd *xhci);
-void xhci_destroy_dma_pool(struct xhci_hcd *xhci);
-int xhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags);
-void xhci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb);
-void xhci_dma_free_handler(struct work_struct *work);
-#else
 static inline int xhci_create_dma_pool(struct xhci_hcd *xhci) {return -EFAULT;}
 static inline void xhci_destroy_dma_pool(struct xhci_hcd *xhci) {}
 static inline int xhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags)
@@ -36,6 +27,5 @@ static inline int xhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb, gfp
 }
 static inline void xhci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb) {}
 static inline void xhci_dma_free_handler(struct work_struct *work) {}
-#endif
 
 #endif /* __LINUX_XHCI_LOCAL_MEM_H */

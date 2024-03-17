@@ -1253,10 +1253,6 @@ extern int usb_disabled(void);
 #define URB_DMA_SG_COMBINED	0x00400000	/* S-G entries were combined */
 #define URB_ALIGNED_TEMP_BUFFER	0x00800000	/* Temp buffer was alloc'd */
 
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-#define URB_MAP_LOCAL_REALLOC	0x10000000	/* Memory mapping for Kirin970 ASP USB Controller */
-#endif
-
 struct usb_iso_packet_descriptor {
 	unsigned int offset;
 	unsigned int length;		/* expected length */
@@ -1488,10 +1484,6 @@ struct urb {
 	unsigned int transfer_flags;	/* (in) URB_SHORT_NOT_OK | ...*/
 	void *transfer_buffer;		/* (in) associated data buffer */
 	dma_addr_t transfer_dma;	/* (in) dma addr for transfer_buffer */
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	void *origin_transfer_buffer;
-	dma_addr_t origin_dma;
-#endif
 	struct scatterlist *sg;		/* (in) scatter gather buffer list */
 	int num_mapped_sgs;		/* (internal) mapped sg entries */
 	int num_sgs;			/* (in) number of entries in the sg list */

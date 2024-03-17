@@ -5028,11 +5028,6 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks)
 
 	get_quirks(dev, xhci);
 
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	if (xhci->quirks & XHCI_NOT_SUP_SG)
-		hcd->self.sg_tablesize = 0;
-#endif
-
 	/* In xhci controllers which follow xhci 1.0 spec gives a spurious
 	 * success event after a short transfer. This quirk will ignore such
 	 * spurious event.
@@ -5069,13 +5064,6 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks)
 		xhci_info(xhci, "Enabling 64-bit DMA addresses.\n");
 		dma_set_coherent_mask(dev, DMA_BIT_MASK(64));
 	}
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	else if ((xhci->quirks & XHCI_HCD_LOCAL_MEM) &&
-			!dma_set_mask(dev, DMA_BIT_MASK(64))) {/*lint !e598 !e648 */
-		xhci_info(xhci, "XHCI_HCD_LOCAL_MEM use 64-bit DMA addresses.\n");
-		dma_set_coherent_mask(dev, DMA_BIT_MASK(64));/*lint !e598 !e648 */
-	}
-#endif
 	else {
 		/*
 		 * This is to avoid error in cases where a 32-bit USB

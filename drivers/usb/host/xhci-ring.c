@@ -71,13 +71,6 @@
 #include "xhci-trace.h"
 #include "xhci-mtk.h"
 
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-#include <linux/hisi/usb/hisi_usb.h>
-
-#include <huawei_platform/power/power_dsm.h>
-
-#endif
-
 /*
  * Returns zero if the TRB isn't in this segment, otherwise it returns the DMA
  * address of the TRB.
@@ -980,17 +973,6 @@ void xhci_stop_endpoint_command_watchdog(unsigned long arg)
 	usb_hc_died(xhci_to_hcd(xhci));
 	xhci_dbg_trace(xhci, trace_xhci_dbg_cancel_urb,
 			"xHCI host controller is dead.");
-
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	if ((xhci->quirks & XHCI_CTRL_NYET_ABNORMAL) &&
-			!(xhci->xhc_state & XHCI_STATE_REMOVING)) {
-		xhci_warn(xhci, "arm usb stop endpoint command failed, use hifi usb\n");
-		hisi_usb_otg_event(START_AP_USE_HIFIUSB);
-#ifdef CONFIG_HUAWEI_DSM
-		power_dsm_dmd_report_format(POWER_DSM_USB, DSM_USB_XHCI_CMD_TIMEOUT, "xhci command timeout\n");
-#endif
-	}
-#endif
 }
 
 
@@ -1329,44 +1311,11 @@ void xhci_handle_command_timeout(struct work_struct *work)
 			usb_hc_died(xhci_to_hcd(xhci)->primary_hcd);
 			xhci_info(xhci, "xHCI host controller is dead.\n");
 
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-			if ((xhci->quirks & XHCI_CTRL_NYET_ABNORMAL) &&
-					!(xhci->xhc_state & XHCI_STATE_REMOVING)) {
-				xhci_warn(xhci, "arm usb abnormal, use hifi usb\n");
-				hisi_usb_otg_event(START_AP_USE_HIFIUSB);
-#ifdef CONFIG_HUAWEI_DSM
-				power_dsm_dmd_report_format(POWER_DSM_USB, DSM_USB_XHCI_CMD_TIMEOUT,
-						"xhci command timeout\n");
-#endif
-			}
-#endif
 			return;
 		}
 
 		goto time_out_completed;
 	}
-
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	if ((xhci->quirks & XHCI_CTRL_NYET_ABNORMAL) &&
-			!(xhci->xhc_state & XHCI_STATE_REMOVING)) {
-		xhci_warn(xhci, "arm usb abnormal, use hifi usb\n");
-
-		xhci_cleanup_command_queue(xhci);
-		xhci->xhc_state |= XHCI_STATE_DYING;
-		/* Disable interrupts from the host controller and start halting it */
-		xhci_quiesce(xhci);
-		spin_unlock_irqrestore(&xhci->lock, flags);
-		usb_hc_died(xhci_to_hcd(xhci)->primary_hcd);
-		xhci_info(xhci, "xHCI host controller is dead.\n");
-
-		hisi_usb_otg_event(START_AP_USE_HIFIUSB);
-
-#ifdef CONFIG_HUAWEI_DSM
-		power_dsm_dmd_report_format(POWER_DSM_USB, DSM_USB_XHCI_CMD_TIMEOUT, "xhci command timeout\n");
-#endif
-		return;
-	}
-#endif
 
 	/* host removed. Bail out */
 	if ((xhci->xhc_state & XHCI_STATE_REMOVING) ||

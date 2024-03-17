@@ -3305,7 +3305,6 @@ CONFIG_USB_DWC3_NOV=y
 # CONFIG_USB_DWC3_FEB is not set
 # CONFIG_USB_DWC3_JAN is not set
 CONFIG_USB_DWC3_VBUS_SPMI=y
-# CONFIG_USB_DWC3_NYET_ABNORMAL is not set
 
 #
 # Debugging features

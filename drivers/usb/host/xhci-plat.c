@@ -100,29 +100,6 @@ static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen3 = {
 	.plat_start = xhci_rcar_start,
 };
 
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-static int xhci_hifi_usb_plat_quirk(struct usb_hcd *hcd)
-{
-	struct device *dev = hcd->self.controller;
-	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
-
-	if (device_property_read_bool(dev, "hcd-local-mem"))
-		xhci->quirks |= XHCI_HCD_LOCAL_MEM;
-
-	if (device_property_read_bool(dev, "disable-lpm"))
-		xhci->quirks |= XHCI_DISABLE_LPM;
-
-	if (device_property_read_bool(dev, "not-support-sg"))
-		xhci->quirks |= XHCI_NOT_SUP_SG;
-
-	return 0;
-}
-
-static const struct xhci_plat_priv xhci_hifi_usb_plat = {
-	.init_quirk = xhci_hifi_usb_plat_quirk,
-};
-#endif
-
 static const struct of_device_id usb_xhci_of_match[] = {
 	{
 		.compatible = "generic-xhci",
@@ -168,25 +145,9 @@ static int xhci_plat_probe(struct platform_device *pdev)
 	struct clk              *clk;
 	int			ret;
 	int			irq;
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	int			hcd_local_mem = 0;
-#endif
 
 	if (usb_disabled())
 		return -ENODEV;
-
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	if (device_property_read_bool(&pdev->dev, "hcd-local-mem")) {
-		hcd_local_mem = 1;
-		xhci_plat_hc_driver.flags |= HCD_LOCAL_MEM;
-		xhci_plat_hc_driver.map_urb_for_dma = xhci_map_urb_for_dma;
-		xhci_plat_hc_driver.unmap_urb_for_dma = xhci_unmap_urb_for_dma;
-	} else {
-		xhci_plat_hc_driver.flags &= ~HCD_LOCAL_MEM;
-		xhci_plat_hc_driver.map_urb_for_dma = NULL;
-		xhci_plat_hc_driver.unmap_urb_for_dma = NULL;
-	}
-#endif
 
 	driver = &xhci_plat_hc_driver;
 
@@ -267,23 +228,6 @@ static int xhci_plat_probe(struct platform_device *pdev)
 	hcd_to_bus(xhci->shared_hcd)->skip_resume = true;
 #endif
 
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	if (hcd_local_mem) {
-		struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
-
-		ret = xhci_create_dma_pool(xhci);
-		if (ret)
-			goto put_usb3_hcd;
-
-		INIT_LIST_HEAD(&xhci->dma_manager.dma_free_list);
-		INIT_WORK(&xhci->dma_manager.dma_free_wk,
-				xhci_dma_free_handler);
-		spin_lock_init(&xhci->dma_manager.lock);
-
-		*priv = xhci_hifi_usb_plat;
-	}
-#endif
-
 	if (device_property_read_bool(&pdev->dev, "usb3-lpm-capable"))
 		xhci->quirks |= XHCI_LPM_SUPPORT;
 
@@ -355,13 +299,6 @@ static int xhci_plat_remove(struct platform_device *dev)
 	usb_phy_shutdown(hcd->usb_phy);
 
 	usb_remove_hcd(hcd);
-
-#ifdef CONFIG_USB_DWC3_NYET_ABNORMAL
-	xhci_destroy_dma_pool(xhci);
-
-	if (hcd->driver->flags & HCD_LOCAL_MEM)
-		flush_work(&xhci->dma_manager.dma_free_wk);
-#endif
 
 	usb_put_hcd(xhci->shared_hcd);
 

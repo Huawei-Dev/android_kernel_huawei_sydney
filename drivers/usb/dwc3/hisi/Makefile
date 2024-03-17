@@ -30,11 +30,6 @@ endif
 #obj-$(CONFIG_USB_DWC3_OF_SIMPLE)	+= dwc3-of-simple.o
 #obj-$(CONFIG_USB_DWC3_ST)		+= dwc3-st.o
 
-ifneq ($(CFG_CONFIG_HISI_FAMA),true)
-obj-$(CONFIG_USB_DWC3_NYET_ABNORMAL)       += dwc3-hifi-usb_4_9.o
-endif
-
-
 usb-vbus-y  := hisi_usb_vbus.o
 ifeq ($(CONFIG_USB_DWC3_VBUS_PLT),y)
 	usb-vbus-y    += hisi_usb_vbus_plt.o
@@ -52,10 +47,6 @@ obj-$(CONFIG_USB_DWC3_MAR)		+= hisi_usb3_31phy.o dwc3-mar.o hisi_usb3_bc.o hisi_
 obj-$(CONFIG_USB_DWC3_FEB)		+= hisi_usb3_31phy.o dwc3-feb.o hisi_usb3_bc.o hisi_usb3_misctrl.o
 obj-$(CONFIG_USB_DWC3_JAN)		+= dwc3-jan.o hisi_usb3_bc.o
 obj-$(CONFIG_USB_DWC3_HISI)		+= dwc3-hisi.o usb-vbus.o
-
-#ifneq ($(CFG_CONFIG_HISI_FAMA),true)
-#obj-$(CONFIG_USB_DWC3_NYET_ABNORMAL)		+= dwc3-hifi-usb_4_9.o
-#endif
 
 ifeq ($(CONFIG_HIFI_MAILBOX), y)
 EXTRA_CFLAGS += -I$(srctree)/drivers/hisi/hifi_mailbox/mailbox

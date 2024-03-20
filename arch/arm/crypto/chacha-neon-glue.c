@@ -1,5 +1,6 @@
 /*
- * ChaCha20 (RFC7539) and XChaCha20 stream ciphers, NEON accelerated
+ * ARM NEON accelerated ChaCha and XChaCha stream ciphers,
+ * including ChaCha20 (RFC7539)
  *
  * Copyright (C) 2016 Linaro, Ltd. <ard.biesheuvel@linaro.org>
  *
@@ -19,7 +20,7 @@
  */
 
 #include <crypto/algapi.h>
-#include <crypto/chacha20.h>
+#include <crypto/chacha.h>
 #include <linux/crypto.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -37,7 +38,7 @@ asmlinkage void hchacha_block_neon(const u32 *state, u32 *out, int nrounds);
 static void chacha_doneon(u32 *state, u8 *dst, const u8 *src,
 			  unsigned int bytes, int nrounds)
 {
-	u8 buf[CHACHA20_BLOCK_SIZE];
+	u8 buf[CHACHA_BLOCK_SIZE];
 
 	while (bytes >= CHACHA_BLOCK_SIZE * 4) {
 		chacha_4block_xor_neon(state, dst, src, nrounds);
@@ -71,7 +72,7 @@ static int chacha_neon_stream_xor(struct blkcipher_desc *desc,
 	int err;
 
 	blkcipher_walk_init(&walk, dst, src, nbytes);
-	err = blkcipher_walk_virt_block(desc, &walk, CHACHA20_BLOCK_SIZE);
+	err = blkcipher_walk_virt_block(desc, &walk, CHACHA_BLOCK_SIZE);
 
 	crypto_chacha_init(state, ctx, iv);
 
@@ -82,7 +83,7 @@ static int chacha_neon_stream_xor(struct blkcipher_desc *desc,
 			      ctx->nrounds);
 		kernel_neon_end();
 		err = blkcipher_walk_done(desc, &walk,
-					  walk.nbytes % CHACHA20_BLOCK_SIZE);
+					  walk.nbytes % CHACHA_BLOCK_SIZE);
 	}
 
 	if (walk.nbytes) {
@@ -173,7 +174,27 @@ static struct crypto_alg algs[] = {
 				.encrypt	= xchacha_neon,
 				.decrypt	= xchacha_neon,
 			},
->>>>>>> 0b8e72bddc19 (BACKPORT, FROMGIT: crypto: arm/chacha20 - add XChaCha20 support)
+		},
+	}, {
+		.cra_name		= "xchacha12",
+		.cra_driver_name	= "xchacha12-neon",
+		.cra_priority		= 300,
+		.cra_flags		= CRYPTO_ALG_TYPE_BLKCIPHER,
+		.cra_blocksize		= 1,
+		.cra_type		= &crypto_blkcipher_type,
+		.cra_ctxsize		= sizeof(struct chacha_ctx),
+		.cra_alignmask		= sizeof(u32) - 1,
+		.cra_module		= THIS_MODULE,
+		.cra_u			= {
+			.blkcipher = {
+				.min_keysize	= CHACHA_KEY_SIZE,
+				.max_keysize	= CHACHA_KEY_SIZE,
+				.ivsize		= XCHACHA_IV_SIZE,
+				.geniv		= "seqiv",
+				.setkey		= crypto_chacha12_setkey,
+				.encrypt	= xchacha_neon,
+				.decrypt	= xchacha_neon,
+			},
 		},
 	},
 };
@@ -201,3 +222,5 @@ MODULE_ALIAS_CRYPTO("chacha20");
 MODULE_ALIAS_CRYPTO("chacha20-neon");
 MODULE_ALIAS_CRYPTO("xchacha20");
 MODULE_ALIAS_CRYPTO("xchacha20-neon");
+MODULE_ALIAS_CRYPTO("xchacha12");
+MODULE_ALIAS_CRYPTO("xchacha12-neon");

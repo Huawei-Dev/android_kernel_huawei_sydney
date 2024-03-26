@@ -38,7 +38,6 @@
 #include <trace/events/cma.h>
 
 #include "cma.h"
-#include "internal.h"
 
 #ifdef CONFIG_HISI_CMA_DEBUG
 #include <linux/hisi/hisi_cma_debug.h>

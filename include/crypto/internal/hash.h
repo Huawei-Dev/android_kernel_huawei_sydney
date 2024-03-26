@@ -109,8 +109,6 @@ int shash_register_instance(struct crypto_template *tmpl,
 			    struct shash_instance *inst);
 void shash_free_instance(struct crypto_instance *inst);
 
-int crypto_grab_shash(struct crypto_shash_spawn *spawn,
-		      const char *name, u32 type, u32 mask);
 int crypto_init_shash_spawn(struct crypto_shash_spawn *spawn,
 			    struct shash_alg *alg,
 			    struct crypto_instance *inst);

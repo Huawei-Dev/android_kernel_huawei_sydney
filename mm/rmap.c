@@ -61,7 +61,6 @@
 #include <linux/hugetlb.h>
 #include <linux/backing-dev.h>
 #include <linux/page_idle.h>
-#include <linux/hisi/page_tracker.h>
 
 #include <asm/tlbflush.h>
 
@@ -1252,7 +1251,6 @@ void do_page_add_anon_rmap(struct page *page,
 		if (compound)
 			__inc_node_page_state(page, NR_ANON_THPS);
 		__mod_node_page_state(page_pgdat(page), NR_ANON_MAPPED, nr);
-		page_tracker_set_type(page, TRACK_ANON, 0);
 	}
 	if (unlikely(PageKsm(page)))
 		return;
@@ -1304,7 +1302,6 @@ void page_add_new_anon_rmap(struct page *page,
 		atomic_set(&page->_mapcount, 0);
 	}
 	__mod_node_page_state(page_pgdat(page), NR_ANON_MAPPED, nr);
-	page_tracker_set_type(page, TRACK_ANON, 0);
 	__page_set_anon_rmap(page, vma, address, 1);
 }
 

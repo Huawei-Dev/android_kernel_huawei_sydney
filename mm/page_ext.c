@@ -11,7 +11,6 @@
 #include <linux/page_owner.h>
 #include <linux/page_idle.h>
 #include <linux/hisi/page_ext.h>
-#include <linux/hisi/page_tracker.h>
 
 /*
  * struct page extension

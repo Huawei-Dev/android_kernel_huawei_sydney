@@ -66,7 +66,6 @@
 #include <linux/page-flags.h>
 #include <linux/memcontrol.h>
 #include <linux/hisi/hisi_ion.h>
-#include <linux/hisi/page_tracker.h>
 
 #include <linux/hisi/rdr_hisi_ap_hook.h>
 #include <asm/sections.h>
@@ -1080,7 +1079,6 @@ static __always_inline bool free_pages_prepare(struct page *page,
 	page_cpupid_reset_last(page);
 	page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
 	reset_page_owner(page, order);
-	page_tracker_reset_tracker(page, order);
 
 	if (!PageHighMem(page)) {
 		debug_check_no_locks_freed(page_address(page),
@@ -1811,7 +1809,6 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
 	kernel_poison_pages(page, 1 << order, 1);
 	kasan_alloc_pages(page, order);
 	set_page_owner(page, order, gfp_flags);
-	page_tracker_set_tracker(page, order);
 }
 
 static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags,
@@ -4001,8 +3998,7 @@ out:
 	trace_mm_page_alloc(page, order, alloc_mask, ac.migratetype);
 
 	if (page) {
-		page_tracker_set_trace(page, _RET_IP_, order);/*lint !e571*/
-		page_trace_hook(gfp_mask, (unsigned char)MEM_ALLOC, _RET_IP_, page, order);/*lint !e571*/
+		page_trace_hook(gfp_mask, (unsigned char)MEM_ALLOC, _RET_IP_, page, order);
 	}
 	return page;
 }
@@ -4024,8 +4020,6 @@ unsigned long __get_free_pages(gfp_t gfp_mask, unsigned int order)
 	page = alloc_pages(gfp_mask, order);
 	if (!page)
 		return 0;
-
-	page_tracker_set_trace(page, _RET_IP_, order);/*lint !e571*/
 
 	return (unsigned long) page_address(page);
 }

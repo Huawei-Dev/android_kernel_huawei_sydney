@@ -35,7 +35,6 @@
 #include <linux/prefetch.h>
 #include <linux/memcontrol.h>
 #include <linux/random.h>
-#include <linux/hisi/page_tracker.h>
 
 #include <linux/hisi/rdr_hisi_ap_hook.h>
 #include <trace/events/kmem.h>
@@ -1694,7 +1693,6 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
 	page->objects = oo_objects(oo);
 
 	order = compound_order(page);
-	page_tracker_set_type(page, TRACK_SLAB, order);
 	page->slab_cache = s;
 	__SetPageSlab(page);
 	if (page_is_pfmemalloc(page))
@@ -3919,8 +3917,6 @@ void *__kmalloc(size_t size, gfp_t flags)
 
 	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
 		ret = kmalloc_large(size, flags);
-		if (ret)
-			page_tracker_set_type(virt_to_page(ret), TRACK_LSLAB, get_order(size));
 		return ret;
 	}
 
@@ -4439,8 +4435,6 @@ void *__kmalloc_track_caller(size_t size, gfp_t gfpflags, unsigned long caller)
 
 	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
 		ret = kmalloc_large(size, gfpflags);
-		if (ret)
-			page_tracker_set_type(virt_to_page(ret), TRACK_LSLAB, get_order(size));
 		return ret;
 	}
 

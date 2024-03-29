@@ -32,7 +32,6 @@
 #include <linux/llist.h>
 #include <linux/bitops.h>
 #include <linux/hisi/rdr_hisi_ap_hook.h>
-#include <linux/hisi/page_tracker.h>
 
 #include <asm/uaccess.h>
 #include <asm/tlbflush.h>
@@ -1663,7 +1662,6 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
 			goto fail;
 		}
 		area->pages[i] = page;
-		page_tracker_set_type(page, TRACK_VMALLOC, 0);
 		if (gfpflags_allow_blocking(gfp_mask))
 			cond_resched();
 	}

@@ -2240,11 +2240,7 @@ int gpiod_direction_input(struct gpio_desc *desc)
 	return status;
 }
 EXPORT_SYMBOL_GPL(gpiod_direction_input);
-int gpio_direction_input(unsigned gpio)
-{
-	return gpiod_direction_input(gpio_to_desc(gpio));
-}
-EXPORT_SYMBOL_GPL(gpio_direction_input);
+
 static int _gpiod_direction_output_raw(struct gpio_desc *desc, int value)
 {
 	struct gpio_chip *gc = desc->gdev->chip;
@@ -2321,11 +2317,6 @@ int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
 	return _gpiod_direction_output_raw(desc, value);
 }
 EXPORT_SYMBOL_GPL(gpiod_direction_output_raw);
-int gpio_direction_output(unsigned gpio, int value)
-{
-	return gpiod_direction_output_raw(gpio_to_desc(gpio), value);
-}
-EXPORT_SYMBOL_GPL(gpio_direction_output);
 
 /**
  * gpiod_direction_output - set the GPIO direction to output

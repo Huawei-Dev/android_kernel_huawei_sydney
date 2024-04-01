@@ -31,4 +31,3 @@ obj-$(CONFIG_UCSI)			+= ucsi.o
 obj-$(CONFIG_USB_SISUSBVGA)		+= sisusbvga/
 obj-$(CONFIG_USB_LINK_LAYER_TEST)	+= lvstest.o
 obj-$(CONFIG_USB_DFU)			+= dfu.o
-obj-$(CONFIG_USB_SOURCESINK)		+= sourcesink.o

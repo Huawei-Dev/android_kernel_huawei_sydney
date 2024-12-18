@@ -109,7 +109,7 @@ HI_VOID VENC_HAL_Get_Reg_Venc(VENC_REG_INFO_S *pVeduReg)
     pVeduReg->all_reg.FUNC_VLC_PIC_BITS = pAllReg->FUNC_VLC_PIC_BITS;
 
     pVeduReg->all_reg.FUNC_SEL_INTRA_PCM_OPT_8X8_CNT.bits.pcm_opt_8x8_cnt = pAllReg->FUNC_SEL_INTRA_PCM_OPT_8X8_CNT.bits.pcm_opt_8x8_cnt;
-    //pVeduReg->all_reg.FUNC_SEL_INTRA_OPT_16X16_CNT.bits.intra_opt_16x16_cnt = pAllReg->FUNC_SEL_INTRA_OPT_16X16_CNT.bits.intra_opt_16x16_cnt;//?ظ?
+    //pVeduReg->all_reg.FUNC_SEL_INTRA_OPT_16X16_CNT.bits.intra_opt_16x16_cnt = pAllReg->FUNC_SEL_INTRA_OPT_16X16_CNT.bits.intra_opt_16x16_cnt;//????
     pVeduReg->all_reg.FUNC_PME_MADI_SUM = pAllReg->FUNC_PME_MADI_SUM;
 
     pVeduReg->all_reg.FUNC_VLCST_DSRPTR00.bits.slc_len0 = pAllReg->FUNC_VLCST_DSRPTR00.bits.slc_len0;

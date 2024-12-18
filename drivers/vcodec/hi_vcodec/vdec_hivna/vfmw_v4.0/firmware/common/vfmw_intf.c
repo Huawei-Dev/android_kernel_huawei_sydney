@@ -289,7 +289,7 @@ static SINT32 VCTRL_ISR(SINT32 irq, VOID *dev_id)
 static SINT32 VCTRL_RequestIrq(UINT32 IrqNumNorm, UINT32 IrqNumProt, UINT32 IrqNumSafe)
 {
 #if !defined(VDM_BUSY_WAITTING)
-	if (VFMW_OSAL_RequestIrq(IrqNumNorm, VCTRL_ISR, IRQF_DISABLED, "vdec_norm_irq", NULL) != 0) {    //for 2.6.24以后
+	if (VFMW_OSAL_RequestIrq(IrqNumNorm, VCTRL_ISR, IRQF_DISABLED, "vdec_norm_irq", NULL) != 0) {    //for 2.6.24????
 		dprint(PRN_FATAL, "Request vdec norm irq %d failed\n", IrqNumNorm);
 		return VCTRL_ERR;
 	}
@@ -297,7 +297,7 @@ static SINT32 VCTRL_RequestIrq(UINT32 IrqNumNorm, UINT32 IrqNumProt, UINT32 IrqN
 
 #if !defined(SMMU_BUSY_WAITTING)
 #ifdef ENV_SOS_KERNEL
-	if (VFMW_OSAL_RequestIrq(IrqNumProt, VCTRL_ISR, IRQF_DISABLED, "vdec_prot_smmu_irq", NULL) != 0) {    //for 2.6.24以后
+	if (VFMW_OSAL_RequestIrq(IrqNumProt, VCTRL_ISR, IRQF_DISABLED, "vdec_prot_smmu_irq", NULL) != 0) {    //for 2.6.24????
 		dprint(PRN_FATAL, "Request vdec prot irq %d failed\n", IrqNumProt);
 		return VCTRL_ERR;
 	}

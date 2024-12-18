@@ -1016,7 +1016,7 @@ static struct file_operations VENC_FOPS =
 	.owner          = THIS_MODULE,/*lint !e64 */
 	.open           = VENC_DRV_Open,
 	.unlocked_ioctl = VENC_DRV_Ioctl,
-	.compat_ioctl   = VENC_DRV_Ioctl,  //用户态 ，内核态平台位宽不一致的时候，会调用
+	.compat_ioctl   = VENC_DRV_Ioctl,  //?????? ????????????????????????????????????
 	.release        = VENC_DRV_Close,
 	//.mmap         = VENC_DRV_MMap,   // reserve
 };/*lint !e785 */
@@ -1073,7 +1073,7 @@ static HI_S32 VENC_DRV_SetupCdev(VENC_ENTRY *venc, const struct file_operations 
 	venc->cdev.ops = &VENC_FOPS;
 	err = cdev_add(&(venc->cdev), venc->dev, 1);
 
-	/*在/sys/class/目录下创建设备类别目录hi_venc*/
+	/*??/sys/class/??????????????????????hi_venc*/
 	venc->venc_class = class_create(THIS_MODULE, "hi_venc");/*lint !e64 */
 	if (IS_ERR(venc->venc_class)) {
 		err = PTR_ERR(venc->venc_class);/*lint !e712 */
@@ -1082,7 +1082,7 @@ static HI_S32 VENC_DRV_SetupCdev(VENC_ENTRY *venc, const struct file_operations 
 		//return HI_FAILURE;/*lint !e438 */
 	}
 
-	/*在/dev/目录和/sys/class/hi_venc目录下分别创建设备文件hi_venc*/
+	/*??/dev/??????/sys/class/hi_venc??????????????????????hi_venc*/
 	venc->venc_device = device_create(venc->venc_class, NULL, venc->dev, "%s", "hi_venc");
 	if (IS_ERR(venc->venc_device)) {
 		err = PTR_ERR(venc->venc_device);/*lint !e712 */
@@ -1112,7 +1112,7 @@ unregister_region:
 
 static HI_S32 VENC_DRV_CleanupCdev(VENC_ENTRY *venc)
 {
-	/*销毁设备类别和设备*/
+	/*??????????????????*/
 	if (venc->venc_class) {
 		device_remove_file(venc->venc_device, &dev_attr_omxvenc_misc);
 		device_destroy(venc->venc_class,venc->dev);

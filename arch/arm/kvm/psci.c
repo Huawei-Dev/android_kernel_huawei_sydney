@@ -269,9 +269,6 @@ static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
 		break;
 	}
 
-<<<<<<< HEAD
-	vcpu_set_reg(vcpu, 0, val);
-=======
 	smccc_set_retval(vcpu, val, 0, 0, 0);
 	return ret;
 }
@@ -315,7 +312,6 @@ static int kvm_psci_1_0_call(struct kvm_vcpu *vcpu)
 	}
 
 	smccc_set_retval(vcpu, val, 0, 0, 0);
->>>>>>> 6681f3c... arm/arm64: KVM: Advertise SMCCC v1.1
 	return ret;
 }
 

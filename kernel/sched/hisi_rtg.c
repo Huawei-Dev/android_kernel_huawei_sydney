@@ -7,10 +7,6 @@
 #include <linux/hisi_rtg.h>
 #include "tune.h"
 
-#ifdef CONFIG_FRAME_RTG
-#include "frame/frame.h"
-#endif
-
 #define DEFAULT_FREQ_UPDATE_INTERVAL	8000000  /* ns */
 #define DEFAULT_UTIL_INVALID_INTERVAL	(~0U) /* ns */
 #define DEFAULT_GROUP_RATE		60 /* 60FPS */
@@ -893,8 +889,4 @@ void sched_update_rtg_tick(struct task_struct *p)
 		return;
 	}
 	rcu_read_unlock();
-
-#ifdef CONFIG_FRAME_RTG
-	update_frame_info_tick(grp);
-#endif
 }

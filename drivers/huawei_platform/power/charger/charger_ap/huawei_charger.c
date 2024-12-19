@@ -3663,16 +3663,6 @@ static void charge_turn_on_charging(struct charge_device_info *di)
 **********************************************************/
 static void water_check(struct charge_device_info *di)
 {
-#ifdef CONFIG_HUAWEI_WATER_CHECK
-	if (strstr(saved_command_line, "androidboot.mode=charger")
-		||strstr(saved_command_line, "androidboot.swtype=factory"))
-		return;
-	if(is_water_intrused()){
-		di->sysfs_data.water_intrused = 1;
-		hisi_coul_charger_event_rcv(VCHRG_STATE_WATER_INTRUSED);
-	}
-#endif
-
 	if(!di->water_check_enabled) /*if disabled, don't start water check*/
 		return;
 	/*in shutdown charge mode or factory version, don't start water check*/

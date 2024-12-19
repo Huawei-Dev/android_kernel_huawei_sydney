@@ -1,3 +1,0 @@
-config HUAWEI_OPMP
-	bool "Huawei opmp heartbeat feature support"
-	default n

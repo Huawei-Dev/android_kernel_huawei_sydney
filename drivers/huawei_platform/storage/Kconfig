@@ -1,2 +1,1 @@
 source "drivers/huawei_platform/storage/ddrinfo/Kconfig"
-source "drivers/huawei_platform/storage/ioinfo/Kconfig"

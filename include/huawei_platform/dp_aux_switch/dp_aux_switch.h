@@ -17,17 +17,11 @@ enum aux_switch_channel_type {
 	channel_fsa4476 = 0,
 	channel_superswitch,
 };
-#ifdef CONFIG_DP_AUX_SWITCH
-void dp_aux_switch_op(uint32_t value);
-void dp_aux_uart_switch_enable(void);
-void dp_aux_uart_switch_disable(void);
-enum aux_switch_channel_type get_aux_switch_channel(void);
-#else
+
 static inline void dp_aux_switch_op(uint32_t value) {}
 static inline void dp_aux_uart_switch_enable(void) {}
 static inline void dp_aux_uart_switch_disable(void) {}
 static inline enum aux_switch_channel_type get_aux_switch_channel(void) {return channel_superswitch;}
-#endif
 
 #endif // __DP_AUX_SWITCH_H__
 

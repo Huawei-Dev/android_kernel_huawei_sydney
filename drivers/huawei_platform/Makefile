@@ -35,7 +35,6 @@ obj-$(CONFIG_HUAWEI_VIBRATOR) += vibrator/
 obj-$(CONFIG_MADAPT) += madapt/
 obj-$(CONFIG_HUAWEI_IO_TRACING) += iotrace/
 obj-$(CONFIG_HUAWEI_EMCOM) += emcom/
-obj-$(CONFIG_DP_AUX_SWITCH) += dp_aux_switch/
 obj-$(CONFIG_HW_DP_SOURCE) += dp_source/
 obj-$(CONFIG_HUAWEI_VENDOR_EXCEPTION) += vendor_exception/
 obj-$(CONFIG_HWAA) += hwaa/

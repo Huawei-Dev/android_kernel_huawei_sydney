@@ -4549,11 +4549,6 @@ CONFIG_HISI_PERF_CTRL=y
 CONFIG_HISI_DDR_PERF_CTRL=y
 
 #
-# NPU Drivers
-#
-# CONFIG_NPU_DEVDRV is not set
-
-#
 # Huawei Platform Drivers
 #
 CONFIG_HUAWEI_PLATFORM=y

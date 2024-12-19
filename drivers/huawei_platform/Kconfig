@@ -35,7 +35,6 @@ source "drivers/huawei_platform/vibrator/Kconfig"
 source "drivers/huawei_platform/madapt/Kconfig"
 source "drivers/huawei_platform/emcom/Kconfig"
 source "drivers/huawei_platform/rilsim/Kconfig"
-source "drivers/huawei_platform/kirin_chipsets/Kconfig"
 source "drivers/huawei_platform/vendor_exception/Kconfig"
 source "drivers/huawei_platform/hwaa/Kconfig"
 endif #HUAWEI_PLATFORM

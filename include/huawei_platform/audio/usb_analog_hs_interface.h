@@ -50,20 +50,6 @@ struct usb_analog_hs_ops {
     void (*usb_ana_hs_mic_swtich_change_state)(void);
 };
 
-#ifdef CONFIG_USB_ANALOG_HS_INTERFACE
-/**begin: these Functions is call by extern module: MBHC**/
-extern int usb_analog_hs_check_headset_pluged_in(void);
-extern int usb_analog_hs_dev_register(struct usb_analog_hs_dev *dev, void *codec_data);
-extern bool check_usb_analog_hs_support(void);
-extern void usb_analog_hs_plug_in_out_handle(int hs_state);
-extern void usb_ana_hs_mic_swtich_change_state(void);
-/**end: these Functions is call by extern module: MBHC**/
-
-/*begin: these Functions is call by inner usb ana hs module*/
-extern int usb_analog_hs_ops_register(struct usb_analog_hs_ops *ops);
-/*end: these Functions is call by inner usb ana hs module*/
-
-#else
 static inline int usb_analog_hs_check_headset_pluged_in(void)
 {
     return USB_ANA_HS_PLUG_OUT;
@@ -93,7 +79,5 @@ static inline int usb_analog_hs_ops_register(struct usb_analog_hs_ops *ops)
 {
     return 0;
 }
-
-#endif
 
 #endif //USB_ANALOG_HS_INTERFACE

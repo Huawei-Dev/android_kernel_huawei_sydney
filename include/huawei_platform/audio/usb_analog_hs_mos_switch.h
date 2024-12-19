@@ -23,13 +23,6 @@
 
 extern void pd_dpm_send_event(enum pd_dpm_cable_event_type event);
 
-#ifdef CONFIG_USB_ANALOG_HS_MOS_SWITCH
-int usb_ana_hs_mos_check_hs_pluged_in(void);
-int usb_ana_hs_mos_dev_register(struct usb_analog_hs_dev *dev, void *codec_data);
-bool check_usb_analog_hs_mos_support(void);
-void usb_ana_hs_mos_plug_in_out_handle(int hs_state);
-void usb_ana_hs_mos_mic_switch_change_state(void);
-#else
 int usb_ana_hs_mos_check_hs_pluged_in(void)
 {
 	return 0;
@@ -52,6 +45,5 @@ void usb_ana_hs_mos_plug_in_out_handle(int hs_state)
 void usb_ana_hs_mos_mic_switch_change_state(void)
 {
 }
-#endif
 
 #endif

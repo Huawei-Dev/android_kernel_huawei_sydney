@@ -1,7 +1,3 @@
-/*lint -e752 -esym(502,*)*/
-/*lint -e753 -esym(753,*)*/
-/*lint -e528 -esym(528,*)*/
-/*lint -save -e713 -e734 -e502 -e774 -e838 -e438 -e701 -e64 -e826 -e838 -e715 -e613 -e747 -e838 -e732 -e785 -e647 -e528 -e753 -e752 */
 /*
  * LEDs driver for hisi
  *
@@ -35,12 +31,8 @@
 
 #define HISI_LOG_TAG HISI_LED_TAG
 
-#ifdef CONFIG_HW_LED_CONFIG
-extern void led_config_get_current_setting(struct hisi_led_platform_data* hisi_leds);
-#else
 void led_config_get_current_setting(struct hisi_led_platform_data* hisi_leds)
 {	pr_info("%s enter,not need to set irset for tp color, using default!\n", __func__); }
-#endif
 
 extern struct atomic_notifier_head panic_notifier_list;
 
@@ -561,7 +553,3 @@ module_exit(hisi_leds_exit);
 MODULE_ALIAS("hisi-leds");
 MODULE_DESCRIPTION("hisi LED driver");
 MODULE_LICENSE("GPL");
-/*lint -restore */
-/*lint -e528 +esym(528,*)*/
-/*lint -e753 +esym(753,*)*/
-/*lint -e752 +esym(502,*)*/

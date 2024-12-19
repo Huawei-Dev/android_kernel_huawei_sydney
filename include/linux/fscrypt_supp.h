@@ -49,11 +49,6 @@ extern int fscrypt_ioctl_get_policy(struct file *, void __user *);
 extern int fscrypt_has_permitted_context(struct inode *, struct inode *);
 extern int fscrypt_inherit_context(struct inode *, struct inode *,
 					void *, bool);
-#ifdef CONFIG_HWAA
-extern int hwaa_inherit_context(struct inode *, struct inode *,
-	struct dentry *, void *, bool);
-#endif
-
 /* keyinfo.c */
 extern int fscrypt_get_verify_context(struct inode *, void *, size_t);
 extern int fscrypt_set_verify_context(struct inode *, const void *,
@@ -64,9 +59,6 @@ extern int fscrypt_derive_gcm_key(struct crypto_aead *,
 extern struct key *fscrypt_request_key(u8 *, const u8 *, int);
 extern int fscrypt_get_encryption_info(struct inode *);
 extern void fscrypt_put_encryption_info(struct inode *, struct fscrypt_info *);
-#ifdef CONFIG_HWAA
-extern int hwaa_get_context(struct inode *);
-#endif
 
 /* fname.c */
 extern int fscrypt_setup_filename(struct inode *, const struct qstr *,

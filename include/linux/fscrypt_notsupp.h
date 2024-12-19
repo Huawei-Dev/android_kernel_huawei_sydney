@@ -99,14 +99,6 @@ static inline int fscrypt_inherit_context(struct inode *parent,
 	return -EOPNOTSUPP;
 }
 
-#ifdef CONFIG_HWAA
-static inline int hwaa_inherit_context(struct inode *dir, struct inode *inode,
-	struct dentry *dentry, void *fs_data, bool preload)
-{
-	return -EAGAIN;
-}
-#endif
-
 /* keyinfo.c */
 static inline int fscrypt_get_encryption_info(struct inode *inode)
 {
@@ -119,14 +111,7 @@ static inline void fscrypt_put_encryption_info(struct inode *inode,
 	return;
 }
 
-#ifdef CONFIG_HWAA
-static inline int hwaa_get_context(struct inode *inode)
-{
-	return -EAGAIN;
-}
-#endif
-
- /* fname.c */
+/* fname.c */
 static inline int fscrypt_setup_filename(struct inode *dir,
 					 const struct qstr *iname,
 					 int lookup, struct fscrypt_name *fname)

@@ -40,5 +40,4 @@ obj-$(CONFIG_HUAWEI_CRYPTO_TEST_MDPP) += mdpp_selftest/
 obj-$(CONFIG_HW_ROOT_SCAN) += hw_root_scan/
 obj-$(CONFIG_HW_DOUBLE_FREE_DYNAMIC_CHECK) += check_double_free/
 obj-$(CONFIG_HW_KERNEL_STP) += kernel_stp/
-obj-$(CONFIG_HWAA) += hwaa/
 include security/kernel_harden/Makefile

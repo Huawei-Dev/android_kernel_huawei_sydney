@@ -35,4 +35,3 @@ obj-$(CONFIG_MADAPT) += madapt/
 obj-$(CONFIG_HUAWEI_IO_TRACING) += iotrace/
 obj-$(CONFIG_HUAWEI_EMCOM) += emcom/
 obj-$(CONFIG_HUAWEI_VENDOR_EXCEPTION) += vendor_exception/
-obj-$(CONFIG_HWAA) += hwaa/

@@ -1588,14 +1588,11 @@ static int report_sensor_event_batch(int tag, int value[], int length, uint64_t 
 					  event.length + OFFSET_OF_END_MEM(struct sensor_data, length), ltimestamp);
 }
 
-#ifdef CONFIG_HW_TOUCH_KEY
-extern int touch_key_report_from_sensorhub(int key, int value);
-#else
 int touch_key_report_from_sensorhub(int key, int value)
 {
 	return 0;
 }
-#endif
+
 #ifndef CONFIG_HISI_SYSCOUNTER
 int syscounter_to_timespec64(u64 syscnt, struct timespec64 *ts)
 {

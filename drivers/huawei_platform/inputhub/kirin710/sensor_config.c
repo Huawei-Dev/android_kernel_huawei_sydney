@@ -19,9 +19,6 @@
 #ifdef CONFIG_HUAWEI_DSM
 #include <dsm/dsm_pub.h>
 #endif
-#ifdef CONFIG_HW_TOUCH_KEY
-#include <huawei_platform/sensor/huawei_key.h>
-#endif
 #include "contexthub_route.h"
 #include "contexthub_boot.h"
 #include "contexthub_recovery.h"
@@ -1260,60 +1257,10 @@ void select_als_para(struct device_node *dn)
 	}
 }
 
-#ifdef CONFIG_HW_TOUCH_KEY
-int huawei_set_key_backlight(void *param_t)
-{
-	int ret = 0;
-	int key_brightness = 0;
-	write_info_t pkg_ap;
-	read_info_t pkg_mcu;
-	pkt_parameter_req_t cpkt;
-	pkt_header_t *hd = (pkt_header_t *)&cpkt;
-	struct key_param_t *param = (struct key_param_t *)param_t;
-
-	if (NULL == param || is_sensorhub_disabled()) {
-		hwlog_err("param null or sensorhub is disabled.\n");
-		return 0;
-	}
-
-	if (strlen(sensor_chip_info[KEY]) == 0) {
-		hwlog_err("no key\n");
-		return 0;
-	}
-	memset(&pkg_ap, 0, sizeof(pkg_ap));
-	memset(&pkg_mcu, 0, sizeof(pkg_mcu));
-	key_brightness = ((param->test_mode << 16) | param->brightness1 | (param->brightness2<<8));
-
-	pkg_ap.cmd = CMD_CMN_CONFIG_REQ;
-	pkg_ap.tag = TAG_KEY;
-	cpkt.subcmd = SUB_CMD_BACKLIGHT_REQ;
-	pkg_ap.wr_buf = &hd[1];
-	pkg_ap.wr_len = sizeof(key_brightness)+SUBCMD_LEN;
-	memcpy(cpkt.para, &key_brightness, sizeof(key_brightness));
-	if (g_iom3_state == IOM3_ST_RECOVERY || iom3_power_state == ST_SLEEP) {
-		ret = write_customize_cmd(&pkg_ap, NULL, false);
-	} else
-		ret = write_customize_cmd(&pkg_ap, &pkg_mcu, true);
-
-	if (ret < 0) {
-		hwlog_err("err. write cmd\n");
-		return -1;
-	}
-
-	if (0 != pkg_mcu.errno) {
-		hwlog_info("mcu err \n");
-		return -1;
-	}
-
-	return 0;
-
-}
-#else
 int huawei_set_key_backlight(void *param_t)
 {
 	return 0;
 }
-#endif
 
 static int light_sensor_update_fastboot_info(void)
 {

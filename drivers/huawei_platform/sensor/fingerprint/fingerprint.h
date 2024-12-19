@@ -3,6 +3,7 @@
 #ifndef LINUX_SPI_FINGERPRINT_H
 #define LINUX_SPI_FINGERPRINT_H
 
+#include <asm-generic/delay.h>
 #include <huawei_platform/log/hw_log.h>
 
 #define EVENT_CTS_HOME	172
@@ -61,6 +62,11 @@
 #define FP_POWER_LDO_VOLTAGE    3300000
 #define FP_POWER_ENABLE         1
 #define FP_POWER_DISABLE        0
+
+static void accurate_delay_100us(unsigned long us_100)
+{
+	udelay(100*us_100);
+}
 
 enum module_vendor_info
 {

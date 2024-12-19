@@ -23,7 +23,6 @@
 #include <linux/slab.h>
 #include <linux/atomic.h>
 #include <linux/hisi/hisi_cpufreq_lowtemp.h>
-#include <linux/accurate_delay.h>
 #include <huawei_platform/fingerprint_interface/fingerprint_interface.h>
 #include <huawei_platform/sensor/hw_comm_pmic.h>
 #include "fingerprint.h"

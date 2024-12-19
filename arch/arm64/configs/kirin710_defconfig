@@ -4547,7 +4547,6 @@ CONFIG_HISI_SECS_CTRL=y
 #
 # CONFIG_HISPIPP is not set
 # CONFIG_HISI_ISP_DEBUG is not set
-# CONFIG_HISI_ACCURATE_DELAY is not set
 
 #
 # Hisilicon ISP FD

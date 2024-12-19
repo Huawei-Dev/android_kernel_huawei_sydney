@@ -9,7 +9,6 @@ source "drivers/huawei_platform/usb/pogopin/Kconfig"
 source "drivers/huawei_platform/usb/hw_usb/Kconfig"
 source "drivers/huawei_platform/usb/hw_ycable/Kconfig"
 source "drivers/huawei_platform/usb/hw_hishow/Kconfig"
-source "drivers/huawei_platform/usb/sw/Kconfig"
 
 config SUPERSWITCH
 	tristate "superswitch support"

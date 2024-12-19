@@ -9,4 +9,3 @@ obj-$(CONFIG_POGO_PIN)	+= pogopin/
 obj-$(CONFIG_HUAWEI_USB)  += hw_usb/
 obj-$(CONFIG_HUAWEI_YCABLE) += hw_ycable/
 obj-$(CONFIG_HUAWEI_HISHOW) += hw_hishow/
-obj-$(CONFIG_HW_SW_DEVICES) += sw/

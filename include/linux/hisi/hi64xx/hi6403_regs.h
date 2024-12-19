@@ -46,10 +46,6 @@
 #define HI6403_PLAY192K_BIT             (20)
 #define HI6403_LOWLANTENCY_BIT          (21)
 
-#ifdef CONFIG_BUCKBOOST
-#define HI6403_AUXMICPWMPOWER_BIT       (22)
-#endif
-
 #define HI6403_IR_ENV_STUDY_BIT         (23)
 #define HI6403_I2S2_BLUETOOTH_LOOP_BIT  (24)
 

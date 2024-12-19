@@ -206,10 +206,6 @@ int hi6403_pll44k1_turn_off(struct snd_soc_codec *codec);
 int hi6403_pllmad_turn_on(struct snd_soc_codec *codec);
 int hi6403_pllmad_turn_off(struct snd_soc_codec *codec);
 
-#ifdef CONFIG_BUCKBOOST
-extern int max77813_forced_pwm_enable(int enable);
-#endif
-
 /* VOLUME CONTROLS */
 /*
 * MAIN MIC GAIN volume control:
@@ -2596,30 +2592,7 @@ int hi6403_hp_high_level_power_event(struct snd_soc_dapm_widget *w,
 
 	return 0;
 }
-#ifdef CONFIG_BUCKBOOST
-int hi6403_auxmic_pwm_power_event(struct snd_soc_dapm_widget *w,
-	struct snd_kcontrol *kcontrol, int event)
-{
-	int ret = 0;
-	switch (event) {
-	case SND_SOC_DAPM_PRE_PMU:
-		ret = max77813_forced_pwm_enable(1);
-		if (ret < 0)
-			pr_warn("%s :  set max77813 pwm enable fail : %d\n", __FUNCTION__, event);
-		break;
 
-	case SND_SOC_DAPM_POST_PMD:
-		ret = max77813_forced_pwm_enable(0);
-		if (ret < 0)
-			pr_warn("%s :  set max77813 pwm disable fail : %d\n", __FUNCTION__, event);
-		break;
-	default :
-		pr_warn("%s : power mode event err : %d\n", __FUNCTION__, event);
-		break;
-	}
-	return 0;
-}
-#endif
 void hi6403_pll_param_pass(struct snd_soc_dapm_widget *w,
 						enum hi64xx_pll_type pll_type, int event)
 {
@@ -3455,12 +3428,6 @@ static const struct snd_kcontrol_new hi6403_dapm_voice32k_switch_controls =
 static const struct snd_kcontrol_new hi6403_dapm_hp_high_level_switch_controls =
 	SOC_DAPM_SINGLE("SWITCH",
 		HI6403_VIRTUAL_REG, HI6403_HPCLASSH_BIT, 1, 0);
-/* MAX77813 PWM SWITCH */
-#ifdef CONFIG_BUCKBOOST
-static const struct snd_kcontrol_new hi6403_dapm_auxmic_pwm_power_switch_controls =
-	SOC_DAPM_SINGLE("SWITCH",
-		HI6403_VIRTUAL_REG, HI6403_AUXMICPWMPOWER_BIT, 1, 0);/*lint !e64 */
-#endif
 /* PLL48K SWITCH */
 static const struct snd_kcontrol_new hi6403_dapm_pll48k_switch_controls =
 	SOC_DAPM_SINGLE("SWITCH",
@@ -4083,10 +4050,6 @@ static const struct snd_soc_dapm_widget hi6403_dapm_widgets[] = {
 	SND_SOC_DAPM_INPUT("VOICE IN"),
 	/* fake input for HP HIGH */
 	SND_SOC_DAPM_INPUT("HP HIGH IN"),
-	/* fake input for MAX77813 PWM */
-	#ifdef CONFIG_BUCKBOOST
-	SND_SOC_DAPM_INPUT("AUXMIC PWM IN"),
-	#endif
 
 	/* ir */
 	SND_SOC_DAPM_INPUT("IR TX IN"),
@@ -4124,10 +4087,6 @@ static const struct snd_soc_dapm_widget hi6403_dapm_widgets[] = {
 	SND_SOC_DAPM_OUTPUT("VOICE OUT"),
 	/* fake output for HP HIGH */
 	SND_SOC_DAPM_OUTPUT("HP HIGH OUT"),
-	/* fake output for MAX77813 PWM */
-	#ifdef CONFIG_BUCKBOOST
-	SND_SOC_DAPM_OUTPUT("AUXMIC PWM OUT"),
-	#endif
 	/* ir rx carrier endpoint dspif8 */
 	SND_SOC_DAPM_OUTPUT("IR RX8 OUT"),
 
@@ -4368,12 +4327,6 @@ static const struct snd_soc_dapm_widget hi6403_dapm_widgets[] = {
 	SND_SOC_DAPM_SWITCH_E("HPHIGHLEVEL SWITCH",
 		SND_SOC_NOPM, 0, 0, &hi6403_dapm_hp_high_level_switch_controls,
 		hi6403_hp_high_level_power_event, (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD)),
-	/* SWITCH FOR MAX77813 PWM */
-	#ifdef CONFIG_BUCKBOOST
-	SND_SOC_DAPM_SWITCH_E("AUXMICPWMPOWER SWITCH",
-		SND_SOC_NOPM, 0, 0, &hi6403_dapm_auxmic_pwm_power_switch_controls,
-		hi6403_auxmic_pwm_power_event, (SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD)),
-	#endif
 
 	/* keep for pll test */
 	SND_SOC_DAPM_SWITCH_E("PLL48K SWITCH",
@@ -4652,11 +4605,6 @@ static const struct snd_soc_dapm_route route_map[] = {
 
 	{"HP HIGH OUT",		NULL,			"HPHIGHLEVEL SWITCH"},
 	{"HPHIGHLEVEL SWITCH",	"SWITCH",		"HP HIGH IN"},
-
-	#ifdef CONFIG_BUCKBOOST
-	{"AUXMIC PWM OUT",		NULL,			"AUXMICPWMPOWER SWITCH"},
-	{"AUXMICPWMPOWER SWITCH",	"SWITCH",		"AUXMIC PWM IN"},
-	#endif
 
 	{"VOICE OUT",		NULL,			"SOUNDTRIGGER ONEMIC SWITCH"},
 	{"VOICE OUT",		NULL,			"SOUNDTRIGGER DUALMIC SWITCH"},

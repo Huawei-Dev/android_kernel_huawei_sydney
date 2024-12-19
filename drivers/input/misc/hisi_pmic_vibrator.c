@@ -41,9 +41,7 @@
 #include <linux/clk.h>
 #include <linux/of_device.h>
 #include <linux/hisi/hisi_vibrator.h>
-#ifdef CONFIG_BOOST_5V
 #include <huawei_platform/power/boost_5v.h>
-#endif
 
 #ifdef CONFIG_HUAWEI_DSM
 #include <dsm/dsm_pub.h>

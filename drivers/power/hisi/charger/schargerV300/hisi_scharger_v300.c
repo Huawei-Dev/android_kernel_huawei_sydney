@@ -40,12 +40,6 @@
 #include <linux/power/hisi/charger/hisi_charger.h>
 #endif
 #include <linux/hisi/hisi_adc.h>
-#ifdef CONFIG_SWITCH_FSA9685
-#include <huawei_platform/usb/switch/switch_fsa9685.h>
-#endif
-#ifdef CONFIG_BOOST_5V
-#include <huawei_platform/power/boost_5v.h>
-#endif
 #include "securec.h"
 
 #define MAX_RBOOST_CNT	(300)
@@ -2968,9 +2962,6 @@ static int hi6523_set_uvp_ovp(void)
 static int hi6523_fcp_switch_to_soc(void)
 {
 	SCHARGER_INF("%s\n", __func__);
-#ifdef CONFIG_SWITCH_FSA9685
-	usbswitch_common_manual_sw(FSA9685_USB1_ID_TO_IDBYPASS);
-#endif
 	return 0;
 }
 
@@ -2985,9 +2976,6 @@ static int hi6523_fcp_switch_to_soc(void)
 static int hi6523_fcp_switch_to_master(void)
 {
 	SCHARGER_INF("%s\n", __func__);
-#ifdef CONFIG_SWITCH_FSA9685
-	usbswitch_common_manual_sw(FSA9685_USB2_ID_TO_IDBYPASS);
-#endif
 	return 0;
 }
 

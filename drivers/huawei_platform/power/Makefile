@@ -4,7 +4,6 @@ obj-$(CONFIG_HUAWEI_KSTATE)	+= hw_kstate/
 obj-$(CONFIG_HUAWEI_FEATURE_PRINT_PID_NAME) += pid_socket/
 obj-$(CONFIG_HUAWEI_SMPL)	+= smpl/
 obj-$(CONFIG_HUAWEI_USB_SHORT_CIRCUIT_PROTECT)	+= usb_short_circuit_protect/
-obj-$(CONFIG_BOOST_5V)	+= boost_5v/
 obj-$(CONFIG_HUAWEI_DSM)	+= power_dsm/
 obj-$(CONFIG_HUAWEI_BATT_ACR_DETECT)	+= batt_acr_detect/
 obj-$(CONFIG_HUAWEI_POWER_THERMALZONE)	+= power_thermalzone/

@@ -52,9 +52,6 @@
 #include <linux/power/hisi/coul/hisi_coul_drv.h>
 #endif
 #include <charging_core.h>
-#ifdef CONFIG_SWITCH_FSA9685
-#include <huawei_platform/usb/switch/switch_fsa9685.h>
-#endif
 #ifdef CONFIG_DIRECT_CHARGER
 #include <huawei_platform/power/direct_charger.h>
 #endif

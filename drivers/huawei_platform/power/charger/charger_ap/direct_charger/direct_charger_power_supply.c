@@ -29,9 +29,6 @@
 #include <huawei_platform/power/direct_charger_power_supply.h>
 #include <huawei_platform/power/direct_charger.h>
 #include <huawei_platform/power/huawei_charger.h>
-#ifdef CONFIG_BOOST_5V
-#include <huawei_platform/power/boost_5v.h>
-#endif
 
 #ifdef HWLOG_TAG
 #undef HWLOG_TAG
@@ -70,10 +67,6 @@ static int scp_power_enable_by_5vboost(int enable)
 		enable);
 
 	if (scp_ps_by_5vboost) {
-#ifdef CONFIG_BOOST_5V
-		ret |= boost_5v_enable(enable, BOOST_CTRL_DC);
-#endif /* CONFIG_BOOST_5V */
-
 		ret |= direct_charge_set_bst_ctrl(enable);
 	}
 

@@ -39,11 +39,6 @@ enum boost_ctrl_source_type {
 	BOOST_CTRL_END,
 };
 
-#ifdef CONFIG_BOOST_5V
-extern int boost_5v_enable(bool enable, enum boost_ctrl_source_type type);
-extern unsigned int boost_5v_status(void);
-
-#else
 static inline int boost_5v_enable(bool enable, enum boost_ctrl_source_type type)
 {
 	return 0;
@@ -53,6 +48,5 @@ static inline unsigned int boost_5v_status(void)
 {
 	return 0;
 }
-#endif /* CONFIG_BOOST_5V */
 
 #endif /* _BOOST_5V_H_ */

@@ -48,9 +48,6 @@
 #include <huawei_platform/usb/pd/richtek/tcpm.h>
 #include <huawei_platform/power/direct_charger.h>
 #include <huawei_platform/power/huawei_charger.h>
-#ifdef CONFIG_BOOST_5V
-#include <huawei_platform/power/boost_5v.h>
-#endif
 #ifdef CONFIG_CONTEXTHUB_PD
 #include <linux/hisi/contexthub/tca.h>
 #endif
@@ -829,9 +826,6 @@ int pd_dpm_get_cc_state_type(unsigned int *cc1, unsigned int *cc2)
 void pd_dpm_report_pd_source_vconn(void *data)
 {
 	if (data)
-#ifdef CONFIG_BOOST_5V
-		boost_5v_enable(*(int *)data, BOOST_CTRL_PD_VCONN);
-#endif
 	hwlog_info("%s - \n", __func__);
 }
 void pd_dpm_report_pd_source_vbus(struct pd_dpm_info *di, void *data)
@@ -1163,13 +1157,6 @@ static inline void pd_dpm_report_host_attach(void)
 
 	hwlog_info("%s \r\n",__func__);
 
-#ifdef CONFIG_SWITCH_FSA9685
-	if (switch_manual_enable) {
-		usbswitch_common_dcd_timeout_enable(true);
-		usbswitch_common_manual_sw(FSA9685_USB1_ID_TO_IDBYPASS);
-	}
-#endif
-
 #ifdef CONFIG_CONTEXTHUB_PD
 	event.dev_type = TCA_ID_FALL_EVENT;
 	event.irq_type = TCA_IRQ_HPD_IN;
@@ -1207,10 +1194,6 @@ static inline void pd_dpm_report_host_detach(void)
 #endif
 
 	hwlog_info("%s \r\n",__func__);
-
-#ifdef CONFIG_SWITCH_FSA9685
-	usbswitch_common_dcd_timeout_enable(false);
-#endif
 
 #ifdef CONFIG_CONTEXTHUB_PD
 	event.typec_orien = pd_dpm_get_cc_orientation();

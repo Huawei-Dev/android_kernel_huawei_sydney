@@ -37,10 +37,6 @@ struct fsa9685_device_info {
 	struct work_struct g_intb_work;
 	struct delayed_work detach_delayed_work;
 
-#ifdef CONFIG_BOOST_5V
-	struct notifier_block usb_nb;
-#endif
-
 	u32 usbid_enable;
 	u32 fcp_support;
 	u32 scp_support;

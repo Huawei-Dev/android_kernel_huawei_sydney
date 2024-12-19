@@ -34,9 +34,6 @@
 #ifdef CONFIG_DIRECT_CHARGER
 #include <huawei_platform/power/direct_charger.h>
 #endif
-#ifdef CONFIG_USB_AUDIO_POWER
-#include <huawei_platform/audio/usb_audio_power.h>
-#endif
 #ifdef CONFIG_HUAWEI_CHARGER
 #include <huawei_platform/power/huawei_charger.h>
 #else

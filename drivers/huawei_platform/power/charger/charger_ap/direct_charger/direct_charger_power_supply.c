@@ -32,9 +32,6 @@
 #ifdef CONFIG_BOOST_5V
 #include <huawei_platform/power/boost_5v.h>
 #endif
-#ifdef CONFIG_USB_AUDIO_POWER
-#include <huawei_platform/audio/usb_audio_power.h>
-#endif
 
 #ifdef HWLOG_TAG
 #undef HWLOG_TAG
@@ -58,9 +55,6 @@ int direct_charge_set_bst_ctrl(int enable)
 		if (!bst_ctrl_use_common_gpio) {
 			ret |= gpio_direction_output(bst_ctrl, enable);
 		} else {
-#ifdef CONFIG_USB_AUDIO_POWER
-			ret |= bst_ctrl_enable(enable, VBOOST_CONTROL_PM);
-#endif /* CONFIG_USB_AUDIO_POWER */
 		}
 	}
 

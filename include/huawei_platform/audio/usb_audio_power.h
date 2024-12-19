@@ -18,17 +18,12 @@ enum VBOOST_CONTROL_SOURCE_TYPE {
     VBOOST_CONTROL_PM = 0,
     VBOOST_CONTROL_AUDIO,
 };
+
 enum MLIB_VOICE_PARA_ENUM {
     AUDIO_POWER_GPIO_RESET = 0,
     AUDIO_POWER_GPIO_SET,
 };
-#ifdef CONFIG_USB_AUDIO_POWER
-int bst_ctrl_enable(bool enable, enum VBOOST_CONTROL_SOURCE_TYPE type);
-int usb_audio_power_buckboost(void);
-int usb_audio_power_scharger(void);
-int usb_headset_plug_in(void);
-int usb_headset_plug_out(void);
-#else
+
 static inline int bst_ctrl_enable(bool enable, enum VBOOST_CONTROL_SOURCE_TYPE type)
 {
     return 0;
@@ -53,6 +48,5 @@ static inline int usb_headset_plug_out(void)
 {
 	return 0;
 }
-#endif
 
 #endif //__USB_AUDIO_POWER_H__

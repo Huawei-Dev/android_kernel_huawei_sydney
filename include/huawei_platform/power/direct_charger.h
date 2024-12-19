@@ -33,9 +33,6 @@
 #ifdef CONFIG_HUAWEI_HW_DEV_DCT
 #include <huawei_platform/devdetect/hw_dev_dec.h>
 #endif
-#ifdef CONFIG_SUPERSWITCH_FSC
-#include <huawei_platform/usb/superswitch/fsc/core/hw_scp.h>
-#endif
 #ifdef CONFIG_WIRELESS_CHARGER
 #include <huawei_platform/power/wireless_charger.h>
 #endif

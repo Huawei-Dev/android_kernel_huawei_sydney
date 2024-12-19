@@ -37,7 +37,6 @@
 #include <sound/initval.h>
 #include <linux/hisi/usb/hisi_usb.h>
 #include <huawei_platform/audio/usb_audio_power.h>
-#include <huawei_platform/audio/usb_audio_power_v600.h>
 #include <linux/wakelock.h>
 
 #include "usbaudio.h"
@@ -364,7 +363,6 @@ void usbaudio_ctrl_set_chip(struct snd_usb_audio *chip)
 			&& ((!strncmp(chip->card->shortname, HUAWEI_USB_HEADSET_PRENAME, strlen(HUAWEI_USB_HEADSET_PRENAME)))
 				|| (!strncmp(chip->card->shortname, BBIITT_USB_HEADSET_PRENAME, strlen(BBIITT_USB_HEADSET_PRENAME))))) {
 			usb_audio_power_buckboost();
-			set_otg_switch_enable_v600();
 			usb_headset_plug_in();
 		}
 	}

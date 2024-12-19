@@ -22,9 +22,6 @@ int support_pd = 0;
 #endif
 #include <huawei_platform/power/wired_channel_switch.h>
 
-#ifdef CONFIG_SUPERSWITCH_FSC
-bool FUSB3601_in_factory_mode(void);
-#endif
 #ifndef HWLOG_TAG
 #define HWLOG_TAG huawei_usb_vbus
 HWLOG_REGIST();
@@ -196,17 +193,7 @@ static void vbus_connect_work(struct work_struct *w)
 	hw_pd_wait_dptx_ready();
 #endif
 	if (!pmic_vbus_attach_enable) {
-#ifdef CONFIG_SUPERSWITCH_FSC
-		if (!FUSB3601_in_factory_mode()) {
-			hwlog_info("%s: pmic_vbus not enabled, end\n", __func__);
-		} else {
-			hwlog_info("%s: superswitch in factory mode\n", __func__);
-			send_charger_connect_event();
-			charger_source_sink_event(START_SINK);
-		}
-#else
 		hwlog_info("%s: pmic_vbus not enabled, end\n", __func__);
-#endif
 		hwusb_wake_unlock();
 		return;
 	}
@@ -298,17 +285,7 @@ static void vbus_disconnect_work(struct work_struct *w)
 	hw_pd_wait_dptx_ready();
 #endif
 	if (!pmic_vbus_attach_enable) {
-#ifdef CONFIG_SUPERSWITCH_FSC
-		if (!FUSB3601_in_factory_mode()) {
-			hwlog_info("%s: pmic_vbus not enabled, end\n", __func__);
-		} else {
-			hwlog_info("%s: superswitch in factory mode\n", __func__);
-			send_charger_disconnect_event();
-			charger_source_sink_event(STOP_SINK);
-		}
-#else
 		hwlog_info("%s: pmic_vbus not enabled, end\n", __func__);
-#endif
 		hwusb_wake_unlock();
 		return;
 	}

@@ -2,7 +2,6 @@
 #=============================================================================
 
 obj-$(CONFIG_HW_ANTENNA_BOARD_MATCH)  += antenna_board_match/
-obj-$(CONFIG_ANTENNA_FPGA) += antenna_fpga/
 obj-$(CONFIG_HUAWEI_AUDIO) += audio/
 obj-$(CONFIG_CHR_NETLINK_MODULE)   += chr/
 obj-$(CONFIG_RIL_NETLINK_MODULE)   += riltcp/
@@ -10,14 +9,14 @@ obj-$(CONFIG_RIL_SIM_NETLINK_MODULE)   += rilsim/
 obj-y   += connectivity/
 obj-$(CONFIG_HUAWEI_HW_DEV_DCT)  += devdetect/
 obj-$(CONFIG_HUAWEI_DEV_SELFCHECK)  += dev_selfcheck/
-#obj-${CONFIG_HUAWEI_DSM} += dsm/
+
 ifneq ($(strip $(OBB_SEPARATE)),true)
 obj-$(CONFIG_VIACBP82D_3RD_MODEM) += ext_modem/
 endif
 obj-y   += inputhub/
 
 obj-$(CONFIG_MAXQ616_POWER_SWITCH) += irda/
-#obj-$(CONFIG_LOGGER_EXTEND) += log/
+
 obj-$(CONFIG_HW_STAT_MM) += mm/
 obj-$(CONFIG_NFC_DEVICES)   += nfc/
 obj-$(CONFIG_HW_WIFI)   += net/

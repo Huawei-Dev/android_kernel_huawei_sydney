@@ -92,10 +92,6 @@ source "drivers/media/Kconfig"
 
 source "drivers/vcodec/hi_vcodec/Kconfig"
 
-source "drivers/vcodec/imagination/D5500/Kconfig"
-
-source "drivers/vcodec/imagination/D5500_DRM/Kconfig"
-
 source "drivers/video/Kconfig"
 
 source "sound/Kconfig"

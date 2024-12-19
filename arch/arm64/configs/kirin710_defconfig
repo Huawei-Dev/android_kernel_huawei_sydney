@@ -2932,8 +2932,6 @@ CONFIG_HI_VCODEC_VDEC_HIVNA=y
 # Hisilicon video venc support
 #
 CONFIG_HI_VCODEC_VENC_HIVNA=y
-# CONFIG_IMAGINATION_D5500_VCODEC is not set
-# CONFIG_IMAGINATION_D5500_DRM_VCODEC is not set
 
 #
 # Graphics support

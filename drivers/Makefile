@@ -187,11 +187,6 @@ obj-$(CONFIG_HI_VCODEC_VENC_HIVNA) += vcodec/hi_vcodec/venc_hivna/drv/venc/
 obj-$(CONFIG_HI_VCODEC_VDEC_HI3660) += vcodec/hi_vcodec/vdec/
 obj-$(CONFIG_HI_VCODEC_VDEC_HIVNA) += vcodec/hi_vcodec/vdec_hivna/
 
-ifeq ($(BOARD_CHARGER_ENABLE_DRM),true)
-obj-$(CONFIG_IMAGINATION_D5500_DRM_VCODEC)  += vcodec/imagination/D5500_DRM/
-else
-obj-$(CONFIG_IMAGINATION_D5500_VCODEC)  += vcodec/imagination/D5500/
-endif
 obj-$(CONFIG_HISILICON_PLATFORM)+= hisi/
 obj-$(CONFIG_HUAWEI_PLATFORM) += huawei_platform/
 obj-$(CONFIG_HUAWEI_DSM)        += dsm/

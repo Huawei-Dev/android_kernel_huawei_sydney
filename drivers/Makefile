@@ -19,7 +19,6 @@ obj-$(CONFIG_PARISC)		+= parisc/
 obj-$(CONFIG_RAPIDIO)		+= rapidio/
 obj-y				+= video/
 obj-y				+= devkit/lcdkit/
-obj-$(CONFIG_HUAWEI_LCD_PANEL)  += huawei_platform/lcd/
 obj-y				+= idle/
 obj-$(CONFIG_HISI_BOOTDEVICE)   += bootdevice/
 # IPMI must come before ACPI in order to provide IPMI opregion support

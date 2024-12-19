@@ -238,8 +238,6 @@ source "drivers/hwzerohung/Kconfig"
 
 source "drivers/hwfdleak/Kconfig"
 
-source "drivers/hwerecovery/Kconfig"
-
 source "drivers/hwnet/Kconfig"
 
 source "drivers/devkit/audiokit/Kconfig"

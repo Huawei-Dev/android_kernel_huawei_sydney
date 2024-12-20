@@ -10,5 +10,4 @@ obj-$(CONFIG_SYNAPTICS_TCM_TS_KIT_3_0)  += synaptics_tcm/
 obj-$(CONFIG_FOCAL_TS_KIT_3_0)  += focaltech/
 obj-$(CONFIG_NOVATEK_TS_KIT_3_0)  += novatek/
 obj-$(CONFIG_PARADE_TS_KIT_3_0)  += parade/
-obj-$(CONFIG_ATMEL_TS_KIT_3_0)  += atmel/
 obj-$(CONFIG_ELAN_TS_KIT_3_0)  += elan/

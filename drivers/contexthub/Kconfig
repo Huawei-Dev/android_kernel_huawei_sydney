@@ -12,13 +12,6 @@ config CONTEXTHUB_SHMEM
 	help
 	Say yes here if you want to configure contexthub share memory
 
-config CONTEXTHUB_SHELL
-	bool "Sensor CONTEXTHUB SHELL DBG driver"
-	depends on CONTEXTHUB
-	default n
-	help
-	Say yes here if you want to use contexthub shell dbg function
-
 config CONTEXTHUB_PLAYBACK
 	bool "Sensor CONTEXTHUB playback driver"
 	depends on CONTEXTHUB

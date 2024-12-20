@@ -151,9 +151,7 @@ struct thp_ioctl_spi_msg_package {
 #define THP_SPI_DEV_NODE_NAME "thp_spi_dev"
 #define THP_TIMING_NODE_NAME "thp_timing"
 
-#ifndef CONFIG_LCD_KIT_DRIVER
 extern volatile int g_tskit_pt_station_flag;
-#endif
 
 #define THP_GET_HARDWARE_TIMEOUT 100000
 #define TP_HWSPIN_LOCK_CODE 28

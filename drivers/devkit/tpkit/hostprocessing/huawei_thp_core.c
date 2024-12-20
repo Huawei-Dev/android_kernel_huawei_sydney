@@ -30,9 +30,6 @@
 #include "../../lcdkit/lcdkit1.0/include/lcdkit_ext.h"
 #include "huawei_thp.h"
 #include "huawei_thp_mt_wrapper.h"
-#if defined (CONFIG_LCD_KIT_DRIVER)
-#include <lcd_kit_core.h>
-#endif
 
 #ifdef CONFIG_INPUTHUB_20
 #include "contexthub_recovery.h"
@@ -90,14 +87,6 @@ struct dsm_client *dsm_thp_dclient;
 
 #define THP_DEVICE_NAME	"huawei_thp"
 #define THP_MISC_DEVICE_NAME "thp"
-#if defined (CONFIG_LCD_KIT_DRIVER)
-int thp_power_control_notify(enum lcd_kit_ts_pm_type pm_type, int timeout);
-
-int ts_kit_ops_register(struct ts_kit_ops * ops);
-struct ts_kit_ops thp_ops = {
-	.ts_power_notify = thp_power_control_notify,
-};
-#endif
 
 static int thp_spi_transfer_one_byte_bootloader(struct thp_core_data *const cd,
 										   const char *const tx_buf,
@@ -702,7 +691,6 @@ static void thp_after_resume_work_fn(struct work_struct *work)
 
 DECLARE_WORK(thp_after_resume_work, thp_after_resume_work_fn);
 
-#ifndef CONFIG_LCD_KIT_DRIVER
 static int thp_lcdkit_notifier_callback(struct notifier_block* self,
 			unsigned long event, void* data)
 {
@@ -767,67 +755,8 @@ static int thp_lcdkit_notifier_callback(struct notifier_block* self,
 
 	return 0;
 }
-#endif
 
 #define SUSPEND_WAIT_TIMEOUT  2000
-#if defined (CONFIG_LCD_KIT_DRIVER)
-int thp_power_control_notify(enum lcd_kit_ts_pm_type pm_type, int timeout)
-{
-	struct thp_core_data *cd = thp_get_core_data();
-	int rc;
-
-	THP_LOG_DEBUG("%s: called by lcdkit, pm_type=%d\n", __func__, pm_type);
-	switch (pm_type) {
-	case TS_EARLY_SUSPEND:
-		THP_LOG_INFO("%s: early suspend,%d\n", __func__, cd->suspend_resume_waitq_flag);
-		if (cd->delay_work_for_pm) {
-			if(cd->suspend_resume_waitq_flag != WAITQ_WAKEUP) {
-				THP_LOG_INFO("%s:wait resume complete.\n", __func__);
-				rc =  wait_event_interruptible_timeout(cd->suspend_resume_waitq,
-						(cd->suspend_resume_waitq_flag == WAITQ_WAKEUP), SUSPEND_WAIT_TIMEOUT);
-				if (!rc)
-					THP_LOG_ERR("%s:wait resume complete timeout.\n", __func__);
-			}
-			thp_set_status(THP_STATUS_POWER, THP_SUSPEND);
-			cd->suspend_resume_waitq_flag = WAITQ_WAIT;
-		} else {
-			thp_set_status(THP_STATUS_POWER, THP_SUSPEND);
-		}
-
-		break;
-
-	case TS_SUSPEND_DEVICE :
-		THP_LOG_INFO("%s: suspend\n", __func__);
-		thp_clean_fingers();
-		break;
-
-	case TS_BEFORE_SUSPEND :
-		THP_LOG_INFO("%s: before suspend\n", __func__);
-		thp_suspend(cd);
-		break;
-
-	case TS_RESUME_DEVICE :
-		THP_LOG_INFO("%s: resume\n", __func__);
-		thp_resume(cd);
-		break;
-
-	case TS_AFTER_RESUME:
-		if(cd->delay_work_for_pm){
-			THP_LOG_INFO("%s: after resume called\n", __func__);
-			schedule_work(&thp_after_resume_work);
-		} else {
-			THP_LOG_INFO("%s: after resume\n", __func__);
-			thp_set_status(THP_STATUS_POWER, THP_RESUME);
-		}
-		break;
-
-	default :
-		break;
-	}
-
-	return 0;
-}
-#endif
 
 static int thp_open(struct inode *inode, struct file *filp)
 {
@@ -1882,23 +1811,11 @@ static int thp_projectid_to_ic_name(char *project_id,
 static int thp_init_chip_info(struct thp_core_data *cd)
 {
 	int rc;
-#if defined (CONFIG_LCD_KIT_DRIVER)
-	struct lcd_kit_ops *tp_ops = lcd_kit_get_ops();
-#endif
 
 	if (cd->is_udp) {
 		rc = hostprocessing_get_project_id_for_udp(cd->project_id);
 	}else{
-#ifndef CONFIG_LCD_KIT_DRIVER
 		rc = hostprocessing_get_project_id(cd->project_id);
-#else
-		if(tp_ops && tp_ops->get_project_id) {
-			rc = tp_ops->get_project_id(cd->project_id);
-		}else{
-			rc = -EINVAL;
-			THP_LOG_ERR("%s:get lcd_kit_get_ops fail\n", __func__);
-		}
-#endif
 	}
 	if (rc)
 		THP_LOG_ERR("%s:get project id form LCD fail\n", __func__);
@@ -2249,21 +2166,12 @@ static int thp_core_init(struct thp_core_data *cd)
 		THP_LOG_ERR("%s: failed to set up irq\n", __func__);
 		goto err_register_misc;
 	}
-#ifndef CONFIG_LCD_KIT_DRIVER
 	cd->lcd_notify.notifier_call = thp_lcdkit_notifier_callback;
 	rc = lcdkit_register_notifier(&cd->lcd_notify);
 	if (rc) {
 		THP_LOG_ERR("%s: failed to register fb_notifier: %d\n",__func__,rc);
 		goto err_register_fb_notify;
 	}
-#endif
-
-#if defined (CONFIG_LCD_KIT_DRIVER)
-
-	rc = ts_kit_ops_register(&thp_ops);
-	if (rc)
-		THP_LOG_INFO("%s:ts_kit_ops_register fail\n", __func__);
-#endif
 
 #if CONFIG_HISI_BCI_BATTERY
 	cd->charger_detect_notify.notifier_call =
@@ -2298,16 +2206,8 @@ err_init_sysfs:
 err_init_wrapper:
 	misc_deregister(&g_thp_misc_device);
 err_register_misc:
-#ifndef CONFIG_LCD_KIT_DRIVER
 	lcdkit_unregister_notifier(&cd->lcd_notify);
 err_register_fb_notify:
-#endif
-
-#if defined (CONFIG_LCD_KIT_DRIVER)
-	rc = ts_kit_ops_unregister(&thp_ops);
-	if (rc)
-		THP_LOG_INFO("%s:ts_kit_ops_register fail\n", __func__);
-#endif
 	mutex_destroy(&cd->mutex_frame);
 	mutex_destroy(&cd->irq_mutex);
 	mutex_destroy(&cd->thp_mutex);
@@ -2747,19 +2647,7 @@ int is_pt_test_mode(struct thp_device *tdev)
 {
 	int thp_pt_station_flag = 0;
 
-#if defined (CONFIG_LCD_KIT_DRIVER)
-	int ret;
-	struct lcd_kit_ops *lcd_ops = lcd_kit_get_ops();
-	if((lcd_ops)&&(lcd_ops->get_status_by_type)) {
-		ret = lcd_ops->get_status_by_type(PT_STATION_TYPE, &thp_pt_station_flag);
-		if(ret < 0) {
-			THP_LOG_INFO("%s: get thp_pt_station_flag fail\n", __func__);
-			return ret;
-		}
-	}
-#else
 	thp_pt_station_flag = (g_tskit_pt_station_flag && tdev->test_config.pt_station_test);
-#endif
 
 	THP_LOG_INFO("%s thp_pt_station_flag = %d\n", __func__,thp_pt_station_flag);
 
@@ -3057,9 +2945,7 @@ static int thp_probe(struct spi_device *sdev)
 static int thp_remove(struct spi_device *sdev)
 {
 	struct thp_core_data *cd = spi_get_drvdata(sdev);
-#if defined(CONFIG_LCD_KIT_DRIVER)
-	int rc;
-#endif
+
 	THP_LOG_INFO("%s: in\n", __func__);
 
 	if (atomic_read(&cd->register_flag)) {
@@ -3070,15 +2956,7 @@ static int thp_remove(struct spi_device *sdev)
 			hisi_charger_type_notifier_unregister(
 					&cd->charger_detect_notify);
 #endif
-#ifndef CONFIG_LCD_KIT_DRIVER
 		lcdkit_unregister_notifier(&cd->lcd_notify);
-#endif
-
-#if defined (CONFIG_LCD_KIT_DRIVER)
-	rc = ts_kit_ops_unregister(&thp_ops);
-	if (rc)
-		THP_LOG_INFO("%s:ts_kit_ops_register fail\n", __func__);
-#endif
 
 		misc_deregister(&g_thp_misc_device);
 		mutex_destroy(&cd->mutex_frame);

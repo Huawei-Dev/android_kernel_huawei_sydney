@@ -352,19 +352,6 @@ ifeq ($(CONFIG_HISI_PERIDVFS),y)
 EXTRA_CFLAGS += -Idrivers/clk/hisi/peri_dvfs
 endif
 
-ifeq ($(CONFIG_LCD_KIT_DRIVER),y)
-EXTRA_CFLAGS += -Idrivers/devkit/lcdkit/lcdkit3.0/kernel/common/include \
-                -Idrivers/devkit/lcdkit/lcdkit3.0/kernel/hisi/adapt \
-                -Idrivers/devkit/lcdkit/lcdkit3.0/kernel/hisi/include
-
-hisifb-objs += backlight/lp8556.o
-hisifb-objs += backlight/rt8555.o
-hisifb-objs += voltage/tps65132.o
-hisifb-objs += backlight/lm36274.o
-hisifb-objs += voltage/rt4801h.o
-hisifb-objs += backlight/ktz8864.o
-endif
-
 ifeq ($(CONFIG_HUAWEI_DEVKIT_HISI),y)
 EXTRA_CFLAGS += -DLV_GET_LCDBK_ON
 endif

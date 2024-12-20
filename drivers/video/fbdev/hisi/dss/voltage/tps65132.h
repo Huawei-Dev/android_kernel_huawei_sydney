@@ -101,8 +101,4 @@ extern int get_vsp_voltage(void);
 extern int get_vsn_voltage(void);
 #endif
 
-#ifdef CONFIG_LCD_KIT_DRIVER
-int tps65132_dbg_set_bias_for_hisi(int vpos, int vneg);
-#endif
-
 #endif

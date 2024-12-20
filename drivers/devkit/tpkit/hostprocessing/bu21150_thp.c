@@ -391,9 +391,7 @@ static int __init thp_bu21150_module_init(void)
 		THP_LOG_ERR("%s: register fail\n", __func__);
 		goto err;
 	}
-#ifndef CONFIG_LCD_KIT_DRIVER
 	lcd_huawei_thp_register(&ts_thp_ops);
-#endif
 	return rc;
 err:
 	if(dev->tx_buff){

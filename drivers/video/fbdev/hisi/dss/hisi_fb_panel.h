@@ -1332,9 +1332,6 @@ int32_t bl_config_max_value(void);
 void panel_check_status_and_report_by_dsm(struct lcd_reg_read_t *lcd_status_reg, int cnt, char __iomem *mipi_dsi0_base);
 void panel_status_report_by_dsm(struct lcd_reg_read_t *lcd_status_reg, int cnt, char __iomem *mipi_dsi0_base, int report_cnt);
 #endif
-#ifdef CONFIG_LCD_KIT_DRIVER
-int hisi_blpwm_set_bl(struct hisi_fb_data_type *hisifd, uint32_t bl_level);
-#endif
 
 int panel_next_tcon_mode(struct platform_device *pdev, struct hisi_panel_info *pinfo);
 int panel_set_display_region(struct hisi_fb_data_type *hisifd, void __user *argp);

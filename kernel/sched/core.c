@@ -96,7 +96,6 @@
 #include <trace/events/sched.h>
 #include "walt.h"
 #include "tune.h"
-#include <linux/hisi_rtg.h>
 
 #ifdef CONFIG_HW_VIP_THREAD
 #include <chipset_common/hwcfs/hwcfs_common.h>

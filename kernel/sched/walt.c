@@ -26,8 +26,6 @@
 #include "sched.h"
 #include "tune.h"
 #include "walt.h"
-#include <linux/hisi_rtg.h>
-
 
 static __read_mostly unsigned int walt_ravg_hist_size = 5;
 static __read_mostly unsigned int walt_window_stats_policy =
@@ -852,10 +850,6 @@ static void update_cpu_busy_time(struct task_struct *p, struct rq *rq,
 	u64 *curr_runnable_sum = &rq->curr_runnable_sum;
 	u64 *prev_runnable_sum = &rq->prev_runnable_sum;
 	int cpu = rq->cpu;
-#ifdef CONFIG_HISI_RTG
-	struct group_cpu_time *cpu_time;
-	struct related_thread_group *grp;
-#endif
 
 	new_window = mark_start < window_start;
 	if (new_window) {
@@ -883,19 +877,6 @@ static void update_cpu_busy_time(struct task_struct *p, struct rq *rq,
 		rq->prev_runnable_sum = curr_sum;
 		rq->curr_runnable_sum = 0;
 	}
-
-#ifdef CONFIG_HISI_RTG
-	rcu_read_lock();
-	grp = task_related_thread_group(p);
-	rcu_read_unlock();
-	if (grp && rq->cluster == grp->preferred_cluster) {
-		cpu_time = group_update_cpu_time(rq, p->grp);
-		if (cpu_time) {
-			curr_runnable_sum = &cpu_time->curr_runnable_sum;
-			prev_runnable_sum = &cpu_time->prev_runnable_sum;
-		}
-	}
-#endif
 
 	/* Handle per-task window rollover. We don't care about the idle
 	 * task or exiting tasks. */
@@ -1215,198 +1196,8 @@ static void add_to_task_demand(struct rq *rq, struct task_struct *p,
 		p->ravg.sum = walt_ravg_window;
 }
 
-#ifdef CONFIG_HISI_RTG
-static void add_to_group_task_time(struct related_thread_group *grp, struct rq *rq, struct task_struct *p, u64 wallclock)
-{
-	u64 mark_start = p->ravg.mark_start;
-	u64 window_start = grp->window_start;
-	u64 delta_exec, delta_load;
-
-	if (unlikely(wallclock <= mark_start))
-		return;
-
-	/* per task load tracking in RTG */
-	if (likely(mark_start >= window_start)) {
-		/*
-		 *   ws   ms  wc
-		 *   |    |   |
-		 *   V    V   V
-		 *   |---------------|
-		 */
-		delta_exec = wallclock - mark_start;
-		p->ravg.curr_window_exec += delta_exec;
-
-		delta_load = scale_exec_time(delta_exec, rq);
-		p->ravg.curr_window_load += delta_load;
-
-	} else {
-		/*
-		 *   ms   ws  wc
-		 *   |    |   |
-		 *   V    V   V
-		 *   -----|----------
-		 */
-		/* prev window task statistic */
-		delta_exec = window_start - mark_start;
-		p->ravg.prev_window_exec += delta_exec;
-
-		delta_load = scale_exec_time(delta_exec, rq);
-		p->ravg.prev_window_load += delta_load;
-
-		/* curr window task statistic */
-		delta_exec = wallclock - window_start;
-		p->ravg.curr_window_exec += delta_exec;
-
-		delta_load = scale_exec_time(delta_exec, rq);
-		p->ravg.curr_window_load += delta_load;
-	}
-}
-
-static void add_to_group_time(struct related_thread_group *grp, struct rq *rq, u64 wallclock)
-{
-	u64 delta_exec, delta_load;
-	u64 mark_start = grp->mark_start;
-	u64 window_start = grp->window_start;
-	bool on_pref_cluster = (rq->cluster == grp->preferred_cluster);
-
-	if (unlikely(wallclock <= mark_start))
-		return;
-
-	/* per group load tracking in RTG */
-	if (likely(mark_start >= window_start)) {
-		/*
-		 *   ws   ms  wc
-		 *   |    |   |
-		 *   V    V   V
-		 *   |---------------|
-		 */
-		delta_exec = wallclock - mark_start;
-		grp->time.curr_window_exec += delta_exec;
-
-		delta_load = scale_exec_time(delta_exec, rq);
-		grp->time.curr_window_load += delta_load;
-
-		if (on_pref_cluster) {
-			grp->time_pref_cluster.curr_window_exec += delta_exec;
-			grp->time_pref_cluster.curr_window_load += delta_load;
-		}
-	} else {
-		/*
-		 *   ms   ws  wc
-		 *   |    |   |
-		 *   V    V   V
-		 *   -----|----------
-		 */
-		/* prev window statistic */
-		delta_exec = window_start - mark_start;
-		grp->time.prev_window_exec += delta_exec;
-
-		delta_load = scale_exec_time(delta_exec, rq);
-		grp->time.prev_window_load += delta_load;
-
-		if (on_pref_cluster) {
-			grp->time_pref_cluster.prev_window_exec += delta_exec;
-			grp->time_pref_cluster.prev_window_load += delta_load;
-		}
-
-		/* curr window statistic */
-		delta_exec = wallclock - window_start;
-		grp->time.curr_window_exec += delta_exec;
-
-		delta_load = scale_exec_time(delta_exec, rq);
-		grp->time.curr_window_load += delta_load;
-
-		if (on_pref_cluster) {
-			grp->time_pref_cluster.curr_window_exec += delta_exec;
-			grp->time_pref_cluster.curr_window_load += delta_load;
-		}
-	}
-}
-
-static inline void add_to_group_demand(struct related_thread_group *grp,
-				struct rq *rq,
-				struct task_struct *p, u64 wallclock)
-{
-	if (unlikely(wallclock <= grp->window_start))
-		return;
-
-	add_to_group_task_time(grp, rq, p, wallclock);
-	add_to_group_time(grp, rq, wallclock);
-}
-
-static int account_busy_for_group_demand(struct task_struct *p, int event)
-{
-	/* No need to bother updating task demand for exiting tasks
-	 * or the idle task. */
-	if (exiting_task(p) || is_idle_task(p))
-		return 0;
-
-	if (event == TASK_WAKE || event == TASK_MIGRATE)
-		return 0;
-
-	return 1;
-}
-
-static void update_group_demand(struct task_struct *p, struct rq *rq,
-				int event, u64 wallclock)
-{
-	struct related_thread_group *grp;
-
-	if (!account_busy_for_group_demand(p, event))
-		return;
-
-	rcu_read_lock();
-	grp = task_related_thread_group(p);
-	if (!grp) {
-		rcu_read_unlock();
-		return;
-	}
-
-	raw_spin_lock(&grp->lock);
-	if (grp->nr_running == 1)
-		grp->mark_start = max(grp->mark_start, p->ravg.mark_start);
-
-	add_to_group_demand(grp, rq, p, wallclock);
-
-	grp->mark_start = wallclock;
-
-	raw_spin_unlock(&grp->lock);
-
-	rcu_read_unlock();
-}
-
-static void update_group_nr_running(struct task_struct *p, int event, u64 wallclock)
-{
-	struct related_thread_group *grp;
-
-	rcu_read_lock();
-	grp = task_related_thread_group(p);
-	if (!grp) {
-		rcu_read_unlock();
-		return;
-	}
-
-	raw_spin_lock(&grp->lock);
-
-	if (event == PICK_NEXT_TASK)
-		grp->nr_running++;
-	else if (event == PUT_PREV_TASK)
-		grp->nr_running--;
-
-	if ((int)grp->nr_running < 0) {
-		WARN_ON(1);
-		grp->nr_running = 0;
-	}
-
-	raw_spin_unlock(&grp->lock);
-
-	rcu_read_unlock();
-}
-
-#else
 static inline void update_group_demand(struct task_struct *p, struct rq *rq, int event, u64 wallclock) { }
 static inline void update_group_nr_running(struct task_struct *p, int event, u64 wallclock) { }
-#endif
 
 /*
  * Account cpu demand of task and/or update task's cpu demand history

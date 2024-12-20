@@ -15,11 +15,8 @@
 #include <global_ddr_map.h>
 #include "perf_ctrl.h"
 #include <libhwsecurec/securec.h>
-#include <linux/hisi_rtg.h>
-
 
 extern int get_ipa_status(struct ipa_stat *status);
-
 
 #define PERF_CTRL_DDR_MAX_CH (4)
 #define PERF_CTRL_DDR_FLUX_MAX_CNT (0xFFFFFFFFUL)

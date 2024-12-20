@@ -10,7 +10,6 @@
 
 #include "sched.h"
 #include "tune.h"
-#include <linux/hisi_rtg.h>
 
 #ifdef CONFIG_CGROUP_SCHEDTUNE
 bool schedtune_initialized = false;
@@ -122,17 +121,6 @@ struct schedtune {
 	/* Boost value for tasks on that SchedTune CGroup */
 	int boost;
 
-#ifdef CONFIG_HISI_CGROUP_RTG
-	/*
-	 * Controls whether tasks of this cgroup should be colocated with each
-	 * other and tasks of other cgroups that have the same flag turned on.
-	 */
-	bool colocate;
-
-	/* Controls whether further updates are allowed to the colocate flag */
-	bool colocate_update_disabled;
-#endif
-
 	/* Performance Boost (B) region threshold params */
 	int perf_boost_idx;
 
@@ -184,10 +172,6 @@ static inline struct schedtune *parent_st(struct schedtune *st)
 static struct schedtune
 root_schedtune = {
 	.boost	= 0,
-#ifdef CONFIG_HISI_CGROUP_RTG
-	.colocate = false,
-	.colocate_update_disabled = false,
-#endif
 	.perf_boost_idx = 0,
 	.perf_constrain_idx = 0,
 	.prefer_idle = 0,
@@ -276,37 +260,9 @@ struct boost_groups {
 
 /* Boost groups affecting each CPU in the system */
 DEFINE_PER_CPU(struct boost_groups, cpu_boost_groups);
-#ifdef CONFIG_HISI_CGROUP_RTG
-static inline void init_sched_boost(struct schedtune *st)
-{
-	st->colocate = false;
-	st->colocate_update_disabled = false;
-}
-static u64 sched_colocate_read(struct cgroup_subsys_state *css,
-			struct cftype *cft)
-{
-	struct schedtune *st = css_st(css);
-
-	return st->colocate;
-}
-
-static int sched_colocate_write(struct cgroup_subsys_state *css,
-			struct cftype *cft, u64 colocate)
-{
-	struct schedtune *st = css_st(css);
-
-	if (st->colocate_update_disabled)
-		return -EPERM;
-
-	st->colocate = !!colocate;
-	st->colocate_update_disabled = true;
-	return 0;
-}
-#else
 static inline void init_sched_boost(struct schedtune *st)
 {
 }
-#endif
 
 static void
 schedtune_cpu_update(int cpu)
@@ -827,24 +783,6 @@ freq_boost_write(struct cgroup_subsys_state *css, struct cftype *cft,
 }
 #endif
 
-#ifdef CONFIG_HISI_CGROUP_RTG
-static void schedtune_attach(struct cgroup_taskset *tset)
-{
-	struct task_struct *task;
-	struct cgroup_subsys_state *css;
-	struct schedtune *st;
-	bool colocate;
-
-	cgroup_taskset_first(tset, &css);
-	st = css_st(css);
-
-	colocate = st->colocate;
-
-	cgroup_taskset_for_each(task, css, tset)
-		sync_cgroup_colocation(task, colocate);
-}
-#endif
-
 static struct cftype files[] = {
 	{
 		.name = "boost",
@@ -866,13 +804,6 @@ static struct cftype files[] = {
 		.name = "freq_boost",
 		.read_s64 = freq_boost_read,
 		.write_s64 = freq_boost_write,
-	},
-#endif
-#ifdef CONFIG_HISI_CGROUP_RTG
-	{
-		.name = "colocate",
-		.read_u64 = sched_colocate_read,
-		.write_u64 = sched_colocate_write,
 	},
 #endif
 	{ }	/* terminate */
@@ -969,9 +900,6 @@ struct cgroup_subsys schedtune_cgrp_subsys = {
 	.cancel_attach  = schedtune_cancel_attach,
 	.legacy_cftypes	= files,
 	.early_init	= 1,
-#ifdef CONFIG_HISI_CGROUP_RTG
-	.attach		= schedtune_attach,
-#endif
 };
 
 static inline void

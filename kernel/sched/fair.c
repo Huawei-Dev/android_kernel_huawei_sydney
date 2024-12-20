@@ -7453,10 +7453,6 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 #ifdef CONFIG_HISI_EAS_SCHED
 	bool favor_smaller_capacity = false;
 #endif
-#ifdef CONFIG_HISI_RTG
-	struct related_thread_group *grp;
-	int grp_cpu;
-#endif
 	bool rtg_task = false;
 
 	*backup_cpu = -1;
@@ -7471,15 +7467,6 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 		schedstat_inc(this_rq()->eas_stats.fbt_no_cpu);
 		return -1;
 	}
-
-#ifdef CONFIG_HISI_RTG
-	grp = task_related_thread_group(p);
-	rtg_task = grp && grp->preferred_cluster;
-	if (rtg_task) {
-		grp_cpu = cpumask_first(&grp->preferred_cluster->cpus);
-		cpu = max(grp_cpu, cpu);
-	}
-#endif
 
 	/* Find SD for the start CPU */
 	sd = rcu_dereference(per_cpu(sd_ea, cpu));
@@ -7839,9 +7826,6 @@ static int select_energy_cpu_brute(struct task_struct *p, int prev_cpu, int sync
 	int target_cpu;
 	int backup_cpu;
 	int next_cpu;
-#ifdef CONFIG_HISI_RTG
-	struct related_thread_group *grp;
-#endif
 
 	schedstat_inc(p->se.statistics.nr_wakeups_secb_attempts);
 	schedstat_inc(this_rq()->eas_stats.secb_attempts);
@@ -7851,14 +7835,6 @@ static int select_energy_cpu_brute(struct task_struct *p, int prev_cpu, int sync
 #ifdef CONFIG_HISI_EAS_SCHED
 		cpumask_t search_cpus;
 		cpumask_and(&search_cpus, tsk_cpus_allowed(p), cpu_online_mask);
-
-#ifdef CONFIG_HISI_RTG
-		rcu_read_lock();
-		grp = task_related_thread_group(p);
-		if (grp && grp->preferred_cluster)
-			cpumask_and(&search_cpus, &search_cpus, &grp->preferred_cluster->cpus);
-		rcu_read_unlock();
-#endif
 
 		if (cpumask_test_cpu(cpu, &search_cpus) && task_fits_max(p, cpu)) {
 			schedstat_inc(p->se.statistics.nr_wakeups_secb_sync);

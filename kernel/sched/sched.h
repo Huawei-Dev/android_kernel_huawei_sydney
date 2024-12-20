@@ -2261,31 +2261,6 @@ static inline void sugov_check_freq_update(int cpu) {}
 static inline unsigned long boosted_freq_policy_util(int cpu) { return 0; }
 #endif
 
-#ifdef CONFIG_HISI_RTG
-int alloc_related_thread_groups(void);
-void init_task_rtg(struct task_struct *p);
-int sync_cgroup_colocation(struct task_struct *p, bool insert);
-int _sched_set_group_id(struct task_struct *p, unsigned int group_id);
-struct group_cpu_time *group_update_cpu_time(struct rq *rq, struct related_thread_group *grp);
-bool group_migrate_task(struct task_struct *p,struct rq *src_rq, struct rq *dest_rq);
-void sched_update_group_load(struct rq *rq);
-void sched_get_max_group_util(const struct cpumask *query_cpus, unsigned long *util, unsigned int *freq);
-
-extern void walt_update_task_ravg(struct task_struct *p, struct rq *rq, int event,
-		u64 wallclock, u64 irqtime);
-extern bool same_schedtune(struct task_struct *tsk1, struct task_struct *tsk2);
-void sched_update_rtg_tick(struct task_struct *p);
-#ifdef CONFIG_HISI_CGROUP_RTG
-void add_new_task_to_grp(struct task_struct *new);
-#else
-static inline void add_new_task_to_grp(struct task_struct *new) {}
-#endif
-static inline
-struct related_thread_group *task_related_thread_group(struct task_struct *p)
-{
-        return rcu_dereference(p->grp);
-}
-#else
 static inline int alloc_related_thread_groups(void) { return 0; }
 static inline void init_task_rtg(struct task_struct *p) {}
 static inline int sync_cgroup_colocation(struct task_struct *p, bool insert) { return 0; }
@@ -2296,7 +2271,6 @@ static inline bool group_migrate_task(struct task_struct *p,struct rq *src_rq, s
 static inline void sched_get_max_group_util(const struct cpumask *query_cpus, unsigned int *freq) {}
 static inline void sched_update_rtg_tick(struct task_struct *p) { return; }
 static inline struct related_thread_group *task_related_thread_group(struct task_struct *p) { return NULL; }
-#endif
 
 #ifdef CONFIG_HISI_EAS_SCHED
 static inline bool is_reserved(int cpu)

@@ -5,7 +5,6 @@
 
 #include "sched.h"
 #include "walt.h"
-#include <linux/hisi_rtg.h>
 
 #include <linux/interrupt.h>
 #include <linux/slab.h>

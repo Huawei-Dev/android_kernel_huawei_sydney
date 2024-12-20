@@ -12,11 +12,6 @@ config CONNECTIVITY_HI1102
 	bool "Connectivity Hi1102 support"
 	default y
 
-config ARCH_KIRIN_PCIE
-    bool "kirin pcie interface support"
-    default n
-    depends on PCI
-
 config HI110X_GPS_REFCLK
   bool "Hisilicon 110X gps refclk feature"
   default y

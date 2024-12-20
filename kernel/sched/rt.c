@@ -22,11 +22,7 @@ struct rt_bandwidth def_rt_bandwidth;
  * util * margin < capacity * 1024
  */
 unsigned int rt_capacity_margin = 1138; /* ~10% */
-#ifdef CONFIG_HISI_RT_CAS
-unsigned int sysctl_sched_enable_rt_cas = 1;
-#else
 unsigned int sysctl_sched_enable_rt_cas = 0;
-#endif
 
 #ifdef CONFIG_HISI_RT_ACTIVE_LB
 unsigned int sysctl_sched_enable_rt_active_lb = 1;
@@ -1703,23 +1699,6 @@ static int find_lowest_rq(struct task_struct *task)
 	struct sched_domain *sd;
 	struct cpumask *lowest_mask = this_cpu_cpumask_var_ptr(local_cpu_mask);
 	int this_cpu = smp_processor_id(), cpu = -1;
-#ifdef CONFIG_HISI_RT_CAS
-	int target_cpu;
-	struct cpumask search_cpu, backup_search_cpu;
-	unsigned long cpu_capacity;
-	unsigned long target_capacity;
-	unsigned long util, target_cpu_util = ULONG_MAX;
-	unsigned long target_cpu_util_cum = ULONG_MAX;
-	unsigned long util_cum;
-	unsigned long tutil = task_util(task);
-	int target_cpu_idle_idx = INT_MAX;
-	int cpu_idle_idx = -1;
-	int prev_cpu = task_cpu(task);
-	struct related_thread_group *grp;
-	struct cpumask *rtg_target_cpus = NULL;
-	struct sched_group *sg, *sg_target, *sg_backup;
-	struct cpumask slow_cpus;
-#endif
 
 	/* Make sure the mask is initialized first */
 	if (unlikely(!lowest_mask))
@@ -1731,152 +1710,6 @@ static int find_lowest_rq(struct task_struct *task)
 	if (!cpupri_find(&task_rq(task)->rd->cpupri, task, lowest_mask))
 		return -1; /* No targets found */
 
-#ifdef CONFIG_HISI_RT_CAS
-	if (sysctl_sched_enable_rt_cas) {
-		sg_target = NULL;
-		sg_backup = NULL;
-		target_cpu = -1;
-		target_capacity = ULONG_MAX;
-
-		rcu_read_lock();
-		grp = task_related_thread_group(task);
-		if (grp && grp->preferred_cluster) {
-			rtg_target_cpus = &grp->preferred_cluster->cpus;
-		} else {
-			hisi_get_slow_cpus(&slow_cpus);
-
-			if (!cpumask_empty(&slow_cpus) &&
-			    cpumask_equal(tsk_cpus_allowed(task), cpu_all_mask)) {
-				cpumask_and(lowest_mask, lowest_mask, &slow_cpus);
-
-				if (cpumask_empty(lowest_mask)) {
-					rcu_read_unlock();
-					return -1;
-				}
-			}
-		}
-
-		sd = rcu_dereference(per_cpu(sd_ea, 0));
-		if (!sd) {
-			rcu_read_unlock();
-			goto noea;
-		}
-
-		sg = sd->groups;
-		do {
-			if (!cpumask_intersects(lowest_mask,
-						sched_group_cpus(sg)))
-				continue;
-
-			if (!sysctl_sched_is_big_little) {
-				sg_target = sg;
-				break;
-			}
-
-			cpu = group_first_cpu(sg);
-			/* honor the rtg cpus */
-			if (rtg_target_cpus && cpumask_test_cpu(cpu, rtg_target_cpus)) {
-				sg_target = sg;
-				break;
-			}
-
-			/*
-			 * 1. add margin to support task migration.
-			 * 2. if task_util is high then all cpus, make sure the
-			 * sg_backup with the most powerful cpus is selected.
-			 */
-			cpu_capacity = capacity_orig_of(cpu);
-			if (tutil * rt_capacity_margin > capacity_orig_of(cpu) * 1024) {
-				sg_backup = sg;
-				continue;
-			}
-
-			if (cpu_capacity < target_capacity) {
-				target_capacity = cpu_capacity;
-				sg_target = sg;
-			}
-		} while (sg = sg->next, sg != sd->groups);
-		rcu_read_unlock();
-
-		if (!sg_target)
-			sg_target = sg_backup;
-
-		if (sg_target) {
-			cpumask_and(&search_cpu, lowest_mask,
-				    sched_group_cpus(sg_target));
-			cpumask_copy(&backup_search_cpu, lowest_mask);
-			cpumask_andnot(&backup_search_cpu, &backup_search_cpu,
-				       &search_cpu);
-		} else {
-			cpumask_copy(&search_cpu, lowest_mask);
-			cpumask_clear(&backup_search_cpu);
-		}
-
-retry:
-		cpu = cpumask_first(&search_cpu);
-		do {
-#ifdef CONFIG_HISI_CPU_ISOLATION
-			if (cpu_isolated(cpu))
-				continue;
-#endif
-
-			if (walt_cpu_high_irqload(cpu))
-				continue;
-
-			/* find best cpu with smallest max_capacity */
-			if (target_cpu != -1 && capacity_orig_of(cpu) > capacity_orig_of(target_cpu))
-				continue;
-
-			util = cpu_util(cpu);
-
-			/* Find the least loaded CPU */
-			if (util > target_cpu_util)
-				continue;
-
-			/*
-			 * If the previous CPU has same load, keep it as
-			 * target_cpu.
-			 */
-			if (target_cpu_util == util && target_cpu == prev_cpu)
-				continue;
-
-			/*
-			 * If candidate CPU is the previous CPU, select it.
-			 * Otherwise, if its load is same with target_cpu and in
-			 * a shallower C-state, select it.  If all above
-			 * conditions are same, select the least cumulative
-			 * window demand CPU.
-			 */
-			if (sysctl_sched_cstate_aware)
-				cpu_idle_idx = idle_get_state_idx(cpu_rq(cpu));
-
-			util_cum = cpu_util_cum(cpu, 0);
-			if (cpu != prev_cpu && target_cpu_util == util) {
-				if (target_cpu_idle_idx < cpu_idle_idx)
-					continue;
-
-				if (target_cpu_idle_idx == cpu_idle_idx &&
-				    target_cpu_util_cum < util_cum)
-					continue;
-			}
-
-			target_cpu_idle_idx = cpu_idle_idx;
-			target_cpu_util_cum = util_cum;
-			target_cpu_util = util;
-			target_cpu = cpu;
-		} while ((cpu = cpumask_next(cpu, &search_cpu)) < nr_cpu_ids);
-
-		if (target_cpu != -1) {
-			return target_cpu;
-		} else if (!cpumask_empty(&backup_search_cpu)) {
-			cpumask_copy(&search_cpu, &backup_search_cpu);
-			cpumask_clear(&backup_search_cpu);
-			goto retry;
-		}
-	}
-
-noea:
-#endif
 	cpu = task_cpu(task);
 	/*
 	 * At this point we have built a mask of cpus representing the

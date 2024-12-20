@@ -30,9 +30,6 @@
 #include "huawei_platform/dp_aux_switch/dp_aux_switch.h"
 #include <huawei_platform/usb/hw_usb.h>
 
-#ifdef CONFIG_POGO_PIN
-#include <huawei_platform/usb/huawei_pogopin.h>
-#endif
 #ifdef CONFIG_TYPEC_CAP_CUSTOM_SRC2
 extern int support_smart_holder;
 #endif
@@ -1709,13 +1706,6 @@ int tcpc_typec_handle_cc_change(struct tcpc_device *tcpc_dev)
 
 	typec_disable_low_power_mode(tcpc_dev);
 
-#ifdef CONFIG_POGO_PIN
-	if (is_pogopin_support()){
-		if (typec_is_cc_open_state(tcpc_dev))
-			return 0;
-	}
-#endif
-
 #ifdef CONFIG_TYPEC_CAP_A2C_C2C
 	if ((rp_present == 0) &&
 		typec_get_rp_present_flag(tcpc_dev) != 0) {
@@ -1961,19 +1951,6 @@ int tcpc_typec_handle_timeout(struct tcpc_device *tcpc_dev, uint32_t timer_id)
 		tcpc_reset_typec_debounce_timer(tcpc_dev);
 	else if (timer_id >= TYPEC_RT_TIMER_START_ID)
 		tcpc_disable_timer(tcpc_dev, timer_id);
-
-#ifdef CONFIG_POGO_PIN
-	if (is_pogopin_support()) {
-		if (timer_id == TYPEC_TIMER_ERROR_RECOVERY)
-			return typec_handle_error_recovery_timeout(tcpc_dev);
-		else if (timer_id == TYPEC_RT_TIMER_LEGACY)
-			typec_alert_attach_state_change(tcpc_dev);
-		else if (typec_is_cc_open_state(tcpc_dev)) {
-			TYPEC_DBG("[Open] Ignore timer_evt\n");
-			return 0;
-		}
-	}
-#endif
 
 #ifdef CONFIG_USB_POWER_DELIVERY
 	if (tcpc_dev->pd_wait_pr_swap_complete) {
@@ -2604,52 +2581,6 @@ int tcpc_typec_init(struct tcpc_device *tcpc_dev, uint8_t typec_role)
 	typec_unattached_entry(tcpc_dev);
 	return ret;
 }
-
-#ifdef CONFIG_POGO_PIN
-
-static bool typec_is_cc_open_state(struct tcpc_device *tcpc_dev)
-{
-	if ((tcpc_dev->typec_state == typec_errorrecovery) || (tcpc_dev->typec_state == typec_disabled))
-		return true;
-
-	return false;
-}
-
-static void typec_cc_open_entry(struct tcpc_device *tcpc_dev, uint8_t state)
-{
-	mutex_lock(&tcpc_dev->access_lock);
-	TYPEC_NEW_STATE(state);
-	tcpc_dev->typec_attach_new = TYPEC_UNATTACHED;
-	mutex_unlock(&tcpc_dev->access_lock);
-
-	tcpci_set_cc(tcpc_dev, TYPEC_CC_OPEN);
-	typec_unattached_power_entry(tcpc_dev);
-
-	tcpc_enable_timer(tcpc_dev, TYPEC_RT_TIMER_LEGACY);
-}
-static inline void typec_disable_entry(struct tcpc_device *tcpc_dev)
-{
-       typec_cc_open_entry(tcpc_dev, typec_disabled);
-}
-int tcpc_typec_disable(struct tcpc_device *tcpc_dev)
-{
-	if (tcpc_dev->typec_state != typec_disabled) {
-		typec_disable_entry(tcpc_dev);
-		TYPEC_DBG("%s\n", __func__);
-	}
-
-	return 0;
-}
-int tcpc_typec_enable(struct tcpc_device *tcpc_dev)
-{
-	if (tcpc_dev->typec_state == typec_disabled) {
-		typec_unattached_entry(tcpc_dev);
-		TYPEC_DBG("%s\n", __func__);
-	}
-
-	return 0;
-}
-#endif
 
 void  tcpc_typec_deinit(struct tcpc_device *tcpc_dev)
 {

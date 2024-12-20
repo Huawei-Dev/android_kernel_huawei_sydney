@@ -72,9 +72,6 @@
 #endif
 
 /* #define DEBUG_GPIO	66 */
-#ifdef CONFIG_POGO_PIN
-#include <huawei_platform/usb/huawei_pogopin.h>
-#endif
 #ifdef CONFIG_TYPEC_CAP_CUSTOM_SRC2
 extern int support_smart_holder;
 #endif
@@ -1207,17 +1204,6 @@ struct cable_vdo_ops rt1711h_cable_vdo_ops = {
 };
 #endif
 
-#ifdef CONFIG_POGO_PIN
-static int tcpm_typec_detect_disable(bool disable)
-{
-	return tcpm_typec_disable_function(g_chip_for_reg_read->tcpc, disable);
-}
-
-struct cc_detect_ops rt1711h_cc_detect_ops = {
-	.typec_detect_disable = tcpm_typec_detect_disable,
-};
-#endif
-
 void rt1711h_set_cc_mode(int mode)
 {
 	int pull = mode ? TYPEC_CC_DRP : TYPEC_CC_RD;
@@ -1862,9 +1848,6 @@ static int rt1711_i2c_probe(struct i2c_client *client,
 		goto err_tcpc_reg;
 	}
 
-#ifdef CONFIG_POGO_PIN
-	cc_detect_register_ops(&rt1711h_cc_detect_ops);
-#endif
 	ret = rt1711_init_alert(chip->tcpc);
 	if (ret < 0) {
 		pr_err("rt1711 init alert fail\n");

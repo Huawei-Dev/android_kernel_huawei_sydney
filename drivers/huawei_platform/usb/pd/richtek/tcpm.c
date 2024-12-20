@@ -810,14 +810,4 @@ int tcpm_notify_vbus_stable(
 }
 EXPORT_SYMBOL(tcpm_notify_vbus_stable);
 
-#ifdef CONFIG_POGO_PIN
-int tcpm_typec_disable_function(
-        struct tcpc_device *tcpc_dev, bool disable)
-{
-	if (disable)
-		return tcpc_typec_disable(tcpc_dev);
-
-	return tcpc_typec_enable(tcpc_dev);
-}
-#endif
 #endif /* CONFIG_USB_POWER_DELIVERY */

@@ -34,9 +34,6 @@
 #include "fusb30x_driver.h"
 #include <huawei_platform/usb/hw_pd_dev.h>
 
-#ifdef CONFIG_POGO_PIN
-#include <huawei_platform/usb/huawei_pogopin.h>
-#endif
 /******************************************************************************
 * Driver functions
 ******************************************************************************/
@@ -134,17 +131,6 @@ int fusb30x_get_cc_mode(void)
 {
        return 0;
 }
-
-#ifdef CONFIG_POGO_PIN
-static int fusb30x_typec_detect_disable(FSC_BOOL disable)
-{
-	return core_cc_disable(disable);
-}
-
-struct cc_detect_ops fusb30x_cc_detect_ops = {
-	.typec_detect_disable = fusb30x_typec_detect_disable,
-};
-#endif
 
 #ifdef FSC_HAVE_CUSTOM_SRC2
 int fusb302_is_cust_src2_cable(void)
@@ -261,9 +247,6 @@ static int fusb30x_probe (struct i2c_client* client,
     fusb_InitializeTimer();
     pr_debug("FUSB  %s - Timers initialized!\n", __func__);
 
-#ifdef CONFIG_POGO_PIN
-	cc_detect_register_ops(&fusb30x_cc_detect_ops);
-#endif
 #ifdef FSC_HAVE_CUSTOM_SRC2
 	if (pd_dpm_get_is_support_smart_holder())
 		pd_dpm_cable_vdo_ops_register(&fusb302_cable_vdo_ops);

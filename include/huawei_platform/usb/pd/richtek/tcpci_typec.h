@@ -52,9 +52,4 @@ extern int tcpc_typec_swap_role(struct tcpc_device *tcpc_dev);
 #endif /* CONFIG_TYPEC_CAP_ROLE_SWAP */
 
 extern int tcpc_typec_notify_direct_charge(struct tcpc_device *tcpc_dev, bool dc);
-#ifdef CONFIG_POGO_PIN
-static bool typec_is_cc_open_state(struct tcpc_device *tcpc_dev);
-extern int tcpc_typec_disable(struct tcpc_device *tcpc_dev);
-extern int tcpc_typec_enable(struct tcpc_device *tcpc_dev);
-#endif
 #endif /* #ifndef __LINUX_TCPCI_TYPEC_H */

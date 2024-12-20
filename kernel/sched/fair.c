@@ -165,17 +165,6 @@ unsigned int sysctl_sched_cfs_bandwidth_slice = 5000UL;
  */
 unsigned int capacity_margin = 1280; /* ~20% */
 
-#ifdef CONFIG_HISI_MULTI_MARGIN
-static inline unsigned int hisi_capacity_margin(int cpu)
-{
-	return cpu_rq(cpu)->cluster->capacity_margin;
-}
-
-static inline unsigned int hisi_sd_capacity_margin(int cpu)
-{
-	return cpu_rq(cpu)->cluster->sd_capacity_margin;
-}
-#else /* CONFIG_HISI_MULTI_MARGIN */
 static inline unsigned int hisi_capacity_margin(int cpu)
 {
 	return capacity_margin;
@@ -192,7 +181,6 @@ static inline unsigned int hisi_sd_capacity_margin(int cpu)
 	return capacity_margin;
 }
 #endif
-#endif /* CONFIG_HISI_MULTI_MARGIN */
 
 #ifdef CONFIG_HISI_EAS_SCHED
 
@@ -6954,7 +6942,6 @@ find_boost_cpu(struct cpumask *group_cpus, struct task_struct *p, int this_cpu)
 	return shallowest_idle_cpu != -1 ? shallowest_idle_cpu : least_loaded_cpu;
 }
 
-#ifndef CONFIG_HISI_MULTI_MARGIN
 static unsigned long
 cpu_spare_capacity(int cpu, unsigned long util)
 {
@@ -7058,29 +7045,6 @@ find_global_boost_cpu(struct task_struct *p)
 
 	return boost_cpu;
 }
-#else /* CONFIG_HISI_MULTI_MARGIN */
-static int
-find_global_boost_cpu(struct task_struct *p)
-{
-	int boost_cpu = -1;
-	struct sched_cluster *cluster;
-
-	for_each_sched_cluster_reverse(cluster) {
-		boost_cpu = find_boost_cpu(&cluster->cpus, p, cpumask_first(&cluster->cpus));
-		if (boost_cpu == -1)
-			continue;
-
-		if (idle_cpu(boost_cpu))
-			break;
-
-		/* If util of boost_cpu is over 90%, check other cluster.*/
-		if ((capacity_of(boost_cpu) * 1024) >= (cpu_util_wake(boost_cpu, p) * 1138))
-			break;
-	}
-
-	return boost_cpu;
-}
-#endif /* CONFIG_HISI_MULTI_MARGIN */
 #endif /* CONFIG_HISI_EAS_SCHED */
 
 static inline int find_idlest_cpu(struct sched_domain *sd, struct task_struct *p,
@@ -12528,142 +12492,6 @@ static ssize_t eas_store(struct kobject *a, struct attribute *attr,
 	return ret;
 }
 
-#ifdef CONFIG_HISI_MULTI_MARGIN
-static unsigned int *get_tokenized_data(const char *buf)
-{
-	const char *cp;
-	int i;
-	int ntokens = 1;
-	unsigned int *tokenized_data;
-	int err = -EINVAL;
-
-	cp = buf;
-	while ((cp = strpbrk(cp + 1, " :")))
-		ntokens++;
-
-	if (ntokens != num_clusters)
-		goto err;
-
-	tokenized_data = kmalloc(ntokens * sizeof(unsigned int), GFP_KERNEL);
-	if (!tokenized_data) {
-		err = -ENOMEM;
-		goto err;
-	}
-
-	cp = buf;
-	i = 0;
-	while (i < ntokens) {
-		if (sscanf(cp, "%u", &tokenized_data[i++]) != 1) /* [false alarm]:fortify */
-			goto err_kfree;
-
-		cp = strpbrk(cp, " :");
-		if (!cp)
-			break;
-		cp++;
-	}
-
-	if (i != ntokens)
-		goto err_kfree;
-
-	return tokenized_data;
-
-err_kfree:
-	kfree(tokenized_data);
-err:
-	return ERR_PTR(err);
-}
-
-static ssize_t capacity_margin_show(struct kobject *kobj,
-				struct attribute *attr, char *buf)
-{
-	struct sched_cluster *cluster;
-	ssize_t ret = 0;
-
-	for_each_sched_cluster(cluster) {
-		ret += scnprintf(buf + ret, PAGE_SIZE - ret, "%u%s",
-				cluster->capacity_margin, ":");
-	}
-
-	sprintf(buf + ret - 1, "\n"); /*lint !e421*/
-	return ret;
-}
-
-static ssize_t sd_capacity_margin_show(struct kobject *kobj,
-				struct attribute *attr, char *buf)
-{
-	struct sched_cluster *cluster;
-	ssize_t ret = 0;
-
-	for_each_sched_cluster(cluster) {
-		ret += scnprintf(buf + ret, PAGE_SIZE - ret, "%u%s",
-				cluster->sd_capacity_margin, ":");
-	}
-
-	sprintf(buf + ret - 1, "\n"); /*lint !e421*/
-	return ret;
-}
-
-static ssize_t capacity_margin_store(struct kobject *a, struct attribute *attr,
-				const char *buf, size_t count)
-{
-	char *str;
-	unsigned int *new_margin;
-	struct sched_cluster *cluster;
-	int i;
-
-	str = vmalloc(count + 1);
-	if (str == NULL)
-		return -ENOMEM;
-	memcpy(str, buf, count);
-	str[count] = 0;
-
-	new_margin = get_tokenized_data(str);
-
-	vfree(str);
-
-	if (IS_ERR(new_margin))
-		return PTR_ERR(new_margin);
-
-	i = 0;
-	for_each_sched_cluster(cluster) {
-		cluster->capacity_margin = new_margin[i++];
-	}
-
-	kfree(new_margin);
-	return count;
-}
-
-static ssize_t sd_capacity_margin_store(struct kobject *a, struct attribute *attr,
-				const char *buf, size_t count)
-{
-	char *str;
-	unsigned int *new_margin;
-	struct sched_cluster *cluster;
-	int i;
-
-	str = vmalloc(count + 1);
-	if (str == NULL)
-		return -ENOMEM;
-	memcpy(str, buf, count);
-	str[count] = 0;
-
-	new_margin = get_tokenized_data(str);
-
-	vfree(str);
-
-	if (IS_ERR(new_margin))
-		return PTR_ERR(new_margin);
-
-	i = 0;
-	for_each_sched_cluster(cluster) {
-		cluster->sd_capacity_margin = new_margin[i++];
-	}
-
-	kfree(new_margin);
-	return count;
-}
-#endif /* CONFIG_HISI_MULTI_MARGIN */
-
 static void eas_attr_add(
 	const char *name,
 	int *value,
@@ -12731,7 +12559,6 @@ static int eas_attr_init(void)
 		NULL,
 		0640);
 
-#ifndef CONFIG_HISI_MULTI_MARGIN
 	eas_attr_add("sd_capacity_margin",
 		&sd_capacity_margin,
 		NULL,
@@ -12744,21 +12571,6 @@ static int eas_attr_init(void)
 		NULL,
 		NULL,
 		0640);
-#else
-	eas_attr_add("sd_capacity_margin",
-		NULL,
-		sd_capacity_margin_show,
-		sd_capacity_margin_store,
-		NULL,
-		0640);
-
-	eas_attr_add("capacity_margin",
-		NULL,
-		capacity_margin_show,
-		capacity_margin_store,
-		NULL,
-		0640);
-#endif
 
 	eas_attr_add("boot_boost",
 		&boot_boost,

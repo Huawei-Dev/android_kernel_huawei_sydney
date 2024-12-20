@@ -19,13 +19,6 @@ config CONTEXTHUB_LOADMONITOR
 	help
 	Say yes here if you want to use contexthub shell dbg function
 
-config CONTEXTHUB_CHRE
-	bool "Sensor CONTEXTHUB CHRE driver"
-	depends on CONTEXTHUB
-	default n
-	help
-	Say yes here if you want to use contexthub shell dbg function
-
 config INPUTHUB_MOCK_SENSOR
 	bool "mock sensor feature support"
 	depends on INPUTHUB_20

@@ -19,12 +19,5 @@ config CONTEXTHUB_LOADMONITOR
 	help
 	Say yes here if you want to use contexthub shell dbg function
 
-config INPUTHUB_MOCK_SENSOR
-	bool "mock sensor feature support"
-	depends on INPUTHUB_20
-	default n
-	help
-	Say yes here if you want to configure INPUTHUB_MOCK_SENSOR
-
 source "drivers/contexthub/flp/Kconfig"
 

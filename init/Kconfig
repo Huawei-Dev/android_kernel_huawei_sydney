@@ -1402,27 +1402,6 @@ config HISI_ED_TASK_RESET_AT_UPMIGRATION
 	  by its earlier running time on little core. Disable this feature
 	  and do not reset ed task on migration is a better choice.
 
-config HISI_CPU_ISOLATION
-	bool "Hisilicon cpu isolation"
-	depends on SMP
-	default n
-	help
-	  This option enables cpu isolation, which implement an interface to
-	  userspace to isolate cpu dynamically, the isolated cpu will be
-	  unavailable to scheduler and load balancer, and all its non-pinned
-	  timers, IRQs and tasks will be migrated to other cpus, only pinned
-	  kthread and IRQS are still allowed to run, this achieve similar
-	  effect as hotplug but at lower latency cost.
-
-config HISI_CORE_CTRL
-	bool "HIsilicon core control"
-	depends on HISI_CPU_ISOLATION
-	default n
-	help
-	  This option enables the core control functionality in
-	  the scheduler. Core control automatically isolate and
-	  unisolate cores based on cpu load and utilization.
-
 config HISI_MIGRATION_NOTIFY
 	bool "Hisilicon task migration notify freq change"
 	depends on HISI_EAS_SCHED

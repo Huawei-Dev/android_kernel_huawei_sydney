@@ -601,9 +601,7 @@ static void sugov_update_util(int cpu, u64 time,
 	struct rq *rq = cpu_rq(cpu);
 	unsigned long max_cap, rt, util;
 	s64 delta;
-#ifdef CONFIG_HISI_CORE_CTRL
-	struct cpufreq_govinfo govinfo;
-#endif
+
 	struct sugov_cpu *sg_cpu = &per_cpu(sugov_cpu, cpu);
 
 	max_cap = arch_scale_cpu_capacity(NULL, cpu);
@@ -627,20 +625,6 @@ static void sugov_update_util(int cpu, u64 time,
 
 	sg_cpu->util = util;
 	sg_cpu->max = max_cap;
-#ifdef CONFIG_HISI_CORE_CTRL
-	/*
-	 * Send govinfo notification.
-	 * Govinfo notification could potentially wake up another thread
-	 * managed by its clients. Thread wakeups might trigger a load
-	 * change callback that executes this function again. Therefore
-	 * no spinlock could be held when sending the notification.
-	 */
-	govinfo.cpu = cpu;
-	govinfo.load = util * 100 / capacity_curr_of(cpu);
-	govinfo.sampling_rate_us = 0;
-	atomic_notifier_call_chain(&cpufreq_govinfo_notifier_list,
-				   CPUFREQ_LOAD_CHANGE, &govinfo);
-#endif
 }
 #endif
 

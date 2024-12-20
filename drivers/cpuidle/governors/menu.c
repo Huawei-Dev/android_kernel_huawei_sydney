@@ -486,12 +486,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
 		if (s->disabled || su->disable)
 			continue;
 
-#ifdef CONFIG_HISI_CPU_ISOLATION
-		if (cpu_isolated(cpu)) {
-			data->last_state_idx = i;
-			continue;
-		}
-#endif
 		if (s->target_residency > data->predicted_us) {
 			low_predicted = 1;
 			continue;

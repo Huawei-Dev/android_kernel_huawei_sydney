@@ -199,12 +199,7 @@ extern bool check_pending_deferrable_timers(int cpu);
  */
 #define NEXT_TIMER_MAX_DELTA	((1UL << 30) - 1)
 
-#ifdef CONFIG_HISI_CPU_ISOLATION
-/* To be used from cpusets, only */
-extern void timer_quiesce_cpu(void *cpup);
-#else
 static inline void timer_quiesce_cpu(void *cpup) {}
-#endif
 
 /*
  * Timer-statistics info:

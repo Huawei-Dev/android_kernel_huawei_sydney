@@ -1888,68 +1888,7 @@ signed long __sched schedule_timeout_idle(signed long timeout)
 }
 EXPORT_SYMBOL(schedule_timeout_idle);
 
-#if defined(CONFIG_HISI_CPU_ISOLATION)
-static void migrate_timer_list(struct timer_base *new_base,
-			       struct hlist_head *head, bool remove_pinned)
-{
-	struct timer_list *timer;
-	struct timer_base *base;
-	int cpu = new_base->cpu;
-	struct hlist_node *n;
-	int is_pinned;
-
-	hlist_for_each_entry_safe(timer, n, head, entry) {
-		is_pinned = timer->flags & TIMER_PINNED;
-		if (!remove_pinned && is_pinned)
-			continue;
-
-		base = get_timer_base(timer->flags);
-		detach_if_pending(timer, base, false);
-		timer->flags = (timer->flags & ~TIMER_BASEMASK) | cpu;
-		internal_add_timer(new_base, timer);
-	}
-}
-
-static void __migrate_timers(int cpu, bool remove_pinned)
-{
-	unsigned long flags;
-	struct timer_base *old_base;
-	struct timer_base *new_base;
-	int b, i;
-
-	for (b = 0; b < NR_BASES; b++) {
-		old_base = per_cpu_ptr(&timer_bases[b], cpu);
-		new_base = get_cpu_ptr(&timer_bases[b]);
-		/*
-		 * The caller is globally serialized and nobody else
-		 * takes two locks at once, deadlock is not possible.
-		 */
-		spin_lock_irqsave(&new_base->lock, flags);
-		spin_lock_nested(&old_base->lock, SINGLE_DEPTH_NESTING);
-
-		/*
-		 * If we're in the hotplug path, kill the system if there's a running
-		 * timer. It's ok to have a running timer in the isolation case - the
-		 * currently running or just expired timers are off of the timer wheel
-		 * and so everything else can be migrated off.
-		 */
-		if (!cpu_online(cpu))
-			BUG_ON(old_base->running_timer);
-
-		for (i = 0; i < WHEEL_SIZE; i++)
-			migrate_timer_list(new_base, old_base->vectors + i, remove_pinned);
-
-		spin_unlock(&old_base->lock);
-		spin_unlock_irqrestore(&new_base->lock, flags);
-		put_cpu_ptr(&timer_bases);
-	}
-}
-
-void timer_quiesce_cpu(void *cpup)
-{
-	__migrate_timers(*(int *)cpup, false);
-}
-#elif defined(CONFIG_HOTPLUG_CPU)
+#ifdef CONFIG_HOTPLUG_CPU
 static void migrate_timer_list(struct timer_base *new_base, struct hlist_head *head)
 {
 	struct timer_list *timer;
@@ -1980,14 +1919,6 @@ int timers_prepare_cpu(unsigned int cpu)
 	return 0;
 }
 
-#ifdef CONFIG_HISI_CPU_ISOLATION
-int timers_dead_cpu(unsigned int cpu)
-{
-	BUG_ON(cpu_online(cpu));
-	__migrate_timers(cpu, true);
-	return 0;
-}
-#else
 int timers_dead_cpu(unsigned int cpu)
 {
 	struct timer_base *old_base;
@@ -2023,7 +1954,6 @@ int timers_dead_cpu(unsigned int cpu)
 	}
 	return 0;
 }
-#endif /* CONFIG_HISI_CPU_ISOLATION */
 #endif /* CONFIG_HOTPLUG_CPU */
 
 static void __init init_timer_cpu(int cpu)

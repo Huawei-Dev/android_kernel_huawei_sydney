@@ -40,11 +40,7 @@ void walt_fixup_busy_time(struct task_struct *p, int new_cpu);
 void walt_init_new_task_load(struct task_struct *p);
 void walt_mark_task_starting(struct task_struct *p);
 void walt_set_window_start(struct rq *rq);
-#ifdef CONFIG_HISI_CPU_ISOLATION
-void walt_migrate_sync_cpu(int cpu, int new_cpu);
-#else
 void walt_migrate_sync_cpu(int cpu);
-#endif
 void walt_init_cpu_efficiency(void);
 u64 walt_ktime_clock(void);
 void walt_account_irqtime(int cpu, struct task_struct *curr, u64 delta,
@@ -80,11 +76,7 @@ static inline void walt_fixup_busy_time(struct task_struct *p, int new_cpu) { }
 static inline void walt_init_new_task_load(struct task_struct *p) { }
 static inline void walt_mark_task_starting(struct task_struct *p) { }
 static inline void walt_set_window_start(struct rq *rq) { }
-#ifdef CONFIG_HISI_CPU_ISOLATION
-static inline void walt_migrate_sync_cpu(int cpu, int new_cpu) { }
-#else
 static inline void walt_migrate_sync_cpu(int cpu) { }
-#endif
 static inline void walt_init_cpu_efficiency(void) { }
 static inline u64 walt_ktime_clock(void) { return 0; }
 

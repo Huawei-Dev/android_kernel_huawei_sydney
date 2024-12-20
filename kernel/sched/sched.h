@@ -830,9 +830,6 @@ struct rq {
 #ifdef CONFIG_HISI_ED_TASK
 	struct task_struct *ed_task;
 #endif
-#ifdef CONFIG_HISI_CORE_CTRL
-	int nr_heavy_running;
-#endif
 	u64 group_load;
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
@@ -1570,18 +1567,11 @@ static inline void sched_update_tick_dependency(struct rq *rq)
 static inline void sched_update_tick_dependency(struct rq *rq) { }
 #endif
 
-#ifdef CONFIG_HISI_CORE_CTRL
-extern void core_ctl_update_nr_prod(struct rq *rq);
-#endif
-
 static inline void __add_nr_running(struct rq *rq, unsigned count)
 {
 	unsigned prev_nr = rq->nr_running;
 
 	rq->nr_running = prev_nr + count;
-#ifdef CONFIG_HISI_CORE_CTRL
-	core_ctl_update_nr_prod(rq);
-#endif
 
 	if (prev_nr < 2 && rq->nr_running >= 2) {
 #ifdef CONFIG_SMP
@@ -1596,9 +1586,6 @@ static inline void __add_nr_running(struct rq *rq, unsigned count)
 static inline void __sub_nr_running(struct rq *rq, unsigned count)
 {
 	rq->nr_running -= count;
-#ifdef CONFIG_HISI_CORE_CTRL
-	core_ctl_update_nr_prod(rq);
-#endif
 	/* Check if we still need preemption */
 	sched_update_tick_dependency(rq);
 }

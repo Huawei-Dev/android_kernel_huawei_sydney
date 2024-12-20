@@ -1458,17 +1458,6 @@ config DEFAULT_USE_ENERGY_AWARE
 
 	  Say N if unsure.
 
-
-config DEFAULT_FBT_STRICT_ORDER
-	bool "Decide the priority of candidates selected by find_best_target()"
-	default n
-	help
-	  Enforce the priority of candidates selected by find_best_target()
-	  true: If the target CPU saves any energy, use that.
-	  false: Use whichever of target or backup saves most.
-
-	  Say N if unsure.
-
 config SYSFS_DEPRECATED
 	bool "Enable deprecated sysfs features to support old userspace tools"
 	depends on SYSFS

@@ -77,16 +77,12 @@
 #define NETLINK_ST_LASER_DRIVER 38
 #endif
 
-#ifdef CONFIG_HUAWEI_EIMA_ACCESS_CONTROL
-#define NETLINK_EIMA 39
-#endif
-
 #if (defined(CONFIG_HW_CPULOAD_NOTI) || defined(CONFIG_HW_VIP_THREAD) \
         || defined(CONFIG_HW_IAWARE_THREAD_BOOST))
 #define NETLINK_HW_IAWARE_CPU 33
-#define MAX_LINKS 40
+#define MAX_LINKS 39
 #else
-#define MAX_LINKS 40
+#define MAX_LINKS 39
 #endif
 
 struct sockaddr_nl {

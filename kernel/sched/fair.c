@@ -11766,11 +11766,7 @@ kick_active_balance(struct rq *rq, struct task_struct *p, int new_cpu)
 
 	/* Invoke active balance to force migrate currently running task */
 	raw_spin_lock(&rq->lock);
-#ifdef CONFIG_HISI_RT_ACTIVE_LB
-	if (!rq->active_balance && !rq->rt_active_balance) {
-#else
 	if (!rq->active_balance) {
-#endif
 		rq->active_balance = 1;
 		rq->push_cpu = new_cpu;
 		get_task_struct(p);

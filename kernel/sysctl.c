@@ -439,15 +439,6 @@ static struct ctl_table kern_table[] = {
 	},
 #endif /* CONFIG_HISI_EAS_SCHED */
 #endif /* CONFIG_SCHED_WALT */
-#ifdef CONFIG_HISI_RT_ACTIVE_LB
-	{
-		.procname	= "sched_enable_rt_active_lb",
-		.data		= &sysctl_sched_enable_rt_active_lb,
-		.maxlen 	= sizeof(unsigned int),
-		.mode		= 0644,
-		.proc_handler	= proc_dointvec,
-	},
-#endif
 #ifdef CONFIG_SCHED_DEBUG
 	{
 		.procname	= "sched_min_granularity_ns",

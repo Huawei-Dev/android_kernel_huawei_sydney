@@ -40,11 +40,7 @@ extern long calc_load_fold_active(struct rq *this_rq, long adjust);
 #ifdef CONFIG_SMP
 extern void cpu_load_update_active(struct rq *this_rq);
 extern void check_for_migration(struct rq *rq, struct task_struct *p);
-#ifdef CONFIG_HISI_RT_ACTIVE_LB
-extern void check_for_rt_migration(struct rq *rq, struct task_struct *p);
-#else
 static inline void check_for_rt_migration(struct rq *rq, struct task_struct *p) { }
-#endif
 #else
 static inline void cpu_load_update_active(struct rq *this_rq) { }
 static inline void check_for_migration(struct rq *rq, struct task_struct *p) { }
@@ -773,13 +769,6 @@ struct rq {
 	int push_cpu;
 	struct task_struct *push_task;
 	struct cpu_stop_work active_balance_work;
-
-	/* For rt active balancing */
-#ifdef CONFIG_HISI_RT_ACTIVE_LB
-	int rt_active_balance;
-	struct task_struct *rt_push_task;
-	struct cpu_stop_work rt_active_balance_work;
-#endif
 
 	/* cpu of this runqueue: */
 	int cpu;

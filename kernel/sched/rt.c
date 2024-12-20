@@ -24,10 +24,6 @@ struct rt_bandwidth def_rt_bandwidth;
 unsigned int rt_capacity_margin = 1138; /* ~10% */
 unsigned int sysctl_sched_enable_rt_cas = 0;
 
-#ifdef CONFIG_HISI_RT_ACTIVE_LB
-unsigned int sysctl_sched_enable_rt_active_lb = 1;
-#endif
-
 static enum hrtimer_restart sched_rt_period_timer(struct hrtimer *timer)
 {
 	struct rt_bandwidth *rt_b =
@@ -2401,90 +2397,6 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
 		}
 	}
 }
-
-#ifdef CONFIG_HISI_RT_ACTIVE_LB
-static int rt_active_load_balance_cpu_stop(void *data)
-{
-	struct rq *busiest_rq = data;
-	struct task_struct *next_task = busiest_rq->rt_push_task;
-	struct rq *lowest_rq;
-	unsigned long flags;
-
-	raw_spin_lock_irqsave(&busiest_rq->lock, flags);
-	busiest_rq->rt_active_balance = 0;
-
-	/* find_lock_lowest_rq locks the rq if found */
-	lowest_rq = find_lock_lowest_rq(next_task, busiest_rq);
-	if (!lowest_rq)
-		goto out;
-
-	if (capacity_orig_of(cpu_of(lowest_rq)) <= capacity_orig_of(task_cpu(next_task)))
-		goto unlock;
-
-	deactivate_task(busiest_rq, next_task, 0);
-	next_task->on_rq = TASK_ON_RQ_MIGRATING;
-	set_task_cpu(next_task, lowest_rq->cpu);
-	next_task->on_rq = TASK_ON_RQ_QUEUED;
-	activate_task(lowest_rq, next_task, 0);
-
-	resched_curr(lowest_rq);
-
-unlock:
-	double_unlock_balance(busiest_rq, lowest_rq);
-
-out:
-	put_task_struct(next_task);
-	raw_spin_unlock_irqrestore(&busiest_rq->lock, flags);
-
-
-	return 0;
-}
-
-void check_for_rt_migration(struct rq *rq, struct task_struct *p)
-{
-	struct related_thread_group *grp;
-	struct sched_cluster *new_cluster;
-	int cpu = task_cpu(p);
-	unsigned long cpu_orig_cap;
-	bool need_actvie_lb = false;
-
-	if (!sysctl_sched_enable_rt_active_lb)
-		return ;
-
-	if (p->nr_cpus_allowed == 1)
-		return ;
-
-	rcu_read_lock();
-	grp = task_related_thread_group(p);
-	if (!grp || !grp->preferred_cluster)
-		goto out;
-
-	cpu_orig_cap = capacity_orig_of(cpu);
-	/* cpu has max capacity, no need to do balance */
-	if (cpu_orig_cap == rq->rd->max_cpu_capacity.val)
-		goto out;
-
-	new_cluster = grp->preferred_cluster;
-	if (capacity_orig_of(cpumask_first(&new_cluster->cpus)) > cpu_orig_cap) {
-		raw_spin_lock(&rq->lock);
-		if (!rq->active_balance && !rq->rt_active_balance) {
-			rq->rt_active_balance = 1;
-			rq->rt_push_task = p;
-			get_task_struct(p);
-			need_actvie_lb = true;
-		}
-		raw_spin_unlock(&rq->lock);
-
-		if (need_actvie_lb)
-			stop_one_cpu_nowait(task_cpu(p),
-						rt_active_load_balance_cpu_stop,
-						rq, &rq->rt_active_balance_work);
-	}
-
-out:
-	rcu_read_unlock();
-}
-#endif
 
 static void set_curr_task_rt(struct rq *rq)
 {

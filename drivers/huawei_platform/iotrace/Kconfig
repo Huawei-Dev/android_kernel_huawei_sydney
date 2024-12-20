@@ -6,10 +6,4 @@ config HUAWEI_IO_TRACING
         default n
         depends on TRACING && TASK_XACCT && TASK_IO_ACCOUNTING
         help
-            trace the io state for debugging
-config HUAWEI_IO_MONITOR
-        tristate "huawei io monitor"
-        default n
-        depends on TASK_IO_ACCOUNTING && HUAWEI_UID_IO_STATS
-        help
-            trace io monitor 
+            trace the io state for debugging 

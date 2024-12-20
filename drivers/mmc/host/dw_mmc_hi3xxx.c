@@ -3175,18 +3175,11 @@ static const struct of_device_id dw_mci_hs_match[] = {
 
 MODULE_DEVICE_TABLE(of, dw_mci_hs_match);
 
-#if defined(CONFIG_HISI_DEBUG_FS)
-extern void proc_sd_test_init(void);
-#endif
 int dw_mci_hs_probe(struct platform_device *pdev)
 {
 	const struct dw_mci_drv_data *drv_data = NULL;
 	const struct of_device_id *match = NULL;
 	int err;
-
-#if defined(CONFIG_HISI_DEBUG_FS)
-	proc_sd_test_init();
-#endif
 
 	match = of_match_node(dw_mci_hs_match, pdev->dev.of_node);
 	if (!match)

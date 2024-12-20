@@ -221,29 +221,6 @@ static int shmem_recv_init(void)
 	return 0;
 }
 
-#ifdef CONFIG_HISI_DEBUG_FS
-#define SHMEM_TEST_TAG (TAG_END-1)
-void shmem_recv_test(const void __iomem *buf_addr, unsigned int size)
-{
-	pr_info("%s: get size %d, send back;\n", __func__, size);
-	shmem_send(SHMEM_TEST_TAG, buf_addr, size);
-}
-
-int shmem_notify_test(const pkt_header_t *head)
-{
-	shmem_recv_test((void __iomem *)head, (unsigned int)(head->length + sizeof(pkt_header_t)));
-	return 0;
-}
-
-int shmem_start_test(void)
-{
-	register_mcu_event_notifier(SHMEM_TEST_TAG, CMD_SHMEM_AP_RECV_REQ, shmem_notify_test);
-	pr_info("%s: ok;\n", __func__);
-	return 0;
-}
-// late_initcall_sync(shmem_start_test); /* test only */
-#endif
-
 int shmem_send(obj_tag_t module_id, const void *usr_buf,
 	       unsigned int usr_buf_size)
 {

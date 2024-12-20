@@ -898,11 +898,6 @@ int usb_gadget_ep_match_desc(struct usb_gadget *gadget,
 	u16		max;
 	int		num_req_streams = 0;
 
-#ifdef CONFIG_HISI_DEBUG_FS
-	if (ep->fake_claimed)
-		return 0;
-#endif
-
 	/* endpoint already claimed? */
 	if (ep->claimed)
 		return 0;

@@ -26,9 +26,6 @@ typedef enum tag_efuse_mem_attr {
 	efuse_mem_attr_authkey_rd_disable,
 	efuse_mem_attr_dbg_class_ctrl,
 	efuse_mem_attr_dieid,
-#ifdef CONFIG_HISI_DEBUG_FS
-	efuse_mem_attr_sltfinishflag,
-#endif
 	efuse_mem_attr_max
 } efuse_mem_attr_t;
 
@@ -65,20 +62,6 @@ typedef struct tag_efusec_data{
 #define HISI_EFUSE_WRITE_DEBUGMODE         (0x7000)
 #define HISI_EFUSE_READ_DEBUGMODE          (0x8000)
 #define HISI_EFUSE_READ_THERMAL            (0x9000)
-
-#ifdef CONFIG_HISI_DEBUG_FS
-#define HISI_EFUSE_TEST_WR                 (0xa001)
-#define HISI_EFUSE_TEST_READ_CHIPID        (0xa002)
-#define HISI_EFUSE_TEST_READ_DIEID         (0xa003)
-#define HISI_EFUSE_TEST_READ_KCE           (0xa004)
-#define HISI_EFUSE_TEST_WRITE_KCE          (0xa005)
-#endif
-
-#ifdef CONFIG_HISI_DEBUG_FS
-#define HISI_EFUSE_WRITE_SLTFINISHFLAG     (0xb000)
-#define HISI_EFUSE_READ_SLTFINISHFLAG      (0xb001)
-#define EFUSE_SLTFINISHFLAG_LENGTH_BYTES   (4)
-#endif
 
 #define HISI_EFUSE_WRITE_DJTAGDEBUG        (0xc000)
 #define HISI_EFUSE_READ_DJTAGDEBUG         (0xd000)

@@ -133,9 +133,7 @@ extern void dw_mci_work_routine_card(struct work_struct *work);
 extern bool mci_wait_reset(struct device *dev, struct dw_mci *host);
 static int mci_send_cmd(struct dw_mci_slot *slot, u32 cmd, u32 arg);
 extern unsigned int test_sd_data;
-#if defined(CONFIG_HISI_DEBUG_FS)
-extern unsigned int sd_test_reset_flag;
-#endif
+
 static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
 {
 	unsigned long timeout = jiffies + msecs_to_jiffies(50);
@@ -1862,14 +1860,6 @@ void dw_mci_retuning_flag_set(struct dw_mci *host,int timing)
 
 }
 
-#if defined(CONFIG_HISI_DEBUG_FS)
-void sd_reset_test_func(struct mmc_request *mrq, struct dw_mci *host)
-{
-	if (sd_test_reset_flag && mrq && mrq->cmd && (host->hw_mmc_id == DWMMC_SD_ID)) {
-		mrq->cmd->error = -EILSEQ;
-	}
-}
-#endif
 void dw_mci_request_end(struct dw_mci *host, struct mmc_request *mrq)
 	__releases(&host->lock)
 	__acquires(&host->lock)
@@ -1878,9 +1868,7 @@ void dw_mci_request_end(struct dw_mci *host, struct mmc_request *mrq)
 	struct mmc_host	*prev_mmc = host->cur_slot->mmc;
 	const struct dw_mci_drv_data *drv_data = host->drv_data;
 	int timing = prev_mmc->ios.timing;
-#if defined(CONFIG_HISI_DEBUG_FS)
-	struct mmc_card *card = prev_mmc->card;
-#endif
+
 	WARN_ON(host->cmd || host->data);
 
 	del_timer(&host->timer);
@@ -1931,11 +1919,6 @@ void dw_mci_request_end(struct dw_mci *host, struct mmc_request *mrq)
 	}
 
 out:
-#if defined(CONFIG_HISI_DEBUG_FS)
-	if (card) {
-		sd_reset_test_func(mrq, host);
-	}
-#endif
 	if (!list_empty(&host->queue)) {
 		slot = list_entry(host->queue.next,
 				  struct dw_mci_slot, queue_node);

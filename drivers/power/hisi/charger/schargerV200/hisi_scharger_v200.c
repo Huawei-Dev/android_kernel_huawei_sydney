@@ -320,10 +320,7 @@ static ssize_t hi6522_sysfs_show(struct device *dev,
 {
 	struct hi6522_sysfs_field_info *info;
 	struct hi6522_sysfs_field_info *info2;
-#ifdef CONFIG_HISI_DEBUG_FS
-	int ret;
-#endif
-    u8 v;
+	u8 v;
 
 	info = hi6522_sysfs_field_lookup(attr->attr.name);
 	if (!info)
@@ -345,11 +342,6 @@ static ssize_t hi6522_sysfs_show(struct device *dev,
 			return -EINVAL;
 		info->reg = info2->reg;
 	}
-#ifdef CONFIG_HISI_DEBUG_FS
-	ret = hi6522_read_mask(info->reg, info->mask, info->shift, &v);
-	if (ret)
-		return ret;
-#endif
 
 	return scnprintf(buf, PAGE_SIZE, "0x%hhx\n", v);
 }
@@ -405,11 +397,6 @@ static ssize_t hi6522_sysfs_store(struct device *dev,
 			return -EINVAL;
 		}
 	}
-#ifdef CONFIG_HISI_DEBUG_FS
-	ret = hi6522_write_mask(info->reg, info->mask, info->shift, v);
-	if (ret)
-		return ret;
-#endif
 
 	return count;
 }

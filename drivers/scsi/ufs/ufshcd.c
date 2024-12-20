@@ -77,13 +77,8 @@
 #include "hisi_ufs_bkops.h"
 #endif
 
-#ifdef CONFIG_HISI_DEBUG_FS
-#define HISI_UFS_BUG_ON(x) 	do {BUG_ON(x);} while(0)
-#define HISI_UFS_BUG() 		do {BUG();} while(0)
-#else
 #define HISI_UFS_BUG_ON(x) 	do {} while(0)
 #define HISI_UFS_BUG() 		do {} while(0)
-#endif
 
 #define UFSHCD_ENABLE_INTRS	(UTP_TRANSFER_REQ_COMPL |\
 				 UTP_TASK_REQ_COMPL |\
@@ -330,70 +325,7 @@ static void ufshcd_print_host_regs(struct ufs_hba *hba)
 	ufshcd_print_uic_err_hist(hba, &hba->ufs_stats.tl_err, "tl_err");
 	ufshcd_print_uic_err_hist(hba, &hba->ufs_stats.dme_err, "dme_err");
 }
-#ifdef CONFIG_HISI_DEBUG_FS
-static
-void ufshcd_print_trs(struct ufs_hba *hba, unsigned long bitmap, bool pr_prdt)
-{
-	struct ufshcd_lrb *lrbp;
-	int prdt_length;
-	int tag;
 
-	pr_prdt = false;
-
-	for_each_set_bit(tag, &bitmap, hba->nutrs) {
-		lrbp = &hba->lrb[tag];
-
-		dev_err(hba->dev, "UPIU[%d] - issue time %lld - complete time %lld\n",
-				tag, lrbp->issue_time_stamp, lrbp->complete_time_stamp);
-		dev_err(hba->dev,
-			"UPIU[%d] - Transfer Request Descriptor phys@0x%llx\n",
-			tag, (u64)lrbp->utrd_dma_addr);
-
-		ufshcd_hex_dump("UPIU TRD: ", lrbp->utr_descriptor_ptr,
-				sizeof(struct utp_transfer_req_desc));
-		dev_err(hba->dev, "UPIU[%d] - Request UPIU phys@0x%llx\n", tag,
-			(u64)lrbp->ucd_req_dma_addr);
-		ufshcd_hex_dump("UPIU REQ: ", lrbp->ucd_req_ptr,
-				sizeof(struct utp_upiu_req));
-		dev_err(hba->dev, "UPIU[%d] - Response UPIU phys@0x%llx\n", tag,
-			(u64)lrbp->ucd_rsp_dma_addr);
-		ufshcd_hex_dump("UPIU RSP: ", lrbp->ucd_rsp_ptr,
-				sizeof(struct utp_upiu_rsp));
-
-		prdt_length = le16_to_cpu(
-			lrbp->utr_descriptor_ptr->prd_table_length);
-		dev_err(hba->dev,
-			"UPIU[%d] - PRDT - %d entries  phys@0x%llx\n",
-			tag, prdt_length,
-			(u64)lrbp->ucd_prdt_dma_addr);
-
-		if (pr_prdt)
-			ufshcd_hex_dump("UPIU PRDT: ", lrbp->ucd_prdt_ptr,
-				sizeof(struct ufshcd_sg_entry) * prdt_length);
-	}
-}
-
-static void ufshcd_print_tmrs(struct ufs_hba *hba, unsigned long bitmap)
-{
-	struct utp_task_req_desc *tmrdp;
-	int tag;
-
-	for_each_set_bit(tag, &bitmap, hba->nutmrs) {
-		tmrdp = &hba->utmrdl_base_addr[tag];
-		dev_err(hba->dev, "TM[%d] - Task Management Header\n", tag);
-		ufshcd_hex_dump("TM TRD: ", &tmrdp->header,
-				sizeof(struct request_desc_header));
-		dev_err(hba->dev, "TM[%d] - Task Management Request UPIU\n",
-				tag);
-		ufshcd_hex_dump("TM REQ: ", tmrdp->task_req_upiu,
-				sizeof(struct utp_upiu_req));
-		dev_err(hba->dev, "TM[%d] - Task Management Response UPIU\n",
-				tag);
-		ufshcd_hex_dump("TM RSP: ", tmrdp->task_rsp_upiu,
-				sizeof(struct utp_task_req_desc));
-	}
-}
-#else
 static
 void ufshcd_print_trs(struct ufs_hba *hba, unsigned long bitmap, bool pr_prdt)
 {
@@ -404,7 +336,7 @@ static void ufshcd_print_tmrs(struct ufs_hba *hba, unsigned long bitmap)
 {
 	return;
 }
-#endif
+
 static void ufshcd_print_host_state(struct ufs_hba *hba)
 {
 	dev_err(hba->dev, "UFS Host state=%d\n", hba->ufshcd_state);
@@ -1796,9 +1728,6 @@ void ufshcd_fsr_dump_handler(struct work_struct *work)
 		dev_err(hba->dev, "[%s]READ FSR FAILED\n", __func__);
 		return;
 	}
-#ifdef CONFIG_HISI_DEBUG_FS
-	dev_err(hba->dev, "===============UFS HI1861 FSR INFO===============\n");
-#endif
 	/*lint -save -e661 -e662*/
 	for (i = 0 ; i < HI1861_FSR_INFO_SIZE; i = i + 16) {
 		dev_err(hba->dev, "0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x\n",
@@ -5845,25 +5774,6 @@ void ufs_idle_intr_toggle(struct ufs_hba *hba, int enable)
 static void ufshcd_idle_handler(struct ufs_hba *hba)
 {
 	struct blk_dev_lld *lld = &(hba->host->tag_set.lld_func);
-#ifdef CONFIG_HISI_DEBUG_FS
-	static DEFINE_RATELIMIT_STATE(idle_print_rs, (30 * HZ), 1);
-	u32 utp_tx_doorbell;
-	u32 utp_task_doorbell;
-
-	if (!hba->idle_intr_disabled) {
-		utp_tx_doorbell = ufshcd_readl(hba, REG_UTP_TRANSFER_REQ_DOOR_BELL);
-		utp_task_doorbell = ufshcd_readl(hba, REG_UTP_TASK_REQ_DOOR_BELL);
-		if (__ratelimit(&idle_print_rs)) {
-			if (utp_tx_doorbell || utp_task_doorbell)
-				dev_err(hba->dev, "%s,Got Idle interrupt while utp_tx_doorbell: 0x%x, utp_task_doorbell: 0x%x\n",
-						__func__, utp_tx_doorbell, utp_task_doorbell);
-			else if (unlikely(hba->ufs_idle_intr_verify))
-				dev_info(hba->dev, "%s, Idle interrupt, all the doorbell is 0\n", __func__);
-		}
-	}
-
-	mod_timer(&hba->idle_intr_check_timer, jiffies + msecs_to_jiffies(hba->idle_intr_check_timer_threshold));
-#endif /* CONFIG_HISI_DEBUG_FS */
 	blk_lld_idle_notify(lld);
 }
 

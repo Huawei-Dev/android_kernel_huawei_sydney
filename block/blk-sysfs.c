@@ -785,124 +785,8 @@ static struct queue_sysfs_entry queue_dax_entry = {
 	.attr = {.name = "dax", .mode = S_IRUGO },
 	.show = queue_dax_show,
 };
+
 #ifdef CONFIG_HISI_BLK
-#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-static struct queue_sysfs_entry queue_hisi_feature_status_entry = {
-	.attr = {.name = "hisi_queue_feature_status", .mode = S_IRUGO },
-	.show = hisi_queue_status_show,
-	.store = NULL,
-};
-
-static struct queue_sysfs_entry queue_hisi_io_latency_warning_threshold_entry = {
-	.attr = {.name = "io_latency_warning_threshold", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_io_latency_warning_threshold_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_io_latency_statistic_enable_entry = {
-	.attr = {.name = "io_latency_statistic_enable", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_io_latency_statistic_enable_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_io_latency_statistic_entry = {
-	.attr = {.name = "io_latency_statistic", .mode = S_IRUGO },
-	.show = hisi_queue_io_latency_statistic_show,
-	.store = NULL,
-};
-
-static struct queue_sysfs_entry queue_hisi_io_hw_latency_statistic_entry = {
-	.attr = {.name = "io_hw_latency_statistic", .mode = S_IRUGO },
-	.show = hisi_queue_io_hw_latency_statistic_show,
-	.store = NULL,
-};
-
-static struct queue_sysfs_entry queue_hisi_io_sw_latency_statistic_entry = {
-	.attr = {.name = "io_sw_latency_statistic", .mode = S_IRUGO },
-	.show = hisi_queue_io_sw_latency_statistic_show,
-	.store = NULL,
-};
-
-static struct queue_sysfs_entry queue_hisi_busy_idle_enable_entry = {
-	.attr = {.name = "busy_idle_enable", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_busy_idle_enable_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_busy_idle_statistic_entry = {
-	.attr = {.name = "busy_idle_statistic_reset", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_busy_idle_statistic_reset_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_busy_idle_entry = {
-	.attr = {.name = "busy_idle_statistic", .mode = S_IRUGO },
-	.show = hisi_queue_busy_idle_statistic_show,
-	.store = NULL,
-};
-
-
-static struct queue_sysfs_entry queue_hisi_io_timeout_tst_entry = {
-	.attr = {.name = "hisi_queue_tst_io_timeout", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_timeout_tst_enable_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_io_latency_tst_entry = {
-	.attr = {.name = "hisi_queue_tst_io_latency", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_io_latency_tst_enable_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_busy_idle_tst_entry = {
-	.attr = {.name = "hisi_queue_tst_busy_idle_enable", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_busy_idle_tst_enable_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_busy_idle_multi_nb_tst_entry = {
-	.attr = {.name = "hisi_queue_tst_busy_idle_multi_nb_enable", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_busy_idle_multi_nb_tst_enable_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_busy_idle_tst_proc_result_simulate_entry = {
-	.attr = {.name = "hisi_queue_tst_busy_idle_proc_result_simulate", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_busy_idle_tst_proc_result_simulate_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_busy_idle_tst_proc_latency_simulate_entry = {
-	.attr = {.name = "hisi_queue_tst_busy_idle_proc_latency_simulate", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_busy_idle_tst_proc_latency_simulate_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_apd_tst_entry = {
-	.attr = {.name = "hisi_queue_tst_apd", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_apd_tst_enable_store,
-};
-
-static struct queue_sysfs_entry queue_hisi_sr_tst_entry = {
-	.attr = {.name = "hisi_queue_sr_tst", .mode = S_IWUSR },
-	.show = NULL,
-	.store = hisi_queue_suspend_tst_store,
-};
-
-extern ssize_t hisi_queue_idle_state_show(struct request_queue *q, char *page);
-extern ssize_t hisi_queue_hw_idle_enable_show(struct request_queue *q, char *page);
-static struct queue_sysfs_entry queue_hw_idle_enable_entry = {
-	.attr = {.name = "hw_idle_enable", .mode = S_IRUGO },
-	.show = hisi_queue_hw_idle_enable_show,
-};
-
-static struct queue_sysfs_entry queue_idle_state_entry = {
-	.attr = {.name = "idle_state", .mode = S_IRUGO },
-	.show = hisi_queue_idle_state_show,
-};
-#endif /* CONFIG_HISI_DEBUG_FS */
-
 static ssize_t queue_usr_ctrl_store(struct request_queue *q, const char *page, size_t count)
 {
 	int ret;
@@ -1002,27 +886,6 @@ static struct attribute *default_attrs[] = {
 	&queue_qos_entry.attr,
 #endif
 #ifdef CONFIG_HISI_BLK
-#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-	&queue_hisi_feature_status_entry.attr,
-	&queue_hisi_io_latency_warning_threshold_entry.attr,
-	&queue_hisi_io_latency_statistic_enable_entry.attr,
-	&queue_hisi_io_latency_statistic_entry.attr,
-	&queue_hisi_io_hw_latency_statistic_entry.attr,
-	&queue_hisi_io_sw_latency_statistic_entry.attr,
-	&queue_hisi_busy_idle_enable_entry.attr,
-	&queue_hisi_busy_idle_statistic_entry.attr,
-	&queue_hisi_busy_idle_entry.attr,
-	&queue_hisi_io_timeout_tst_entry.attr,
-	&queue_hisi_io_latency_tst_entry.attr,
-	&queue_hw_idle_enable_entry.attr,
-	&queue_idle_state_entry.attr,
-	&queue_hisi_busy_idle_tst_entry.attr,
-	&queue_hisi_busy_idle_multi_nb_tst_entry.attr,
-	&queue_hisi_busy_idle_tst_proc_result_simulate_entry.attr,
-	&queue_hisi_busy_idle_tst_proc_latency_simulate_entry.attr,
-	&queue_hisi_apd_tst_entry.attr,
-	&queue_hisi_sr_tst_entry.attr,
-#endif /* CONFIG_HISI_DEBUG_FS */
 	&queue_usr_ctrl_entry.attr,
 #endif /* CONFIG_HISI_BLK */
 	&queue_wc_entry.attr,

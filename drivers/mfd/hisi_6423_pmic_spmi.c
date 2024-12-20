@@ -136,15 +136,6 @@ static int get_6423_pmic_device_tree_data(struct device_node *np, struct hisi_64
 	return ret;
 }
 
-#ifdef CONFIG_HISI_DEBUG_FS
-void vbatt_limit_ctrl(int val)
-{
-	vbatt_limit = val;
-	pr_err("vbatt_limit = %d mV", vbatt_limit);
-	return;
-}
-#endif
-
 static void hisi_6423_vbatt_check(struct work_struct *work)
 {
 	int vbatt, ret;

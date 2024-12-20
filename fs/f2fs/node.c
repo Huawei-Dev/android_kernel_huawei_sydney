@@ -657,9 +657,6 @@ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
 		if (!npage[0]) {
 			if (dn->mem_control)
 				return -ENOMEM;
-		#ifdef CONFIG_HISI_DEBUG_FS
-			BUG();
-		#endif
 		}
 		if (IS_ERR(npage[0]))
 			return PTR_ERR(npage[0]);

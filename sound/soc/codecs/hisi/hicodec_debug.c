@@ -483,90 +483,9 @@ static ssize_t hicodec_debug_rr_read(struct file *file, char __user *user_buf,
 
 	return byte_read;
 }
-#ifdef CONFIG_HISI_DEBUG_FS
-/*
- * Write or read a single register.
- *
- * 1 default cat will output page registers: cat rr
- * 2 write single register: echo "w reg val" > rr
- * 3 read single register:
- * echo "r reg" > rr
- * cat rr
- */
-static ssize_t hicodec_debug_rr_write(struct file *file, const char __user *user_buf, size_t count, loff_t *ppos)
-{
-	char *kn_buf;
-	ssize_t byte_writen;
-	int num = 0;
-	unsigned int vs_reg = 0;
-	unsigned int vs_val = 0;
 
-	if (!g_codec || !(g_codec->driver) || !(g_codec->driver->write)) {
-		pr_err(LOG_TAG"g_codec or g_codec->driver or g_codec->driver->write is null\n");
-		return -EINVAL;
-	}
-
-	kn_buf = kzalloc(HICODEC_DBG_SIZE_PAGE, GFP_KERNEL); /*lint !e747 */
-	if (NULL == kn_buf) {
-		pr_err(LOG_TAG"kn_buf is null\n");
-		return -EFAULT;
-	}
-
-	byte_writen = simple_write_to_buffer(kn_buf, HICODEC_DBG_SIZE_PAGE, ppos, user_buf, count); /*lint !e747 */
-	if (byte_writen != count) { /*lint !e737 */
-		pr_err(LOG_TAG"simple_write_to_buffer err:%zd\n", byte_writen);
-		byte_writen = -EINVAL;
-		kfree(kn_buf);
-		return byte_writen;
-	}
-
-	switch (kn_buf[0]) {
-	case 'w':
-		/* write single reg */
-		num = sscanf(kn_buf, "w 0x%x 0x%x", &vs_reg, &vs_val);
-		if (2 == num) {
-			g_codec->driver->write(g_codec, vs_reg, vs_val);
-			pr_info(LOG_TAG"write single reg, vs_reg:0x%x, value:0x%x", vs_reg, vs_val);
-		} else {
-			byte_writen = -EINVAL;
-			pr_err(LOG_TAG"write single reg failed");
-		}
-		isReadRegAll = true;
-
-		break;
-	case 'r':
-		/* read single reg */
-		num = sscanf(kn_buf, "r 0x%x", &vs_reg);
-		if (1 == num) {
-			isReadRegAll = false;
-			g_vs_reg = vs_reg;
-			pr_info(LOG_TAG"read single reg,vs_reg:0x%x",vs_reg);
-		} else {
-			isReadRegAll = true;
-			byte_writen = -EINVAL;
-			pr_err(LOG_TAG"read single reg failed");
-		}
-		break;
-	case 'p':
-		/* read PAGE */
-		isReadRegAll = true;
-		break;
-	default:
-		/* abnormal */
-		isReadRegAll = true;
-		byte_writen = -EINVAL;
-		break;
-	}
-
-	kfree(kn_buf);
-	return byte_writen;
-}
-#endif
 static const struct file_operations hicodec_debug_rr_fops = {
 	.read  = hicodec_debug_rr_read,
-#ifdef CONFIG_HISI_DEBUG_FS
-	.write = hicodec_debug_rr_write,
-#endif
 };
 
 /*******************************************************************************

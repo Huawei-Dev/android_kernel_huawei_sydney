@@ -428,9 +428,7 @@ static ssize_t hi6523_sysfs_show(struct device *dev,
 {
 	struct hi6523_sysfs_field_info *info;
 	struct hi6523_sysfs_field_info *info2;
-#ifdef CONFIG_HISI_DEBUG_FS
-	int ret;
-#endif
+
 	u8 v;
 	struct hi6523_device_info *di = g_hi6523_dev;
 	if (NULL == di) {
@@ -457,24 +455,11 @@ static ssize_t hi6523_sysfs_show(struct device *dev,
 		return scnprintf(buf, PAGE_SIZE, "0x%x\n", di->sysfs_fcp_reg_addr);
 	}
 	if (!strncmp("adapter_val", attr->attr.name, strlen("adapter_val"))) {
-#ifdef CONFIG_HISI_DEBUG_FS
-                ret = hi6523_fcp_adapter_reg_read(&v, di->sysfs_fcp_reg_addr);
-                SCHARGER_INF(" sys read fcp adapter reg 0x%x , v 0x%x \n", di->sysfs_fcp_reg_addr, v);
-                if (ret)
-                        return ret;
-#else
                 v = 0;
-#endif
                 return scnprintf(buf, PAGE_SIZE, "0x%x\n", v);
         }
 
-#ifdef CONFIG_HISI_DEBUG_FS
-	ret = hi6523_read_mask(info->reg, info->mask, info->shift, &v);
-	if (ret)
-		return ret;
-#else
     v = 0;
-#endif
 
 	return scnprintf(buf, PAGE_SIZE, "0x%hhx\n", v);
 }
@@ -531,23 +516,8 @@ static ssize_t hi6523_sysfs_store(struct device *dev,
 	}
 	if (!strncmp(("adapter_val"), attr->attr.name, strlen("adapter_val"))) {
                         di->sysfs_fcp_reg_val = (u8)v;
-#ifdef CONFIG_HISI_DEBUG_FS
-                        ret = hi6523_fcp_adapter_reg_write(di->sysfs_fcp_reg_val,
-                                                                di->sysfs_fcp_reg_addr);
-                        SCHARGER_INF(" sys write fcp adapter reg 0x%x , v 0x%x \n",
-                                                      di->sysfs_fcp_reg_addr, di->sysfs_fcp_reg_val);
-
-                        if (ret)
-                                return ret;
-#endif
                         return count;
         }
-
-#ifdef CONFIG_HISI_DEBUG_FS
-	ret = hi6523_write_mask(info->reg, info->mask, info->shift, v);
-	if (ret)
-		return ret;
-#endif
 
 	return count;
 }

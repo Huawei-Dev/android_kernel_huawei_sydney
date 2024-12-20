@@ -28,10 +28,7 @@
 #include <linux/mmc/cmdq_hci.h>
 #include <linux/pm_runtime.h>
 #include "sdhci.h"
-#ifdef CONFIG_HISI_DEBUG_FS
-#include "hisi_mmc_debug.h"
-#define CMDQ_DEBUG
-#endif
+
 #ifdef CONFIG_HUAWEI_EMMC_DSM
 extern void sdhci_dsm_handle(struct sdhci_host *host, struct mmc_request *mrq);
 extern void sdhci_dsm_set_host_status(struct sdhci_host *host, u32 error_bits);

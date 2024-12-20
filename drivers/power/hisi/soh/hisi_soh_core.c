@@ -729,24 +729,6 @@ ssize_t nv_ctrl(struct device *dev, struct device_attribute *attr, const char *b
     if (!di)
         return status;
 
-#ifdef CONFIG_HISI_DEBUG_FS
-    switch (val) {
-    case SOH_ACR:
-        di->soh_acr_dev.acr_nv.acr_control = 1;
-        soh_rw_nv_info(di, SOH_ACR, NV_WRITE);
-        break;
-    case SOH_DCR:
-        di->soh_dcr_dev.dcr_nv.dcr_control = 1;
-        soh_rw_nv_info(di, SOH_DCR, NV_WRITE);
-        break;
-    case SOH_PD_LEAK:
-        di->soh_pd_leak_dev.pd_leak_nv.pd_control = 1;
-        soh_rw_nv_info(di, SOH_PD_LEAK, NV_WRITE);
-        break;
-    default:
-        break;
-    }
-#endif
 	return status;
 }
 
@@ -772,27 +754,6 @@ ssize_t nv_clear(struct device *dev, struct device_attribute *attr, const char *
     if (!di)
         return status;
 
-#ifdef CONFIG_HISI_DEBUG_FS
-    switch (val) {
-    case SOH_ACR:
-        memset_s(&di->soh_acr_dev.acr_nv, sizeof(struct acr_nv_info), 0, sizeof(struct acr_nv_info));
-        memset_s(&di->soh_acr_dev.soh_acr_info, sizeof(struct acr_info), 0, sizeof(struct acr_info));
-        soh_rw_nv_info(di, SOH_ACR, NV_WRITE);
-        break;
-    case SOH_DCR:
-        memset_s(&di->soh_dcr_dev.dcr_nv, sizeof(struct dcr_nv_info), 0, sizeof(struct dcr_nv_info));
-        memset_s(&di->soh_dcr_dev.soh_dcr_info, sizeof(struct dcr_info), 0, sizeof(struct dcr_info));
-        soh_rw_nv_info(di, SOH_DCR, NV_WRITE);
-        break;
-    case SOH_PD_LEAK:
-        memset_s(&di->soh_pd_leak_dev.pd_leak_nv, sizeof(struct pd_leak_nv_info), 0, sizeof(struct pd_leak_nv_info));
-        memset_s(&di->soh_pd_leak_dev.soh_pd_leak_current_info, sizeof(struct pd_leak_current_info), 0, sizeof(struct pd_leak_current_info));
-        soh_rw_nv_info(di, SOH_PD_LEAK, NV_WRITE);
-        break;
-    default:
-        break;
-    }
-#endif
 	return status;
 }
 
@@ -1136,7 +1097,7 @@ static int soh_create_sysfs_file(struct hisi_soh_device *di)
 #endif
 /*************************************************************************
   Function:        soh_acr_start_check
-  Description:     check acr start valid by temp current and bat cycle¡¢soc.
+  Description:     check acr start valid by temp current and bat cycle\A1\A2soc.
   Input:           NA
   Output:          NA
   Return:          0:start check success
@@ -1828,7 +1789,7 @@ static int soh_ovp_uninit(struct hisi_soh_device *di)
 }
 /*************************************************************************
   Function:        soh_dcr_start_check
-  Description:     check dcr start valid by temp current and bat cycle¡¢soc.
+  Description:     check dcr start valid by temp current and bat cycle\A1\A2soc.
   Input:           NA
   Output:          NA
   Return:          0:start check success
@@ -2666,132 +2627,7 @@ int soh_get_poweroff_leakage(struct pd_leak_current_info *i)
 **********************************************************/
 void soh_acr_low_precision_cal_start(void)
 {
-#ifdef CONFIG_HISI_DEBUG_FS
-    struct hisi_soh_device *di = g_di;
-    if (!di)
-        return;
-
-    di->soh_acr_dev.acr_prec_type = ACR_L_PRECISION;
-    queue_delayed_work(system_power_efficient_wq, &di->soh_acr_dev.acr_work, msecs_to_jiffies(0));
-#endif
 }
-
-
-/*only for test*/
-
-#ifdef  CONFIG_HISI_DEBUG_FS
-
-void test_acr_task_schedule(void)
-{
-    struct hisi_soh_device *di = g_di;
-    if (!di)
-        return;
-    queue_delayed_work(system_power_efficient_wq, &di->soh_acr_dev.acr_work, msecs_to_jiffies(0));
-}
-
-
-void test_dcr_task_schedule(void)
-{
-    struct hisi_soh_device *di = g_di;
-    if (!di)
-        return;
-    queue_delayed_work(system_power_efficient_wq, &di->soh_dcr_dev.dcr_work, msecs_to_jiffies(0));
-}
-
-void test_ovp_task_schedule(void)
-{
-    struct hisi_soh_device *di = g_di;
-    if (!di)
-        return;
-    queue_delayed_work(system_power_efficient_wq, &di->soh_ovp_dev.soh_ovp_work, msecs_to_jiffies(0));
-}
-
-int test_get_acr( enum acr_type type)
-{
-    struct acr_info r;
-    return soh_get_acr_resistance(&r, type);
-}
-
-int test_get_dcr(void)
-{
-    struct dcr_info r;
-    return soh_get_dcr_resistance(&r);
-}
-
-int test_get_pd_leak(void)
-{
-    struct pd_leak_current_info i;
-    return soh_get_poweroff_leakage(&i);
-}
-
-
-void test_set_ovp_thd_value(enum soh_ovp_type type, int order, int temp, int vol_mv)
-{
-    struct hisi_soh_device *di = g_di;
-    if (!di)
-        return;
-
-    if (SOH_OVH == type) {
-        if (order >= 3 || order < 0)
-            return;
-        di->soh_ovp_dev.soh_ovh_thres[order].bat_vol_mv = vol_mv;
-        di->soh_ovp_dev.soh_ovh_thres[order].temp       = temp;
-    } else if (SOH_OVL == type){
-        if (order >= 3 || order < 0)
-            return;
-        di->soh_ovp_dev.soh_ovl_thres[order].bat_vol_mv = vol_mv;
-        di->soh_ovp_dev.soh_ovl_thres[order].temp       = temp;
-    } else {
-        di->soh_ovp_dev.soh_ovl_safe_thres.bat_vol_mv   = vol_mv;
-        di->soh_ovp_dev.soh_ovl_safe_thres.temp         = temp;
-    }
-}
-void test_set_ovp_protect(void)
-{
-    soh_ovp_set_protect_threshold(g_di);
-
-}
-
-void test_set_ovp_start_time(int time)
-{
-    struct hisi_soh_device *di =g_di;
-    if (!di)
-        return;
-
-    di->soh_ovp_dev.soh_ovp_start_time = time;
-}
-
-void test_soh_nv_printf(enum soh_type type)
-{
-   soh_nv_printf(g_di, type);
-}
-
-void test_set_bat_cyc_inc(enum soh_type type, int cycle)
-{
-    if (SOH_ACR == type)
-        acr_cycle_inc = cycle;
-    if (SOH_DCR == type)
-        dcr_cycle_inc = cycle;
-}
-void test_soh_report(int type)
-{
-    struct hisi_soh_device *di =g_di;
-    if (!di)
-        return;
-
-    switch(type) {
-    case 0:
-        sysfs_notify(&di->dev->kobj, NULL, "acr_raw");
-        break;
-    case 1:
-        sysfs_notify(&di->dev->kobj, NULL, "dcr_raw");
-        break;
-    default:
-        break;
-    }
-    return ;
-}
-#endif
 
 /*******************************************************
   Function:        soh_probe

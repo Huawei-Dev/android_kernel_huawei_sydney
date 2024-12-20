@@ -135,9 +135,6 @@ void blk_mq_wake_waiters(struct request_queue *q)
 					blk_mq_tag_wakeup_all(hctx->tags, true);
 				} else {
 				pr_err("%s: mq_tag_wakeup_all_fn failed. err = %d \r\n", __func__, ret);
-			#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-				BUG();
-			#endif
 				}
 			}
 #else
@@ -226,9 +223,6 @@ __blk_mq_alloc_request(struct blk_mq_alloc_data *data, int op, int op_flags)
 			tag = blk_mq_get_tag(data);
 		} else {
 			pr_err("%s: mq_tag_get_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #else
@@ -271,9 +265,6 @@ struct request *blk_mq_alloc_request(struct request_queue *q, int rw,
 		int res = q->hisi_queue_ops->mq_req_alloc_prep_fn(&alloc_data, q, ctx, hctx, 0, false);
 		if (unlikely(res)) {
 			pr_err("%s: mq_req_alloc_prep_fn failed. err = %d \r\n", __func__, res);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #endif
@@ -334,9 +325,6 @@ struct request *blk_mq_alloc_request_hctx(struct request_queue *q, int rw,
 		int res = q->hisi_queue_ops->mq_req_alloc_prep_fn(&alloc_data, q, ctx, hctx, rw, false);
 		if (unlikely(res)) {
 			pr_err("%s: mq_req_alloc_prep_fn failed. err = %d \r\n", __func__, res);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #endif
@@ -369,9 +357,6 @@ void __blk_mq_free_request(struct blk_mq_hw_ctx *hctx,
 	if (ret) {
 		if (unlikely(ret != -EPERM)) {
 			pr_err("%s: mq_hctx_get_by_req_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	} else {
 		hctx = generate_hctx;
@@ -391,9 +376,6 @@ void __blk_mq_free_request(struct blk_mq_hw_ctx *hctx,
 		ret = q->hisi_queue_ops->mq_req_deinit_fn(q, rq);
 		if (unlikely(ret)) {
 			pr_err("%s: mq_req_deinit_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 
@@ -406,9 +388,6 @@ void __blk_mq_free_request(struct blk_mq_hw_ctx *hctx,
 			blk_mq_put_tag(hctx, ctx, tag);
 		} else {
 			pr_err("%s: mq_tag_put_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 
@@ -549,9 +528,6 @@ void blk_mq_complete_request(struct request *rq, int error)
 				__blk_mq_complete_request(rq);
 			} else {
 				pr_err("%s: mq_req_complete_fn failed. err = %d \r\n", __func__, ret);
-			#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-				BUG();
-			#endif
 			}
 		}
 #else
@@ -693,9 +669,6 @@ void blk_mq_add_to_requeue_list(struct request *rq, bool at_head)
 			spin_unlock_irqrestore(&q->requeue_lock, flags);
 		} else {
 			pr_err("%s: mq_req_requeue_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #else
@@ -734,9 +707,6 @@ void blk_mq_kick_requeue_list(struct request_queue *q)
 	} else {
 		if (unlikely(ret != -EPERM)) {
 			pr_err("%s: mq_run_requeue_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #endif
@@ -845,9 +815,6 @@ static void blk_mq_check_expired(struct blk_mq_hw_ctx *hctx,
 					blk_mq_rq_timed_out(rq, reserved);
 				} else {
 					pr_err("%s: mq_req_timeout_fn failed. err = %d \r\n", __func__, ret);
-				#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-					BUG();
-				#endif
 				}
 			}
 #else
@@ -896,9 +863,6 @@ static void blk_mq_timeout_work(struct work_struct *work)
 			blk_mq_queue_tag_busy_iter(q, blk_mq_check_expired, &data);
 		} else {
 			pr_err("%s: mq_tag_busy_iter_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #else
@@ -1032,9 +996,6 @@ static void __blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx)
 	} else {
 		if (unlikely(ret != -EPERM)) {
 			pr_err("%s: mq_exec_queue_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #endif
@@ -1170,9 +1131,6 @@ void blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
 		} else {
 			if (unlikely(ret != -EPERM)) {
 				pr_err("%s: mq_exec_queue_fn failed. err = %d \r\n", __func__, ret);
-			#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-				BUG();
-			#endif
 			}
 		}
 	#endif
@@ -1194,9 +1152,6 @@ void blk_mq_run_hw_queue(struct blk_mq_hw_ctx *hctx, bool async)
 	} else {
 		if (unlikely(ret != -EPERM)) {
 			pr_err("%s: mq_run_hw_queue_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #endif
@@ -1305,9 +1260,6 @@ void blk_mq_delay_queue(struct blk_mq_hw_ctx *hctx, unsigned long msecs)
 	} else {
 		if (unlikely(ret != -EPERM)) {
 			pr_err("%s: mq_run_delay_queue_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #endif
@@ -1345,9 +1297,6 @@ static void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx,
 			blk_mq_hctx_mark_pending(hctx, ctx);
 		} else {
 			pr_err("%s: mq_req_insert_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #else
@@ -1528,9 +1477,6 @@ struct request *blk_mq_map_request(struct request_queue *q,
 		int ret = q->hisi_queue_ops->mq_req_alloc_prep_fn(&alloc_data, q, ctx, hctx, bio->bi_opf, true);
 		if (unlikely(ret)) {
 			pr_err("%s: mq_req_alloc_prep_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #endif
@@ -1818,9 +1764,6 @@ static void blk_mq_free_rq_map(struct blk_mq_tag_set *set,
 				hctx->tags = NULL;
 		} else {
 			pr_err("%s: tagset_free_tags_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #else
@@ -1851,9 +1794,6 @@ static struct blk_mq_tags *blk_mq_init_rq_map(struct blk_mq_tag_set *set,
 					set->numa_node, BLK_MQ_FLAG_TO_ALLOC_POLICY(set->flags));
 		} else {
 			pr_err("%s: tagset_init_tags_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #else
@@ -1879,9 +1819,6 @@ static struct blk_mq_tags *blk_mq_init_rq_map(struct blk_mq_tag_set *set,
 				blk_mq_free_tags(tags);
 			} else {
 				pr_err("%s: tagset_free_tags_fn failed. err = %d \r\n", __func__, ret);
-			#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-				BUG();
-			#endif
 			}
 		}
 	#else
@@ -2202,9 +2139,6 @@ static void blk_mq_map_swqueue(struct request_queue *q,
 					}
 				} else {
 					pr_err("%s: mq_hctx_free_in_ctx_map_fn failed. err = %d \r\n", __func__, ret);
-				#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-					BUG();
-				#endif
 				}
 			}
 #else

@@ -3516,9 +3516,6 @@ bool blk_poll(struct request_queue *q, blk_qc_t cookie)
 	} else {
 		if (unlikely(ret != -EPERM)) {
 			pr_err("%s: blk_poll_enable_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #endif

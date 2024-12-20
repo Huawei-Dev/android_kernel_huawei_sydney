@@ -193,26 +193,6 @@ extern void hisi_blk_queue_usr_ctrl_set(struct request_queue *q);
 extern int hisi_blk_busy_idle_event_register(struct blk_dev_lld *lld, struct blk_busy_idle_nb *notify_nb);
 extern int hisi_blk_busy_idle_event_unregister(struct blk_dev_lld *lld, struct blk_busy_idle_nb *notify_nb);
 
-#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-extern ssize_t hisi_queue_status_show(struct request_queue *q, char *page);
-extern ssize_t hisi_queue_io_latency_warning_threshold_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_io_latency_statistic_enable_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_io_latency_statistic_show(struct request_queue *q, char *page);
-extern ssize_t hisi_queue_io_hw_latency_statistic_show(struct request_queue *q, char *page);
-extern ssize_t hisi_queue_io_sw_latency_statistic_show(struct request_queue *q, char *page);
-extern ssize_t hisi_queue_busy_idle_enable_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_busy_idle_statistic_reset_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_busy_idle_statistic_show(struct request_queue *q, char *page);
-
-extern ssize_t hisi_queue_timeout_tst_enable_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_io_latency_tst_enable_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_busy_idle_tst_enable_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_busy_idle_multi_nb_tst_enable_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_busy_idle_tst_proc_result_simulate_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_busy_idle_tst_proc_latency_simulate_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_apd_tst_enable_store(struct request_queue *q, const char *page, size_t count);
-extern ssize_t hisi_queue_suspend_tst_store(struct request_queue *q, const char *page, size_t count);
-#endif
 extern ssize_t queue_var_store(unsigned long *var, const char *page, size_t count);
 #endif
 

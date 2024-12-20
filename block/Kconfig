@@ -140,13 +140,6 @@ config HISI_BLK
 	help
 		HISI Block feature
 		
-config HISI_BLK_DEBUG
-	bool "HISI Block Debug Mode"
-	depends on HISI_BLK
-	default n
-	help
-		HISI Block Debug Mode
-
 config HISI_BK_OPS
 	bool "HISI BKOPS"
 	depends on HISI_BLK

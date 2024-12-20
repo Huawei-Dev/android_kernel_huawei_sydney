@@ -93,9 +93,6 @@ static inline void blk_mq_put_ctx(struct blk_mq_ctx *ctx)
 			put_cpu();
 		} else {
 			pr_err("%s: mq_ctx_put_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 		}
 	}
 #else

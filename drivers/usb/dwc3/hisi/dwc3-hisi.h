@@ -216,9 +216,6 @@ struct hisi_dwc3_device {
 	struct wake_lock wake_lock;
 	struct blocking_notifier_head charger_type_notifier;
 	struct work_struct event_work;
-#ifdef CONFIG_HISI_DEBUG_FS
-	struct work_struct usb_core_reg_dump_work;
-#endif /* hisi debug */
 	struct work_struct speed_change_work;
 
 	u32 eye_diagram_param;	/* this param will be set to USBOTG3_CTRL4 */
@@ -316,15 +313,6 @@ struct usb3_phy_ops {
 	void (*disable_usb3)(void);
 };
 
-#ifdef CONFIG_HISI_DEBUG_FS
-struct usb3_hisi_debug_node {
-	atomic_t hisi_dwc3_linkstate_flag;
-	atomic_t hisi_dwc3_noc_flag;
-	uint32_t usb_test_noc_addr;
-	atomic_t hisi_dwc3_lbintpll_flag;
-};
-#endif
-
 typedef ssize_t (*hiusb_debug_show_ops)(void *, char *, ssize_t);
 typedef ssize_t (*hiusb_debug_store_ops)(void *, const char *, ssize_t);
 void hiusb_debug_init(void *data);
@@ -368,13 +356,6 @@ int hisi_dwc3_is_es(void);
 /*
  * hisi usb debug
  */
-#ifdef CONFIG_HISI_DEBUG_FS
-void usb_start_dump(void);
-int hisi_dwc3_is_linkstate_dump(void);
-int hisi_dwc3_is_test_noc_addr(void);
-uint32_t hisi_dwc3_get_noc_addr(uint32_t addr);
-int hisi_dwc3_select_lbintpll_clk(void);
-#else
 static inline void usb_start_dump(void)
 {
 	return ;
@@ -399,6 +380,5 @@ static inline int hisi_dwc3_select_lbintpll_clk(void)
 {
 	return 0;
 }
-#endif
 
 #endif /* _DWC3_HISI_H_ */

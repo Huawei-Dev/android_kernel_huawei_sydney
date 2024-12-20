@@ -15,9 +15,7 @@ obj-$(CONFIG_USB_PROXY_HCD)		+= usbaudio-monitor.o
 
 obj-$(CONFIG_USB_PROXY_HCD)		+= hifiusb.o
 hifiusb-y				+= hifi-usb.o hifi-usb-urb-buf.o
-hifiusb-$(CONFIG_HISI_DEBUG_FS)		+= hifi-usb-debugfs.o
 hifiusb-$(CONFIG_HIFI_MAILBOX)		+= hifi-usb-mailbox.o
 
 obj-$(CONFIG_USB_PROXY_HCD)		+= phcd.o
 phcd-y					:= proxy-hcd.o proxy.o
-phcd-$(CONFIG_HISI_DEBUG_FS)		+= proxy-hcd-debugfs.o

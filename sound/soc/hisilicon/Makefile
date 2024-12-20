@@ -17,9 +17,6 @@ EXTRA_CFLAGS +=	-Iinclude/linux/hisi/hi64xx/
 snd-soc-hi3630-objs := hisi_pcm_hifi.o hisi_pcm_ion.o
 snd-soc-hi3650-objs := hisi_pcm_hifi.o slimbus_dai.o hi3xxx_asp_dma.o hisi_pcm_ion.o
 snd-soc-hi3660-objs := hisi_pcm_hifi.o slimbus_dai.o hi3xxx_asp_dma.o asp_cfg.o hisi_pcm_ion.o
-#ifeq ($(CONFIG_HISI_DEBUG_FS),y)
-#snd-soc-hi3660-objs += pcm_debug.o
-#endif
 
 ifeq ($(CONFIG_HDMI_K3), y)
 endif

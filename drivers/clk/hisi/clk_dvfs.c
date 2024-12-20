@@ -900,12 +900,6 @@ static void __init hisi_peri_dvfs_clk_setup(struct device_node *np)
 		user_high_volt = 0;
 
 	/*USB need vote 0.8V in User version and vote dynamic volt by profile in debug version*/
-#ifndef CONFIG_HISI_DEBUG_FS
-	if(user_high_volt){
-		for (i = 0; i < DVFS_MAX_VOLT_NUM; i++)
-			sensitive_volt[i] = PERI_VOLT_3;
-	}
-#endif
 	parent_names = kzalloc(sizeof(char *) * MUX_SOURCE_NUM, GFP_KERNEL);
 	if (!parent_names) {
 		pr_err("[%s] fail to alloc parent_names!\n", __func__);

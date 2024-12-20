@@ -216,9 +216,6 @@ int pl011_tx_work_init(struct uart_amba_port *uap, unsigned int aurt_tx_buf_size
 	wake_up_process(unit->thread);
 
 	snprintf_s(dbgfs_name, sizeof(dbgfs_name), sizeof(dbgfs_name)-1, "uart%d_stat", uap->port.line);
-#ifdef CONFIG_HISI_DEBUG_FS
-	debugfs_create_file(dbgfs_name, S_IRUGO, NULL, unit, &pl011_tx_stat_ops);
-#endif
 	return 0;
 }
 

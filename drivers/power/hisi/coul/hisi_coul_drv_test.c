@@ -45,12 +45,7 @@ static ssize_t hisi_coul_set_test_start_flag(struct device *dev,
 
 	if ((strict_strtol(buf, 16, &val) < 0) || (val < 0))
 		return -EINVAL;
-#ifdef CONFIG_HISI_DEBUG_FS
-	di->test_start_flag = (unsigned int)val;
-	coul_test_info("set %s is %d\n", __func__, di->test_start_flag);
-#else
 	coul_test_info("set %s is %d for user\n", __func__, di->test_start_flag);
-#endif
 	return status;
 }
 

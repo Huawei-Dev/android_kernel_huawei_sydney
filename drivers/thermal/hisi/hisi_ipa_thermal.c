@@ -861,25 +861,6 @@ static int get_temp_value(void *data, int *temp)
 
 static void update_debugfs(struct ipa_sensor *sensor_data)
 {
-#ifdef CONFIG_HISI_DEBUG_FS
-	struct dentry *dentry_f, *filter_d;
-	char filter_name[25];
-
-	snprintf(filter_name, sizeof(filter_name), "thermal_lpf_filter%d", sensor_data->sensor_id);
-	filter_d = debugfs_create_dir(filter_name, NULL);
-	if (IS_ERR_OR_NULL(filter_d)) {
-		pr_warning("unable to create debugfs directory for the LPF filter\n");
-		return;
-	}
-
-	dentry_f = debugfs_create_u32("alpha", S_IWUSR | S_IRUGO, filter_d,
-				      (u32 *)&sensor_data->alpha);
-	if (IS_ERR_OR_NULL(dentry_f)) {
-		debugfs_remove(filter_d);
-		pr_warn("IPA:Unable to create debugfsfile: alpha\n");
-		return;
-	}
-#endif
 }
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 1, 15)

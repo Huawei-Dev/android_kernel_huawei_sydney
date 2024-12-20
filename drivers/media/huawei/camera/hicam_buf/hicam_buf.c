@@ -337,16 +337,6 @@ void hicam_buf_device_destroy(struct hicam_buf_device *idev)
 	kfree(idev);
 }
 
-#ifdef CONFIG_HISI_DEBUG_FS
-ssize_t hicam_buf_info_show(struct device *dev,
-		struct device_attribute *attr, char *buf)
-{
-	hicam_internal_dump_debug_info(dev);
-	return snprintf(buf, PAGE_SIZE, "info dumpped to kmsg...");
-}
-DEVICE_ATTR_RO(hicam_buf_info);
-#endif /* CONFIG_HISI_DEBUG_FS */
-
 static int32_t hicam_buf_probe(struct platform_device* pdev)
 {
 	int rc = 0;
@@ -370,13 +360,6 @@ static int32_t hicam_buf_probe(struct platform_device* pdev)
 		goto err_init_internal;
 	}
 
-#ifdef CONFIG_HISI_DEBUG_FS
-	rc = device_create_file(&pdev->dev, &dev_attr_hicam_buf_info);
-	if (rc < 0) {
-		// just log it, it's not fatal.
-		cam_err("%s: fail to create hicam_buf_info file.", __func__);
-	}
-#endif /* CONFIG_HISI_DEBUG_FS */
 	return 0;
 err_init_internal:
 	hicam_buf_device_destroy(hicam_buf_dev);
@@ -393,9 +376,7 @@ static int32_t hicam_buf_remove(struct platform_device* pdev)
 	}
 	hicam_internal_deinit(&hicam_buf_dev->pdev->dev);
 	hicam_buf_device_destroy(hicam_buf_dev);
-#ifdef CONFIG_HISI_DEBUG_FS
-	device_remove_file(&pdev->dev, &dev_attr_hicam_buf_info);
-#endif /* CONFIG_HISI_DEBUG_FS */
+
 	return 0;
 }
 

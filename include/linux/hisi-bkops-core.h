@@ -23,21 +23,6 @@ enum hisi_bkops_flag {
 #define BKOPS_FLAG_BKOPS_CHK_ACCU_WRITE			(1 << BKOPS_CHK_ACCU_WRITE)
 #define BKOPS_FLAG_BKOPS_CHK_ACCU_DISCARD		(1 << BKOPS_CHK_ACCU_DISCARD)
 
-#ifdef CONFIG_HISI_DEBUG_FS
-struct bkops_debug_ops {
-	bool sim_bkops_start_fail;
-	bool sim_bkops_stop_fail;
-	bool sim_bkops_query_fail;
-	bool sim_critical_bkops;
-	bool sim_bkops_abort;
-	u32 sim_bkops_stop_delay; /* in ms */
-	bool skip_bkops_stop;
-	bool disable_bkops;
-	bool bkops_force_query;
-	u32 sim_bkops_query_delay; /* in ms */
-};
-#endif /* CONFIG_HISI_DEBUG_FS */
-
 typedef enum {
 	BKOPS_100MS,
 	BKOPS_500MS,
@@ -111,11 +96,6 @@ struct hisi_bkops {
 	unsigned long last_write_len; /* in bytes */
 
 	struct bkops_stats bkops_stats;
-#ifdef CONFIG_HISI_DEBUG_FS
-	struct dentry *bkops_root;
-	struct bkops_debug_ops bkops_debug_ops;
-#endif
-
 };
 
 typedef int (bkops_start_stop_fn)(void *bkops_data, int start);

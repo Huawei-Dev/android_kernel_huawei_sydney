@@ -107,12 +107,6 @@ static int generic_flp_probe(struct platform_device *pdev)
 	if(ret)
 		return ret;
     dev_info(&pdev->dev, "generic_flp_probe \n");
-#ifdef    CONFIG_HISI_DEBUG_FS
-    ret = driver_create_file(&generic_flp_platdrv.driver,
-                            &driver_attr_debug_level);
-    if (ret)
-        dev_info(&pdev->dev, "%s %d create file error: \n", __func__, __LINE__);
-#endif
     ret = hisi_flp_register();
     return ret;
 }

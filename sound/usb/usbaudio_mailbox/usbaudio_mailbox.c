@@ -18,9 +18,7 @@
 #ifdef CONFIG_HIFI_MAILBOX
 #include "drv_mailbox_cfg.h"
 #endif
-#ifdef CONFIG_HISI_DEBUG_FS
-#include <linux/debugfs.h>
-#endif
+
 struct completion probe_msg_complete;
 struct completion disconnect_msg_complete;
 struct completion nv_check;

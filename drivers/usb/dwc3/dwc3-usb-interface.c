@@ -170,70 +170,6 @@ static void dwc3_dump_regs(void)
 	    dwc3_readl(g_dwc->regs, DWC3_LINK_GDBGLTSSM(0)));
 }
 
-#ifdef CONFIG_HISI_DEBUG_FS
-static void usb3_link_state_print(void)
-{
-	u32 value;
-	unsigned long long int count6 = 0;
-	int flg6;
-	int flg3;
-	unsigned long long int count3 = 0;
-	unsigned long long int count8 = 0;
-	u32 old = 0;
-	flg6 = 1;
-	flg3 = 1;
-	while (!hisi_dwc3_is_powerdown()) {
-		value = dwc3_readl(g_dwc->regs, DWC3_LINK_GDBGLTSSM(0));
-		switch((value >> 22) & 0xf) {
-			case 6:
-				count6++;
-				if (0 == (count6 % 100000)) {
-					printk(KERN_DEBUG "[LINK]:%x, %lld\n", value, count6);
-				}
-				if (flg6) {
-					printk(KERN_DEBUG "[LINK]:%x, %lld\n", value, count6);
-					count6 = 0;
-					flg6 = 0;
-					flg3 = 1;
-				}
-				break;
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-				count3++;
-				if (0 == (count3 % 100000)) {
-					printk(KERN_DEBUG "[LINK]:%x, %lld\n", value, count3);
-				}
-				if (flg3) {
-					printk(KERN_DEBUG "[LINK]:0x%x, %lld\n", value, count3);
-					count3 = 0;
-					flg3 = 0;
-					flg6 = 1;
-				}
-				break;
-			case 4:
-			case 5:
-			case 7:
-			case 8:
-				flg3 = 1;
-				flg6 = 1;
-				if (((value >> 18) & 0xf) == old) {
-					count8++;
-					break;
-				}
-				old = ((value >> 18) & 0xf);
-				printk(KERN_DEBUG "[USB.DBG.LINK]:0x%x\n", value);
-				break;
-			default:
-				flg3 = 1;
-				flg6 = 1;
-				printk(KERN_DEBUG "[USB.DBG.LINK]:0x%x\n", value);
-		}
-	}
-}
-#endif
-
 #ifdef CONFIG_USB_DWC3_MAR
 static void dwc3_logic_analyzer_trace_set(u32 value)
 {
@@ -307,9 +243,6 @@ static struct usb3_core_ops dwc3_core_ops = {
 	.cptest_next_pattern = dwc3_cptest_next_pattern,
 	.enable_u3 = dwc3_enable_u3,
 	.dump_regs = dwc3_dump_regs,
-#ifdef CONFIG_HISI_DEBUG_FS
-	.link_state_print = usb3_link_state_print,
-#endif
 #ifdef CONFIG_USB_DWC3_MAR
 	.logic_analyzer_trace_set = dwc3_logic_analyzer_trace_set,
 #endif

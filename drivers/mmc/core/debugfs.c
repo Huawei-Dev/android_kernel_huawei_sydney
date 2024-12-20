@@ -470,9 +470,7 @@ static const struct file_operations mmc_dbg_test_st_fops = {
 	.write		= mmc_test_st_write,
 };
 #endif /* CONFIG_HW_MMC_TEST */
-#ifdef CONFIG_HISI_DEBUG_FS
-extern int hisi_mmc_add_card_debugfs(struct mmc_card *card, struct dentry *root);
-#endif
+
 void mmc_add_card_debugfs(struct mmc_card *card)
 {
 	struct mmc_host	*host = card->host;
@@ -530,10 +528,6 @@ void mmc_add_card_debugfs(struct mmc_card *card)
             goto err;
 #endif
 
-#ifdef CONFIG_HISI_DEBUG_FS
-	if (hisi_mmc_add_card_debugfs(card, root))
-		goto err;
-#endif
 	return;
 
 err:

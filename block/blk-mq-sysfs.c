@@ -246,9 +246,6 @@ static ssize_t blk_mq_hw_sysfs_tags_show(struct blk_mq_hw_ctx *hctx, char *page)
 			return blk_mq_tag_sysfs_show(hctx->tags, page);
 		} else {
 			pr_err("%s: mq_tag_sysfs_show_fn failed. err = %d \r\n", __func__, ret);
-		#if defined(CONFIG_HISI_DEBUG_FS) || defined(CONFIG_HISI_BLK_DEBUG)
-			BUG();
-		#endif
 			size = 0;
 		}
 	}

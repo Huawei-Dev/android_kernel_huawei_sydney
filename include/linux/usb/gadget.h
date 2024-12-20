@@ -216,9 +216,6 @@ struct usb_ep {
 	const struct usb_ep_ops	*ops;
 	struct list_head	ep_list;
 	struct usb_ep_caps	caps;
-#ifdef CONFIG_HISI_DEBUG_FS
-	bool			fake_claimed;
-#endif
 	bool			claimed;
 	bool			enabled;
 	unsigned		maxpacket:16;

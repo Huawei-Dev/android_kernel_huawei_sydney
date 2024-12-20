@@ -78,50 +78,6 @@ static DEFINE_MUTEX(list_lock);
 static int use_cnt;
 static DEFINE_MUTEX(state_lock);
 
-#ifdef CONFIG_HISI_DEBUG_FS
-static ssize_t show_map(struct device *dev, struct device_attribute *attr,
-			char *buf)
-{
-	struct devfreq *df = to_devfreq(dev);
-	struct memlat_node *n = df->data;
-	struct core_dev_map *map = n->hw->freq_map;
-	unsigned int cnt = 0;
-
-	cnt += scnprintf(buf, PAGE_SIZE, "Core freq (MHz)\tDevice BW\n");
-
-	while (map->core_mhz && cnt < PAGE_SIZE) {
-		cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "%15u\t%9u\n",
-				map->core_mhz, map->target_freq);
-		map++;
-	}
-	if (cnt < PAGE_SIZE)
-		cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "\n");
-
-	return cnt;
-}
-
-static DEVICE_ATTR(freq_map, 0444, show_map, NULL);
-
-static ssize_t show_node_info(struct device *dev, struct device_attribute *attr,
-			char *buf)
-{
-	struct devfreq *df = to_devfreq(dev);
-	struct memlat_node *node = df->data;
-	unsigned int cnt = 0;
-
-	cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "node: %s\n", dev_name(node->hw->dev));
-	cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "\t->monitor_enable=%u\n", node->monitor_enable);
-	cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "\t->switch_on_freq=%d\n", node->switch_on_cpufreq);
-	cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "\t->monitor_paused=%d\n", node->monitor_paused);
-	cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "\t->new_cpufreq=%d\n", node->new_cpufreq);
-	cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "\t->pending_change=%d\n", node->pending_change);
-	cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "\t->idle_vote_enabled=%d\n", node->idle_vote_enabled);
-	cnt += scnprintf(buf + cnt, PAGE_SIZE - cnt, "\n");
-
-	return cnt;
-}
-static DEVICE_ATTR(node, 0444, show_node_info, NULL);
-#endif
 static unsigned int *get_tokenized_data(const char *buf, int *num_tokens)
 {
 	const char *cp;
@@ -806,10 +762,6 @@ static int devfreq_memlat_get_freq(struct devfreq *df,
 }
 
 static struct attribute *dev_attr[] = {
-#ifdef CONFIG_HISI_DEBUG_FS
-	&dev_attr_freq_map.attr,
-	&dev_attr_node.attr,
-#endif
 	&dev_attr_target_ratio.attr,
 	&dev_attr_monitor_enable.attr,
 	NULL,

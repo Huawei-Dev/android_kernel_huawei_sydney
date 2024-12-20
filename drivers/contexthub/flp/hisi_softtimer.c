@@ -403,34 +403,6 @@ IOMAP_FIN:
     return ret;
 }
 
-/*lint -e715*/
-#ifdef CONFIG_HISI_DEBUG_FS
-static void hisi_softtimer_timeout(unsigned long data)
-{
-    printk(KERN_INFO "hisi_softtimer_timeout\n");
-    return ;
-}
-/*lint +e715*/
-/*lint -e727*/
-struct softtimer_list timer = {0};
-void hisi_softtimer_test(int timeout)
-{
-    int ret;
-    static int  flag;
-    if (0 == flag)    {
-        hisi_softtimer_create(&timer , hisi_softtimer_timeout , (unsigned long)0, 0);
-        flag = 1;
-    }
-    printk(KERN_INFO "hisi_softtimer_test enter\n");
-    hisi_softtimer_delete(&timer);
-    ret = hisi_softtimer_modify(&timer, (unsigned int)timeout);
-    if (ret)
-        pr_err("[%s] %d:\n", __func__, __LINE__);
-    hisi_softtimer_add(&timer);
-}
-#endif
-/*lint +e727*/
-/*lint -e715*/
 static int generic_softtimer_probe(struct platform_device *pdev)
 {
     int ret;

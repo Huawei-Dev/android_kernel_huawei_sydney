@@ -28,9 +28,6 @@ struct usb3_core_ops {
 	int (*cptest_next_pattern)(void);
 	int (*enable_u3)(void);
 	void (*dump_regs)(void);
-#ifdef CONFIG_HISI_DEBUG_FS
-	void (*link_state_print)(void);
-#endif
 #ifdef CONFIG_USB_DWC3_MAR
 	void (*logic_analyzer_trace_set)(u32 value);
 #endif

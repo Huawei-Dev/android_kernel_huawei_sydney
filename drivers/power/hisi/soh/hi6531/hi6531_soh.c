@@ -451,8 +451,8 @@ STATIC int soh_hi6531_acr_calculate_acr(void)
   Description:   get acr chip temperature
   Input:         NA
   Output:        NA
-  Return:        temerature (°)
-  Remart:        VPTAT_ACR= 1800*code（十进制）/4095 (mV)
+  Return:        temerature (\A1\E3)
+  Remart:        VPTAT_ACR= 1800*code\A3\A8十\BD\F8\D6疲\A9/4095 (mV)
                  VPTAT_ACR=386.38+1.3*T
 ********************************************************/
 STATIC int soh_hi6531_acr_get_chip_temp(void)
@@ -677,10 +677,6 @@ static ssize_t hi6531_sysfs_show(struct device *dev,
 		info->reg = info2->reg;
 	}
 
-#ifdef CONFIG_HISI_DEBUG_FS
-	hi6531_read_byte(info->reg, &v);
-#endif
-
 	return snprintf_s(buf, PAGE_SIZE, PAGE_SIZE, "0x%hhx\n", v);
 }
 
@@ -719,17 +715,11 @@ static ssize_t hi6531_sysfs_store(struct device *dev,
 	if (!strncmp(("reg_addr"), attr->attr.name, strlen("reg_addr"))) {
 		if (v < (u8) HI6531_REG_TOTAL_NUM) {
 			info->reg = v;
-        #ifdef CONFIG_HISI_DEBUG_FS
-            soh_hi6531_gpio_en(1);
-        #endif
 			return count;
 		} else {
 			return -EINVAL;
 		}
 	}
-#ifdef CONFIG_HISI_DEBUG_FS
-	hi6531_write_byte(info->reg, v);
-#endif
 
 	return count;
 }

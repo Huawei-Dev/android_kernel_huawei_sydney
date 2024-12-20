@@ -37,10 +37,6 @@ extern int mmc_blk_cmdq_halt(struct mmc_card *card);
 bool g_mmc_reset_status;
 #endif
 
-#if defined(CONFIG_HISI_DEBUG_FS)
-extern unsigned int sd_test_reset_flag;
-#endif
-
 void mmc_power_up_vcc(struct mmc_host *host,u32 ocr)
 {
 	if (host->ios.power_mode == MMC_POWER_UP)
@@ -834,10 +830,6 @@ static int mmc_do_sd_reset(struct mmc_host *host)
 	if (host->ops->hw_reset)
 		host->ops->hw_reset(host);
 
-	/*clear the reset flag after reset has been done*/
-#if defined(CONFIG_HISI_DEBUG_FS)
-	sd_test_reset_flag = 0;
-#endif
 	/* Only for K930/920 SD slow down clk*/
 	if (host->ops->slowdown_clk)
 		host->ops->slowdown_clk(host, host->ios.timing);
@@ -882,7 +874,7 @@ int mmc_sd_reset(struct mmc_host *host)
 }
 EXPORT_SYMBOL(mmc_sd_reset);
 
-/*低速卡，设定频率25M  设置卡位宽*/
+/*\B5\CD\CB倏\A8\A3\AC\C9瓒ㄆ礬C2\CA25M  \C9\E8\D6每\A8位\BF\ED*/
 void mmc_select_new_sd(struct mmc_card *card)
 {
 	unsigned int max_dtr;

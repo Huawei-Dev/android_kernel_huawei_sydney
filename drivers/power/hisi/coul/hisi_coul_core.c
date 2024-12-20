@@ -149,9 +149,6 @@ static void check_batt_critical_electric_leakage(struct smartstar_coul_device *d
 static void isc_config_splash2_file_sync(struct iscd_info *iscd);
 static char dsm_buff[ISCD_DSM_LOG_SIZE_MAX] = { 0 };
 int get_batt_reset_flag(void);
-#ifdef CONFIG_HISI_DEBUG_FS
-int print_multi_ocv_threshold(void);
-#endif
 
 static struct coul_ocv_cali_info g_coul_ocv_cali_info[INDEX_MAX];
 static int g_ocv_cali_index = 0;
@@ -3100,19 +3097,6 @@ static void get_ocv_by_fcc(struct smartstar_coul_device *di,int batt_temp)
     }
 }
 
-#ifdef CONFIG_HISI_DEBUG_FS
-int test_cc_discharge_percent(unsigned int percent)
-{
-    struct smartstar_coul_device *di = g_smartstar_coul_dev;
-    if (!di) {
-        coul_core_info("NULL point in [%s]\n", __func__);
-   	    return -1;
-    }
-    percent = clamp_val(percent, 0, 100);
-    di->dischg_ocv_soc = percent;
-    return percent;
-}
-#endif
 /*******************************************************
   Function:        could_cc_update_ocv
   Description:     judege if cc could update with cc dischage 5% fcc
@@ -3563,9 +3547,6 @@ static void coul_get_initial_ocv(struct smartstar_coul_device *di)
     di->batt_ocv_temp = di->coul_dev_ops->get_ocv_temp();
     di->batt_ocv = ocv_uv;
 	di->coul_dev_ops->get_ocv_level(&(di->last_ocv_level));
-#ifdef CONFIG_HISI_DEBUG_FS
-	print_multi_ocv_threshold();
-#endif
     coul_core_info("initial OCV = %d , OCV_temp=%d, fcc_flag= %d, ocv_level:%d\n", di->batt_ocv,di->batt_ocv_temp,di->batt_ocv_valid_to_refresh_fcc, di->last_ocv_level);
 }
 
@@ -3853,7 +3834,7 @@ out:
     soc_new = bound_soc(soc_new);
     return soc_new;
 }
-/* 电量平滑修正*/
+/* \B5\E7\C1\BF平\BB\AC\D0\DE\D5\FD*/
 /*******************************************************
   Function:        limit_soc
   Description:     limt soc
@@ -4177,7 +4158,7 @@ static int calculate_state_of_charge(struct smartstar_coul_device *di)
     /* calculate remaining usable charge */
     //eco_leak_uah = calculate_eco_leak_uah();
 
-	/* 退出ECO模式后 */
+	/* \CD顺\F6ECO模式\BA\F3 */
     //remaining_charge_uah = remaining_charge_uah - eco_leak_uah;
 
     remaining_usable_charge_uah = remaining_charge_uah
@@ -7826,29 +7807,7 @@ static enum hrtimer_restart iscd_timer_func(struct hrtimer *timer)
 #ifdef CONFIG_HISI_COUL_POLAR
 static int enable_eco_sample = 0;
 static int enable_ocv_calc = 0;
-#ifdef CONFIG_HISI_DEBUG_FS
-void test_enable_sample(void)
-{
-struct smartstar_coul_device *di = g_smartstar_coul_dev;
-    if (NULL == di)
-        return;
-    enable_eco_sample = 1;
-    di->coul_dev_ops->set_eco_sample_flag(1);
-    di->coul_dev_ops->clr_eco_data(1);
-}
-void test_enable_ocv_calc(void)
-{
-    enable_ocv_calc = 1;
-}
-void test_disable_sample(void)
-{
-struct smartstar_coul_device *di = g_smartstar_coul_dev;
-    if (NULL == di)
-        return;
-    enable_eco_sample = 0;
-    di->coul_dev_ops->set_eco_sample_flag(0);
-}
-#endif
+
 static void update_polar_params(struct smartstar_coul_device *di,
                                         bool update_flag)
 {
@@ -7951,7 +7910,7 @@ static void update_polar_ocv(struct smartstar_coul_device *di,
     unsigned long sample_time_rtc = 0;
     if (NULL == di)
         return;
-    /*判断eco数据是否被清空*/
+    /*\C5卸\CFeco\CA\FD\BE\DD\CA欠\F1\B1\BB\C7\E5\BF\D5*/
     di->coul_dev_ops->get_eco_sample_flag(&eco_sample_flag);
     current_sec = di->coul_dev_ops->get_coul_time();
     coul_core_debug("[%s]vbat:0x%x, ibat:0x%x\n",
@@ -8002,19 +7961,6 @@ static void update_polar_ocv(struct smartstar_coul_device *di,
     }
     coul_core_info("[%s]polar_ocv:%d, polar_ocv_time:%d,cc_comp:%d\n",
         __FUNCTION__,  di->polar.polar_ocv,  di->polar.polar_ocv_time, cc_now);
-    #ifdef CONFIG_HISI_DEBUG_FS
-    if (!is_in_capacity_dense_area(di->polar.polar_ocv)) {
-        di->batt_ocv_valid_to_refresh_fcc = 1;
-        di->batt_ocv = di->polar.polar_ocv;
-        di->batt_ocv_temp = temp;
-        di->coul_dev_ops->save_ocv_temp((short)temp);
-        di->coul_dev_ops->save_ocv(di->polar.polar_ocv, IS_UPDATE_FCC);
-    	coul_clear_cc_register();
-        coul_clear_coul_time();
-        clear_polar_err_b();
-        di->coul_dev_ops->save_cc_uah(cc_now);
-    }
-    #endif
     return;
 }
 static void polar_ipc_init(struct smartstar_coul_device *di)
@@ -8305,9 +8251,6 @@ static int save_cali_param(void)
         pinfo->c_offset_b = c_offset_b;
         pinfo->c_chip_temp = curr_cal_temp;
     }
-#ifdef CONFIG_HISI_DEBUG_FS
-    ret = hisi_nve_direct_access(&nve);
-#endif
     if (ret)
     {
         coul_core_err("save cali param failed, ret=%d\n", ret);
@@ -10812,52 +10755,6 @@ static void clear_big_current_10min(void)
 		 curr2update_ocv[i].time = 0;
 	}
 }
-#ifdef CONFIG_HISI_DEBUG_FS
-int control_ocv_level(int level, int val)
-{
-	if (level >=  OCV_LEVEL_MAX || level < OCV_LEVEL_0)
-		return -1;
-	if (val == 1)
-		ocv_level_para[level].is_enabled = 1;
-	else if (val == 0)
-		ocv_level_para[level].is_enabled = 0;
-	else
-		return -1;
-	coul_core_info("ocv level[%d]is set[%d]\n", level, ocv_level_para[level].is_enabled);
-	return 0;
-}
-
-int print_multi_ocv_threshold(void)
-{
- int i = 0;
- coul_core_info("%s++++",__func__);
- coul_core_info("duty_ratio_limit|sleep_time_limit|wake_time_limit|max_avg_curr_limit|temp_limit|ocv_gap_time_limit|delta_soc_limit|ocv_update_anyway|allow_fcc_update|is_enabled|\n");
- for (i = 0; i < OCV_LEVEL_MAX; i++) {
-	coul_core_info(	"%4d|%4d|%4d|%4d|%4d|%4d|%4d|%4d|%4d|%4d|\n",ocv_level_para[i].duty_ratio_limit,\
-	ocv_level_para[i].sleep_time_limit, ocv_level_para[i].wake_time_limit,\
-	ocv_level_para[i].max_avg_curr_limit,ocv_level_para[i].temp_limit,\
-	ocv_level_para[i].ocv_gap_time_limit,ocv_level_para[i].delta_soc_limit,\
-	ocv_level_para[i].ocv_update_anyway,ocv_level_para[i].allow_fcc_update,ocv_level_para[i].is_enabled);
- }
- coul_core_info("%s----",__func__);
- return 0;
-}
-
-u8 get_delta_soc(void)
-{
-	if (!g_test_delta_soc_renew_ocv)
-		return delta_soc_renew_ocv;
-	else
-		return g_test_delta_soc_renew_ocv;
-}
-
-u8 set_delta_soc(u8 delta_soc)
-{
-    g_test_delta_soc_renew_ocv = delta_soc;
-	coul_core_info("delta_soc is set[%d]\n", delta_soc);
-    return g_test_delta_soc_renew_ocv;
-}
-#endif
 
 #ifdef CONFIG_HUAWEI_DUBAI
 static void report_battery_adjust(int delta_ocv, int delta_soc, int delta_uah, int sleep_cc)

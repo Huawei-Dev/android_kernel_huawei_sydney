@@ -19,7 +19,6 @@ obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
 obj-$(CONFIG_SCSI_UFS_FAULT_INJECT) += ufs_fault_inject.o
 obj-$(CONFIG_SCSI_UFS_BLOCK_TEST) += ufs_block_test.o
 obj-$(CONFIG_SCSI_UFS_TEST) += ufs_test.o
-obj-$(CONFIG_HISI_DEBUG_FS) += ufs_debugfs.o
 obj-$(CONFIG_HUAWEI_UFS_DSM) += dsm_ufs.o
 obj-$(CONFIG_HISI_AB_PARTITION) += ufs-kirin-lib.o
 obj-$(CONFIG_HISI_BOOTDEVICE) += ufs-rpmb.o

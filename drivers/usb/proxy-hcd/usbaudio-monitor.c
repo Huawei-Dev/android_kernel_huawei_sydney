@@ -41,25 +41,8 @@ static bool match_reest_power_devices(struct usb_device *udev)
 	return false;
 }
 
-#ifdef CONFIG_HISI_DEBUG_FS
-static int never_hifi_usb;
-static int always_hifi_usb;
-
-int never_use_hifi_usb(int val)
-{
-	never_hifi_usb = val;
-	return val;
-}
-
-int always_use_hifi_usb(int val)
-{
-	always_hifi_usb = val;
-	return val;
-}
-#else
 #define never_hifi_usb 0
 #define always_hifi_usb 0
-#endif
 
 int get_never_hifi_usb_value(void)
 {
@@ -222,12 +205,6 @@ static int usb_notifier_call(struct notifier_block *nb,
 							"to start hifi usb\n");
 						(void)hisi_usb_start_hifi_usb();
 					}
-#ifdef CONFIG_HISI_DEBUG_FS
-					else if (get_always_hifi_usb_value()) {
-						DBG("always_hifi_usb, to start hifi usb\n");
-						(void)hisi_usb_start_hifi_usb();
-					}
-#endif
 				}
 			}
 		}

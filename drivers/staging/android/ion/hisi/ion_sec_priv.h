@@ -49,12 +49,7 @@ enum SECSG_CMA_TYPE {
 
 #define SECBOOT_CMD_ID_MEM_ALLOCATE 0x1
 
-#ifdef CONFIG_HISI_ION_SECSG_DEBUG
-#define secsg_debug(fmt, ...) \
-	pr_info(fmt, ##__VA_ARGS__)
-#else
 #define secsg_debug(fmt, ...)
-#endif
 
 #define SEC_SG_CMA_NUM 4
 

@@ -59,13 +59,6 @@ config ION_OF
 
 	  If using Ion and devicetree, you should say Y here
 
-config HISI_ION_SECSG_DEBUG
-	bool "Hisilicon ION secsg heap support"
-	depends on ION_HISI_SECSG
-	default n
-	help
-	  if you want to debug ion secsg, you should select this.
-
 config ION_HISI_SECSG
 	bool "Hisilicon ION secsg heap support"
 	depends on ION_HISI

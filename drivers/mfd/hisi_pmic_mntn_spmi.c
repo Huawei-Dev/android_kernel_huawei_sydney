@@ -73,29 +73,6 @@ int hisi_call_pmic_mntn_notifiers(int val,void *v)
 }
 EXPORT_SYMBOL_GPL(hisi_call_pmic_mntn_notifiers);
 
-#ifdef CONFIG_HISI_PMIC_DEBUG
-static int hisi_test_pmic_mntn_notifier_call(struct notifier_block *nb, unsigned long event, void *data)
-{
-	PMIC_MNTN_EXCP_INFO  *ocp_ldo_msg  = (PMIC_MNTN_EXCP_INFO *)(data);
-	if ( NULL == ocp_ldo_msg) {
-		pr_err("[%s] test pmic mnt ocp ldo msg is NULL!\n",__func__);
-		return -EPERM;
-	}
-
-	if (event == HISI_PMIC_OCP_EVENT) {
-		pr_err("[%s] test pmic mnt %s ocp event!\n",__func__,ocp_ldo_msg->ldo_num);
-	}else {
-		pr_err("[%s]invalid event %d!\n", __func__,(int) (event));
-	}
-	return 0;
-}
-
-static struct notifier_block hisi_pmic_mntn_test_nb = {
-	.notifier_call = hisi_test_pmic_mntn_notifier_call,
-	.priority = INT_MIN,
-};
-#endif
-
 static void hisi_pmic_panic_handler(void)
 {
 #ifdef CONFIG_HISI_BB
@@ -917,12 +894,6 @@ static int hisi_pmic_ocp_mntn_initial(struct spmi_device *pdev, PMIC_MNTN_DESC *
 		return -ENODEV;
 	}
 
-#ifdef CONFIG_HISI_PMIC_DEBUG
-	ret = hisi_pmic_mntn_register_notifier(&hisi_pmic_mntn_test_nb);
-	if(0 != ret){
-		pr_err("%s:hisi pmic mntn test nb register fail!\n",__func__);
-	}
-#endif
 	return 0;
 }
 
@@ -1218,13 +1189,6 @@ static int hisi_pmic_mntn_probe(struct spmi_device *pdev)
 
 static int hisi_pmic_mntn_remove(struct spmi_device *pdev)
 {
-#ifdef CONFIG_HISI_PMIC_DEBUG
-	int ret = 0;
-	ret = hisi_pmic_mntn_unregister_notifier(&hisi_pmic_mntn_test_nb);
-	if( 0 != ret){
-		pr_err("%s: hisi pmic mntn test nb unregister fail!\n",__func__);
-	}
-#endif
 	return 0;
 }
 

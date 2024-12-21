@@ -46,9 +46,6 @@
 #include <linux/clk-provider.h>
 
 #include <soc_crgperiph_interface.h>
-#ifdef CONFIG_HISI_PMIC_DEBUG
-#include <linux/debugfs.h>
-#endif
 #include <linux/seq_file.h>
 #include <linux/uaccess.h>
 
@@ -1163,59 +1160,6 @@ static struct of_device_id of_hisi_regulator_ip_match_tbl[] = {
 	},
 	{ /* end */ }
 };
-#ifdef CONFIG_HISI_PMIC_DEBUG
-static int dbg_control_vcc_show(struct seq_file *s, void *data)
-{
-	pr_info("dbg_control_hisi_ip_show \n\r");
-	return 0;
-}
-static ssize_t dbg_control_vcc_set_value(struct file *filp, const char __user *buffer,
-	size_t count, loff_t *ppos)
-{
-	char tmp[128] = {0};
-	int index = 0;
-
-	if (count >= 128 || !buffer) {
-		pr_info("error! buffer size big than internal buffer\n");
-		return -EFAULT;
-	}
-
-	if (copy_from_user(tmp, buffer, count)) {
-		pr_info("error!\n");
-		return -EFAULT;
-	}
-
-	if (sscanf(tmp, "%d", &index)) {
-		if (index == 0) {
-
-		} else if (index == 1) {
-
-		} else {
-			pr_info("ERRR~\n");
-		}
-	} else {
-		pr_info("ERRR~\n");
-	}
-
-	*ppos += count;
-
-	return count;
-}
-
-static int dbg_control_vcc_open(struct inode *inode, struct file *file)
-{
-	file->private_data = inode->i_private;
-	return single_open(file, dbg_control_vcc_show, &inode->i_private);
-}
-
-static const struct file_operations set_control_vcc_fops = {
-	.open		= dbg_control_vcc_open,
-	.read		= seq_read,
-	.write		= dbg_control_vcc_set_value,
-	.llseek		= seq_lseek,
-	.release	= single_release,
-};
-#endif
 
 static int hisi_regulator_ip_probe(struct platform_device *pdev)
 {
@@ -1231,9 +1175,6 @@ static int hisi_regulator_ip_probe(struct platform_device *pdev)
 	int ret = 0;
 	static int regulator_flag;
 	const char *supplyname = NULL;
-#ifdef CONFIG_HISI_PMIC_DEBUG
-	struct dentry *d;
-#endif
 
 	if (pdev == NULL) {
 		pr_err("[%s]regulator get  platform device para is err!\n", __func__);
@@ -1307,25 +1248,12 @@ static int hisi_regulator_ip_probe(struct platform_device *pdev)
 	}
 
 	if (regulator_flag == 0) {
-#ifdef CONFIG_HISI_PMIC_DEBUG
-		d = debugfs_create_dir("hisi_ip_debugfs", NULL);
-		if (!d) {
-			dev_err(dev, "failed to create ip regulator debugfs dir !\n");
-			ret = -ENOMEM;
-			goto hwspin_lock_err1;
-		}
-		(void) debugfs_create_file("control_vcc", S_IRUSR, d, NULL, &set_control_vcc_fops);
-#endif
 		regulator_flag = 1;
 	}
 
 	platform_set_drvdata(pdev, rdev);
 
 	return 0;
-#ifdef CONFIG_HISI_PMIC_DEBUG
-hwspin_lock_err1:
-	regulator_unregister(rdev);
-#endif
 hisi_ip_probe_end:
 	kfree(sreg);
 	return ret;

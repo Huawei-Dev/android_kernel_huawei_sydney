@@ -142,12 +142,6 @@ static struct ccafc_charge_pattern g_ccafc_pattern;
 static int g_ccafc_pattern_valid;
 static int g_ccafc_sample_status;
 
-#ifdef CONFIG_HISI_CHARGER_SYS_WDG
-#define CHARGE_SYS_WDG_TIMEOUT  180
-extern void charge_enable_sys_wdt(void);
-extern void charge_stop_sys_wdt(void);
-extern void charge_feed_sys_wdt(unsigned int timeout);
-#endif
 static void charge_wake_unlock(void);
 
 #ifdef CONFIG_WIRELESS_CHARGER
@@ -2833,9 +2827,6 @@ static void charge_kick_watchdog(struct charge_device_info *di)
 	ret = di->ops->reset_watchdog_timer();
 	if (ret)
 		hwlog_err("charge kick watchdog timer fail!!\n");
-#ifdef CONFIG_HISI_CHARGER_SYS_WDG
-	charge_feed_sys_wdt(CHARGE_SYS_WDG_TIMEOUT);
-#endif
 }
 
 /**********************************************************
@@ -2852,9 +2843,6 @@ static void charge_disable_watchdog(struct charge_device_info *di)
 		hwlog_err("charge disable watchdog timer fail!!\n");
 	else
 		hwlog_info("charge disable watchdog timer");
-#ifdef CONFIG_HISI_CHARGER_SYS_WDG
-	charge_stop_sys_wdt();
-#endif
 }
 
 bool charge_get_hiz_state(void)
@@ -2998,9 +2986,7 @@ static void charge_start_charging(struct charge_device_info *di)
 	ret = di->ops->chip_init(&init_crit);
 	if (ret)
 		hwlog_err("chip init fail!!\n");
-#ifdef CONFIG_HISI_CHARGER_SYS_WDG
-	charge_enable_sys_wdt();
-#endif
+
 	mod_delayed_work(system_wq, &di->charge_work, msecs_to_jiffies(0));
 
 	schedule_delayed_work(&di->vbus_valid_check_work,
@@ -3122,10 +3108,8 @@ static void charge_stop_charging(struct charge_device_info *di)
 	charge_lock_flag = CHARGE_NO_NEED_WAKELOCK;
 	charge_wake_unlock();
 	mutex_unlock(&charge_wakelock_flag_lock);
-#ifdef CONFIG_HISI_CHARGER_SYS_WDG
-	charge_stop_sys_wdt();
-#endif
 }
+
 extern void hisi_usb_otg_bc_again(void);
 /**********************************************************
 *  Function:       charge_type_dcp_detected_notify
@@ -6058,9 +6042,6 @@ static int charge_resume(struct platform_device *pdev)
 	schedule_work(&resume_wakelock_work);
 
 	if (di->charger_source == POWER_SUPPLY_TYPE_MAINS) {
-#ifdef CONFIG_HISI_CHARGER_SYS_WDG
-		charge_enable_sys_wdt();
-#endif
 		schedule_delayed_work(&di->charge_work, msecs_to_jiffies(0));
 	}
 

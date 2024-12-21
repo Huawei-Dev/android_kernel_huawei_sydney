@@ -16,15 +16,6 @@ static int r_coul_mohm = R_COUL_MOHM;
 
 static void hi6xxx_coul_cc_write_pro(u8 lock)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V700) ||\
-    defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
-#else
-    u8 val = COUL_WRITE_LOCK;
-    if(UNLOCK == lock)
-        val = COUL_WRITE_UNLOCK;
-
-    HI6XXX_REG_WRITE(HI6XXX_DEBUG_WRITE_PRO, val);
-#endif
 }
 
 /*******************************************************
@@ -211,7 +202,7 @@ static  int hi6xxx_coul_convert_ocv_regval2uv(short reg)
         reg_val &= (~INVALID_TO_UPDATE_FCC);
     }
 
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     /*
         1 bit = 225.1196 uv = 4.8/21322 V = 4.8/21322 * 1000 * 1000 uV
                 = 24 * 1000 * 100/ 10661 uV
@@ -250,7 +241,7 @@ static  unsigned short  hi6xxx_coul_convert_ocv_uv2regval(int uv_val)
 {
     unsigned short ret;
     s64 temp;
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     /*
         1 bit = 225.1196 uv = 4.8/21322 V
             = 4.8/21322 * 1000 * 1000 uV
@@ -289,7 +280,7 @@ static int hi6xxx_coul_convert_ocv_regval2ua(short reg_val)
     int ret;
     s64 temp;
 
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     /*
       10 mohm resistance: 1 bit = 5/10661 A = 5*1000*1000 / 10661 uA
       20 mohm resistance: 1 bit = 10 mohm / 2
@@ -326,9 +317,7 @@ static int hi6xxx_coul_convert_ocv_regval2ua(short reg_val)
     ret = div_s64(temp, 1000000);
     ret += c_offset_b;
 
-#ifndef CONFIG_HISI_COUL_HI6421V700
-        ret = ret / 2;
-#endif
+    ret = ret / 2;
 #endif
 
     HI6XXX_COUL_DBG("[%s] reg_val 0x%lx, ret 0x%lx\n", __func__, reg_val, ret);
@@ -346,7 +335,7 @@ static int hi6xxx_coul_convert_ocv_regval2ua(short reg_val)
 static int hi6xxx_coul_convert_regval2uv(unsigned int reg_val)
 {
     s64 temp;
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     short reg_val_temp = reg_val;
 
     if (reg_val_temp & INVALID_TO_UPDATE_FCC) {
@@ -399,7 +388,7 @@ static int hi6xxx_coul_convert_regval2uv(unsigned int reg_val)
         return ret;
 #endif
 }
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
 #else
 
 /*******************************************************
@@ -459,7 +448,7 @@ static  unsigned int  hi6xxx_coul_convert_uv2regval(int uv_val)
     unsigned int ret;
     s64 temp;
 
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     temp = (s64)(uv_val - v_offset_b);
     temp = temp * 1000000;
     temp = div_s64(temp, v_offset_a);
@@ -502,7 +491,7 @@ static  int hi6xxx_coul_convert_regval2ua(unsigned int reg_val)
     int ret;
     s64 temp;
 
-#if defined (CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     ret = (short)reg_val;
     temp = (s64)(ret) * (s64)(1000 * 1000 * 5);
     temp = div_s64(temp, 10661);
@@ -532,9 +521,7 @@ static  int hi6xxx_coul_convert_regval2ua(unsigned int reg_val)
     ret = div_s64(temp, 1000000);
     ret += c_offset_b;
 
-    #ifndef CONFIG_HISI_COUL_HI6421V700
     ret = ret / 2;
-    #endif
 
     HI6XXX_COUL_DBG("[%s] h%d reg_val 0x%lx, ret %d\n", __func__, __LINE__, reg_val, ret);
 
@@ -557,16 +544,7 @@ static int hi6xxx_coul_convert_regval2uah(u64 reg_val)
     int ret;
     s64 temp;
 
-#if defined(CONFIG_HISI_COUL_HI6421V600)
-    temp = (s64)reg_val;
-    temp = 10 * temp / r_coul_mohm;
-    temp = temp * BIT_FOR_UAH_DCXO_586;
-    temp = (s64)div_s64(temp, 10000000);
-
-    temp = (s64) c_offset_a * temp;
-    ret = div_s64(temp, 1000000);
-
-#elif defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 
     u8 coul_clk_mode = 0;
     temp = reg_val;
@@ -594,9 +572,7 @@ static int hi6xxx_coul_convert_regval2uah(u64 reg_val)
     temp = (s64) c_offset_a * temp;
     ret = (int)div_s64(temp, 1000000);
 
-#ifndef CONFIG_HISI_COUL_HI6421V700
-        ret = ret / 2;
-#endif
+    ret = ret / 2;
 #endif
     HI6XXX_COUL_DBG("[%s] reg_val 0x%lx, ret %d\n", __func__, reg_val, ret);
 
@@ -615,23 +591,7 @@ static u64 hi6xxx_coul_convert_uah2regval(unsigned int uah)
     u64 ret = 0;
     u64 temp;
 
-#if defined(CONFIG_HISI_COUL_HI6421V600)
-    /*
-        1bit = 1bit current * 0.11 c = 5/10661 * 11/100 c
-             = 5/10661 * 11/100 * 1000/3600 mAh
-             = 11 / (10661*2*36) mAh = 11 * 1000/ (10661 *2 *36) uAh
-             = 11 * 125/ (10661* 9) uAh
-    */
-
-    temp = uah;
-    temp = temp * 1000000;
-    temp = div_s64(temp, c_offset_a);
-
-    temp = temp * 10000000;
-    temp = div_s64(temp, BIT_FOR_UAH_DCXO_586);
-    ret = (int)(temp * r_coul_mohm /10);
-
-#elif defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
     u8 coul_clk_mode = 0;
 
     temp = uah;
@@ -656,9 +616,7 @@ static u64 hi6xxx_coul_convert_uah2regval(unsigned int uah)
     6421V800: mAh = temp * 5381.5  / r_coul_mohm  * 10E-10   (mAh)
     */
 
-    #ifndef CONFIG_HISI_COUL_HI6421V700
     uah = uah * 2;
-    #endif
 
     temp = uah;
     temp = temp * 1000000;
@@ -926,7 +884,7 @@ int hi6xxx_coul_get_battery_cur_ua_from_fifo(unsigned int fifo_order)
 short hi6xxx_coul_get_offset_current_mod(void)
 {
     short regval = 0;
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     HI6XXX_REGS_READ(HI6XXX_OFFSET_CUR_MODIFY_BASE, &regval, REG_NUM);
 #endif
     return regval;
@@ -942,9 +900,6 @@ short hi6xxx_coul_get_offset_current_mod(void)
 short hi6xxx_coul_get_offset_vol_mod(void)
 {
     short regval = 0;
-#if defined(CONFIG_HISI_COUL_HI6421V600)
-    HI6XXX_REGS_READ(HI6XXX_OFFSET_VOL_MODIFY_BASE, &regval, REG_NUM);
-#endif
     return regval;
 }
 
@@ -957,10 +912,6 @@ short hi6xxx_coul_get_offset_vol_mod(void)
 ********************************************************/
 void hi6xxx_coul_set_offset_vol_mod(void)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600)
-    short regval = 0;
-    HI6XXX_REGS_WRITE(HI6XXX_OFFSET_VOL_MODIFY_BASE, &regval, REG_NUM);
-#endif
 }
 /*******************************************************
   Function:        hi6xxx_coul_get_fifo_avg_data
@@ -1060,7 +1011,7 @@ static int  hi6xxx_coul_get_ate_a(void)
     a_low  = HI6XXX_REG_READ(HI6XXX_VOL_OFFSET_A_ADDR_0);
     a_high = HI6XXX_REG_READ(HI6XXX_VOL_OFFSET_A_ADDR_1);
 
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     regval = (((a_low >> 6) & VOL_OFFSET_A_LOW_VALID_MASK) | ((a_high << 2) & VOL_OFFSET_A_HIGH_VALID_MASK)) & VOL_OFFSET_A_VALID_MASK;
 #else
     regval = ((a_low & VOL_OFFSET_A_LOW_VALID_MASK) | ((a_high << 1) & VOL_OFFSET_A_HIGH_VALID_MASK)) & VOL_OFFSET_A_VALID_MASK;
@@ -1082,7 +1033,7 @@ static int hi6xxx_coul_get_ate_b(void)
       6421v600 :bit[0-5]*/
     regval &= VOL_OFFSET_B_VALID_MASK;
 
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#ifdef CONFIG_HISI_COUL_HI6555V200
     return (VOL_OFFSET_B_BASE + regval*VOL_OFFSET_B_STEP);
 #else
     regval = (regval >> 1);
@@ -1161,26 +1112,6 @@ static int hi6xxx_coul_check_version(struct hi6xxx_coul_device_info *di)
 ********************************************************/
 static int hi6xxx_coul_check_debug(void)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600)
-    u8    val    = 0;
-    short ocvreg = 0;
-    val = HI6XXX_REG_READ(HI6XXX_DEBUG_REG2);
-    if (val){
-        HI6XXX_COUL_ERR("debug reg2 is 0x%x\n",val);
-    }
-    val = HI6XXX_REG_READ(HI6XXX_DEBUG_REG);
-    if(val){
-        HI6XXX_COUL_ERR("debug reg is not 0x0\n");
-	HI6XXX_REG_WRITE(HI6XXX_DEBUG_WRITE_PRO,COUL_WRITE_UNLOCK);
-        HI6XXX_REG_WRITE(HI6XXX_DEBUG_REG, 0x0);
-	HI6XXX_REG_WRITE(HI6XXX_DEBUG_WRITE_PRO,COUL_WRITE_LOCK);
-        usleep_range(500,510);
-        HI6XXX_REGS_WRITE(HI6XXX_SAVE_OCV_ADDR, &ocvreg, 2);
-        usleep_range(500,510);
-        return -1;
-    }
-
-#endif
     return 0;
 }
 
@@ -1217,7 +1148,7 @@ static void hi6xxx_coul_cali_adc(void)
 ********************************************************/
 static void hi6xxx_coul_clear_irq(void)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
     char val = 0x0F;
 #else
     char val = 0x3F;
@@ -1250,7 +1181,7 @@ static void hi6xxx_coul_clear_irq(void)
      HI6XXX_REG_WRITE(HI6XXX_COUL_IRQ_MASK_REG, irq_disable_flag);
      HI6XXX_COUL_INF("Mask coul irq!\n");
  }
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
 /*******************************************************
   Function:      hi6xxx_coul_convert_ua2regval
@@ -1270,9 +1201,7 @@ static  unsigned int hi6xxx_coul_convert_ua2regval(int ua)
     s64 temp;
     int val = ua;
 
-#ifndef CONFIG_HISI_COUL_HI6421V700
     val = val * 2;
-#endif
 
     temp = (s64)val * 1000000;
     temp = div_s64(temp, c_offset_a);
@@ -1298,7 +1227,7 @@ static  unsigned int hi6xxx_coul_convert_ua2regval(int ua)
 *******************************************************/
 static void hi6xxx_coul_set_i_in_event_gate(int ma)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
     unsigned int reg_val = 0;
 
@@ -1319,7 +1248,7 @@ static void hi6xxx_coul_set_i_in_event_gate(int ma)
 *******************************************************/
 static void hi6xxx_coul_set_i_out_event_gate(int ma)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
     unsigned int reg_val = 0;
 
@@ -1333,26 +1262,10 @@ static void hi6xxx_coul_set_i_out_event_gate(int ma)
 
 static void hi6xxx_coul_eco_delay_enable(u8 enable)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V700) || defined(CONFIG_HISI_COUL_HI6421V600) ||\
-    defined(CONFIG_HISI_COUL_HI6555V200)
-#else
-        u8 val;
-        val = HI6XXX_REG_READ(HI6XXX_COUL_ECO_CONFIG_ADDR);
-        val = (val & ~(ECO_DELAY_EN_MASK)) | (enable << ECO_DELAY_EN_SHIFT);
-        HI6XXX_REG_WRITE(HI6XXX_COUL_ECO_CONFIG_ADDR, val);
-#endif
 }
 
 static void hi6xxx_coul_wait_comp_enable(u8 enable)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V700) || defined(CONFIG_HISI_COUL_HI6421V600) || \
-    defined(CONFIG_HISI_COUL_HI6555V200)
-#else
-        u8 val;
-        val = HI6XXX_REG_READ(HI6XXX_COUL_WAIT_COMP_ADDR);
-        val = (val & ~(WAIT_COMP_EN_MASK)) | (enable << WAIT_COMP_EN_SHIFT);
-        HI6XXX_REG_WRITE(HI6XXX_COUL_WAIT_COMP_ADDR, val);
-#endif
 }
 /*******************************************************
   Function:        hi6xxx_coul_config_init
@@ -1376,7 +1289,7 @@ static void hi6xxx_coul_chip_init(void)
     udelay(110);
     HI6XXX_REG_WRITE(HI6XXX_COUL_CTRL_REG,DEFAULT_COUL_CTRL_VAL);
 
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
     /* open coul cali auto*/
     udelay(110);
     HI6XXX_REG_WRITE(HI6XXX_CLJ_CTRL,CALI_CLJ_DEFAULT_VALUE);
@@ -1568,13 +1481,6 @@ static void hi6xxx_coul_clear_fifo(void)
 ********************************************************/
 static void hi6xxx_coul_clear_enable_eco_fifo(void)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V700) ||\
-    defined(CONFIG_HISI_COUL_HI6421V600) ||defined(CONFIG_HISI_COUL_HI6555V200)
-#else
-    unsigned char reg_value = 0;
-    reg_value = HI6XXX_REG_READ(HI6XXX_ECO_FIFO_CLEAR);
-    HI6XXX_REG_WRITE(HI6XXX_ECO_FIFO_CLEAR, (reg_value | ECO_FIFO_CLEAR | ECO_FIFO_EN));
-#endif
 }
 
 /*******************************************************
@@ -1755,7 +1661,7 @@ static void hi6xxx_coul_clear_drained_battery_flag(void)
 }
 static void hi6xxx_coul_set_eco_sample(u8 set_val)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
     u8 val;
     val = HI6XXX_REG_READ(HI6XXX_ECO_OCV_ADDR);
@@ -1770,7 +1676,7 @@ static void hi6xxx_coul_set_eco_sample(u8 set_val)
 
 static void hi6xxx_coul_get_eco_sample(u8 *get_val)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
     u8 val = 0;
     val = HI6XXX_REG_READ(HI6XXX_ECO_OCV_ADDR);
@@ -1784,7 +1690,7 @@ static void hi6xxx_coul_get_eco_sample(u8 *get_val)
 
 static void hi6xxx_coul_clr_eco_sample(u8 set_val)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
     u8 val;
     val = HI6XXX_REG_READ(HI6XXX_ECO_OCV_ADDR);
@@ -1798,7 +1704,7 @@ static void hi6xxx_coul_clr_eco_sample(u8 set_val)
 }
 static void hi6xxx_coul_set_bootocv_sample(u8 set_val)
 {
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
     u8 val;
     val = HI6XXX_REG_READ(BOOT_OCV_ADDR);
@@ -1811,7 +1717,7 @@ static void hi6xxx_coul_set_bootocv_sample(u8 set_val)
     HI6XXX_COUL_ERR("%s set_bootocv:%d!!!\n", __FUNCTION__, val);
 #endif
 }
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
 static int  hi6xxx_get_coul_calibration_status(void)
 {
@@ -1826,7 +1732,7 @@ static int  hi6xxx_get_coul_calibration_status(void)
 }
 #endif
 
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
+#if defined(CONFIG_HISI_COUL_HI6555V200)
 #else
 static int hi6xxx_coul_get_eco_out_chip_temp(void)
 {
@@ -1939,88 +1845,6 @@ static int hi6xxx_coul_get_chip_temp(enum CHIP_TEMP_TYPE type)
 }
 #endif
 
-#if defined(CONFIG_HISI_COUL_HI6421V700) || \
-    defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
-#else
-/*******************************************************
-  Function:      hi6xxx_coul_get_eco_fifo_depth
-  Description:   get coul eco fifo depth
-  Input:         NULL
-  Output:        NULL
-  Return:        depth of eco fifo
-********************************************************/
-static int hi6xxx_coul_get_eco_fifo_depth(void)
-{
-    return ECO_FIFO_DEPTH;
-}
-
-/*******************************************************
-    Function:      hi6xxx_coul_get_eco_vol_uv
-    Description:   get eco vol in uv from fifo
-    Intput:        fifo_order:fifo serial number 0-4
-    Output:        NULL
-    Return:        battery voltage in uv
-********************************************************/
-int hi6xxx_coul_get_eco_vol_uv_from_fifo(unsigned int fifo_order)
-{
-    unsigned int regval = 0;
-    if (fifo_order > ECO_FIFO_DEPTH){
-        fifo_order = ECO_FIFO_DEPTH;
-    }
-    HI6XXX_REGS_READ((HI6XXX_ECO_VOL_FIFO_BASE + 3*fifo_order),&regval,3);/*lint !e647 */
-    return (hi6xxx_coul_convert_regval2uv(regval));
-}
-/*******************************************************
-    Function:      hi6xxx_coul_get_eco_current_ua
-    Description:   get eco current in ua from eco fifo
-    Intput:        fifo_order:fifo serial number 0-4
-    Output:        NULL
-    Return:        battery voltage in uv
-********************************************************/
-int hi6xxx_coul_get_eco_cur_ua_from_fifo(unsigned int fifo_order)
-{
-    unsigned int regval = 0;
-    if (fifo_order > ECO_FIFO_DEPTH){
-        fifo_order = ECO_FIFO_DEPTH;
-    }
-    HI6XXX_REGS_READ((HI6XXX_ECO_I_FIFO_BASE + REG_NUM*fifo_order),&regval,REG_NUM);/*lint !e647 */
-    return (hi6xxx_coul_convert_regval2ua(regval));
-}
-/*******************************************************
-    Function:      hi6xxx_coul_get_eco_temp
-    Description:   get eco current from eco fifo
-    Intput:        fifo_order:fifo serial number 0-4
-    Output:        NULL
-    Return:        battery temp
-********************************************************/
-int hi6xxx_coul_get_eco_temp_from_fifo(unsigned int fifo_order)
-{
-    unsigned int regval = 0;
-    if (fifo_order > ECO_FIFO_DEPTH){
-        fifo_order = ECO_FIFO_DEPTH;
-    }
-    HI6XXX_REGS_READ((HI6XXX_ECO_TEMP_FIFO_BASE + 3*fifo_order),&regval,3);/*lint !e647 */
-    return (hi6xxx_coul_convert_regval2temp(regval));
-}
-
-/*******************************************************
-  Function:        hi6xxx_coul_get_tbat
-  Description:    Get the temp of battery by soh
-  Input:          NA
-  Output:         NA
-  Return:         temp of battery
-*******************************************************/
-static int hi6xxx_coul_get_tbat(void)
-{
-        u16 tbat_code = 0;
-
-        /* get adc data */
-        HI6XXX_REGS_READ(HI6XXX_SOH_TBAT_DATA_BASE, &tbat_code, 2);
-
-        return (int)tbat_code;
-}
-#endif
-
 #ifdef CONFIG_SYSFS
 
 static long g_reg_addr = 0;
@@ -2130,32 +1954,6 @@ struct coul_device_ops hi6xxx_coul_ops =
     .set_eco_sample_flag          = hi6xxx_coul_set_eco_sample,
     .get_eco_sample_flag          = hi6xxx_coul_get_eco_sample,
     .clr_eco_data                 = hi6xxx_coul_clr_eco_sample,
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
-#else
-    .set_i_in_event_gate          = hi6xxx_coul_set_i_in_event_gate,
-    .set_i_out_event_gate         = hi6xxx_coul_set_i_out_event_gate,
-    .convert_regval2uv            = hi6xxx_coul_convert_regval2uv,
-    .convert_regval2ua            = hi6xxx_coul_convert_regval2ua,
-    .convert_regval2temp          = hi6xxx_coul_convert_regval2temp,
-    .convert_uv2regval            = hi6xxx_coul_convert_uv2regval,
-    .convert_regval2uah           = hi6xxx_coul_convert_regval2uah,
-    .get_coul_calibration_status     = hi6xxx_get_coul_calibration_status,
-#endif
-
-#if defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
-#else
-    .get_chip_temp                = hi6xxx_coul_get_chip_temp,
-#endif
-
-#if defined(CONFIG_HISI_COUL_HI6421V700) || \
-    defined(CONFIG_HISI_COUL_HI6421V600) || defined(CONFIG_HISI_COUL_HI6555V200)
-#else
-    .get_eco_fifo_depth           = hi6xxx_coul_get_eco_fifo_depth,
-    .get_eco_vol_uv_from_fifo     = hi6xxx_coul_get_eco_vol_uv_from_fifo,
-    .get_eco_cur_ua_from_fifo     = hi6xxx_coul_get_eco_cur_ua_from_fifo,
-    .get_eco_temp_from_fifo       = hi6xxx_coul_get_eco_temp_from_fifo,
-    .get_bat_temp                 = hi6xxx_coul_get_tbat,
-#endif
 };
 
 static int hi6xxx_coul_create_sysfs(struct hi6xxx_coul_device_info *di)

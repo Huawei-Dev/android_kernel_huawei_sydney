@@ -1,6 +1,4 @@
 obj-$(CONFIG_HISI_COUL_HI6555V200)      += hi6xxx/
-obj-$(CONFIG_HISI_COUL_HI6421V600)      += hi6xxx/
-obj-$(CONFIG_HISI_COUL_HI6421V700)      += hi6xxx/
 
 EXTRA_CFLAGS += -Idrivers/hisi/tzdriver/libhwsecurec/
 

@@ -105,23 +105,11 @@ static int scp_get_direct_charge_mode(void)
 
 static void set_boot_weaksource_flag(void)
 {
-#ifdef CONFIG_HISI_COUL_HI6421V700
-    unsigned int reg_val = 0;
-    reg_val = hisi_pmic_reg_read(WEAKSOURCE_FLAG_REG);
-    reg_val |= WAEKSOURCE_FLAG;
-    hisi_pmic_reg_write(WEAKSOURCE_FLAG_REG, reg_val);
-#endif
     return;
 }
 
 static void clr_boot_weaksource_flag(void)
 {
-#ifdef CONFIG_HISI_COUL_HI6421V700
-    unsigned int reg_val = 0;
-    reg_val = hisi_pmic_reg_read(WEAKSOURCE_FLAG_REG);
-    reg_val &= (~WAEKSOURCE_FLAG);
-    hisi_pmic_reg_write(WEAKSOURCE_FLAG_REG, reg_val);
-#endif
     return;
 }
 /**********************************************************

@@ -21,10 +21,6 @@ extern void ind_hisi_com(void *info, u32 len);
 
 extern void ind_modem_reset(uint8_t *value, uint32_t len);
 
-#ifdef CONFIG_HW_CROSSLAYER_OPT
-extern void aspen_crosslayer_recovery(void *info, int length);
-#endif
-
 #ifdef CONFIG_HUAWEI_EMCOM
 extern void Emcom_Ind_Modem_Support(u8 ucState);
 #endif
@@ -58,7 +54,8 @@ int get_modem_rab_id(struct bst_modem_rab_id *info)
 
 	if (!info) {
 		return -EINVAL;
-	}
+	}
+
 
 	if (IS_ERR_OR_NULL(dev_filp)) {
 		return -EBUSY;
@@ -148,41 +145,6 @@ int bastet_comm_keypsInfo_write(uint32_t ulState)
 }
 #endif /* CONFIG_HUAWEI_EMCOM */
 
-#ifdef CONFIG_HW_CROSSLAYER_OPT
-static void bastet_aspen_pkt_drop_proc(uint8_t *msg, uint32_t len)
-{
-	bst_aspen_pkt_drop *aspen_msg = (bst_aspen_pkt_drop *)msg;
-
-	if (NULL == aspen_msg) {
-		BASTET_LOGE("aspen msg is empty");
-		return;
-	}
-
-	if (len < (sizeof(*aspen_msg) - sizeof(aspen_msg->stPkt))) {
-		BASTET_LOGE("aspen msg size too small %u", len);
-		return;
-	}
-
-	switch(aspen_msg->ulAspenInfoType)
-	{
-		case BST_ASPEN_INFO_PKT_DROP:
-		{
-			if (len != (sizeof(bst_aspen_pkt_drop) - (BST_ASPEN_PKT_DROP_SIZE - aspen_msg->ulPktNum) * sizeof(struct aspen_cdn_info))) {
-				BASTET_LOGE("aspen msg size wrong %u", len);
-				break;
-			}
-			aspen_crosslayer_recovery((void *)aspen_msg->stPkt, (int)aspen_msg->ulPktNum);
-			break;
-		}
-		default:
-		{
-			BASTET_LOGE("aspen info type is wrong %u", aspen_msg->ulAspenInfoType);
-			break;
-		}
-	}
-}
-#endif /* CONFIG_HW_CROSSLAYER_OPT */
-
 static int handle_event(uint8_t *msg, uint32_t len)
 {
 	bst_common_msg *bst_msg;
@@ -203,20 +165,6 @@ static int handle_event(uint8_t *msg, uint32_t len)
 
 	switch(bst_msg->enMsgType)
 	{
-	#ifdef CONFIG_HW_CROSSLAYER_OPT
-		case BST_ACORE_CORE_MSG_TYPE_ASPEN:
-		{
-			bst_acom_msg *acom_msg = (bst_acom_msg *)msg;
-			long hdrlen = (uint8_t *)(acom_msg->aucValue) - (uint8_t *)acom_msg;
-
-			if (len != hdrlen + acom_msg->ulLen) {
-				BASTET_LOGE("aspen msg len error %u %u", len, acom_msg->ulLen);
-				break;
-			}
-			bastet_aspen_pkt_drop_proc(acom_msg->aucValue, acom_msg->ulLen);
-			break;
-		}
-	#endif
 		case BST_ACORE_CORE_MSG_TYPE_DSPP:
 		{
 			bst_acom_msg *acom_msg = (bst_acom_msg *)msg;

@@ -14,27 +14,10 @@
 
 #include "bastet_dev.h"
 
-#ifdef CONFIG_HW_CROSSLAYER_OPT
-#include <net/tcp_crosslayer.h>
-#endif
-
-
 #define BST_MODEM_IOC_MAGIC					'j'
 
 #define BST_MODEM_IOC_GET_MODEM_RAB_ID			_IOWR(BST_MODEM_IOC_MAGIC, 1, struct bastet_modem_rab_id)
 #define BST_MODEM_IOC_GET_MODEM_RESET			_IOWR(BST_MODEM_IOC_MAGIC, 2, int32_t)
-
-#ifdef CONFIG_HW_CROSSLAYER_OPT
-#define BST_ASPEN_INFO_PKT_DROP             0xc0000001
-#define BST_ASPEN_PKT_DROP_SIZE             128
-
-typedef struct
-{
-    uint32_t                          ulAspenInfoType;
-    uint32_t                          ulPktNum;
-    struct aspen_cdn_info             stPkt[BST_ASPEN_PKT_DROP_SIZE];
-} bst_aspen_pkt_drop;
-#endif
 
 struct bastet_modem_rab_id {
     uint16_t modem_id;

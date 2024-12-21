@@ -126,30 +126,6 @@ static void powerkey_timer_func(unsigned long data)
 }
 #endif
 
-#ifdef CONFIG_HISI_POWERKEY_DEBUG
-static int hisi_test_powerkey_notifier_call(struct notifier_block *powerkey_nb, unsigned long event, void *data)
-{
-	if (event == HISI_PRESS_KEY_DOWN) {
-		pr_err("[%s] test power key press event!\n",__func__);
-	}else if (event == HISI_PRESS_KEY_UP) {
-		pr_err("[%s] test power key release event!\n",__func__);
-	}else if (event == HISI_PRESS_KEY_1S) {
-		pr_err("[%s] test response long press 1s event!\n",__func__);
-	}else if (event == HISI_PRESS_KEY_6S) {
-		pr_err("[%s] test response long press 6s event!\n",__func__);
-	} else if (event == HISI_PRESS_KEY_8S) {
-		pr_info("[%s] test response long press 8s event!\n",__func__);
-	} else if (event == HISI_PRESS_KEY_10S) {
-		pr_info("[%s] test response long press 10s event!\n",__func__);
-	} else {
-		pr_err("[%s]invalid event %d!\n", __func__,(int) (event));
-	}
-	return 0;
-}
-
-static struct notifier_block  hisi_test_powerkey_nb;
-#endif
-
 static irqreturn_t hisi_powerkey_handler(int irq, void *data)
 {
 	struct hisi_powerkey_info *info = (struct hisi_powerkey_info *)data;
@@ -245,11 +221,6 @@ static int hisi_powerkey_probe(struct spmi_device *pdev)
 	powerkey_last_press_time = 0;
 	setup_timer(&dsm_powerkey_timer, powerkey_timer_func,
 			(uintptr_t)info);
-#endif
-
-#ifdef CONFIG_HISI_POWERKEY_DEBUG
-	hisi_test_powerkey_nb.notifier_call = hisi_test_powerkey_notifier_call;
-	hisi_powerkey_register_notifier(&hisi_test_powerkey_nb);
 #endif
 
 	sema_init(&long_presspowerkey_happen_sem, 0);
@@ -365,9 +336,7 @@ unregister_err:
 static int hisi_powerkey_remove(struct spmi_device *pdev)
 {
 	struct hisi_powerkey_info *info = dev_get_drvdata(&pdev->dev);
-#ifdef CONFIG_HISI_POWERKEY_DEBUG
-	hisi_powerkey_unregister_notifier(&hisi_test_powerkey_nb);
-#endif
+
 	if (NULL != info) {
 		wake_lock_destroy(&info->pwr_wake_lock);
 		input_free_device(info->idev);

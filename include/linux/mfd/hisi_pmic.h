@@ -117,36 +117,6 @@ static inline void hisi_pmic_write_sub_pmu(u8 sid ,int reg, u32 val) {}
 static inline int hisi_pmic_get_dieid(char *dieid){ return 0;}
 #endif
 
-#ifdef CONFIG_HISI_HI6421V500_PMU
-enum pmic_irq_list {
-	POR_D45MR = 0,
-	VBUS_CONNECT,
-	VBUS_DISCONNECT,
-	ALARMON_R,
-	HOLD_6S,
-	HOLD_1S,
-	POWERKEY_UP,
-	POWERKEY_DOWN,
-	OCP_SCP_R,
-	COUL_R,
-	VSYS_OV,
-	VSYS_UV,
-	VSYS_PWROFF_ABS,
-	VSYS_PWROFF_DEB,
-	THSD_OTMP140,
-	THSD_OTMP125,
-	HRESETN,
-	SIM0_HPD_R = 24,
-	SIM0_HPD_F,
-	SIM0_HPD_H,
-	SIM0_HPD_L,
-	SIM1_HPD_R,
-	SIM1_HPD_F,
-	SIM1_HPD_H,
-	SIM1_HPD_L,
-	PMIC_IRQ_LIST_MAX,
-};
-#else
 enum pmic_irq_list {
 	OTMP = 0,
 	VBUS_CONNECT,
@@ -164,7 +134,6 @@ enum pmic_irq_list {
 	SIM1_HPD_F,
 	PMIC_IRQ_LIST_MAX,
 };
-#endif
 
 #ifdef CONFIG_HISI_SR_DEBUG
 extern void get_ip_regulator_state(void);

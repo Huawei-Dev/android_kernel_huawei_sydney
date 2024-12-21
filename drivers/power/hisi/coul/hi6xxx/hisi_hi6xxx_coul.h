@@ -29,8 +29,6 @@
 #include <linux/mfd/hisi_pmic.h>
 #if defined(CONFIG_HISI_COUL_HI6555V200)
 #include "hisi_hi6555v200_coul.h"
-#elif defined(CONFIG_HISI_COUL_HI6555V300)
-#include "hisi_hi6555v300_coul.h"
 #elif defined(CONFIG_HISI_COUL_HI6421V600)
 #include "hisi_hi6421v600_coul.h"
 #elif defined(CONFIG_HISI_COUL_HI6421V700)

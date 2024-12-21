@@ -4473,7 +4473,6 @@ CONFIG_HISI_HHEE_TOKEN=y
 # CONFIG_GATOR is not set
 CONFIG_HISI_DIEID=y
 CONFIG_HISI_SECS_CTRL=y
-# CONFIG_SECURE_TEST is not set
 
 #
 # Hisilicon Performace Control

@@ -8,6 +8,12 @@ menuconfig HISILICON_PLATFORM
 
 if HISILICON_PLATFORM
 
+config HISI_DIEID
+	bool "Support Hisilicon DIEID driver"
+	default n
+	help
+	Say yes here if you want to use hisi dieid
+
 source "drivers/hisi/adc/Kconfig"
 source "drivers/hisi/cci_extra/Kconfig"
 source "drivers/hisi/cmdline/Kconfig"
@@ -48,7 +54,6 @@ source "drivers/hisi/timekeeper/Kconfig"
 source "drivers/hisi/tlb_conflict/Kconfig"
 source "drivers/hisi/hisi_lmk/Kconfig"
 source "drivers/hisi/hhee/Kconfig"
-source "drivers/hisi/dieid/Kconfig"
 source "drivers/hisi/kernel_harden_test/Kconfig"
 source "drivers/hisi/secs_power_ctrl/Kconfig"
 source "drivers/hisi/isp/Kconfig"

@@ -75,10 +75,6 @@
 #include <linux/delay.h>
 #include "internal.h"
 
-#ifdef CONFIG_HISI_SLOW_PATH_COUNT
-#include "hisi/slowpath_count.h"
-#endif
-
 #ifdef CONFIG_HUAWEI_UNMOVABLE_ISOLATE
 #include <linux/unmovable_isolate.h>
 #endif
@@ -3835,9 +3831,6 @@ retry:
 
 
 	/* Try direct reclaim and then allocating */
-#ifdef CONFIG_HISI_SLOW_PATH_COUNT
-	pgalloc_count_inc(1, order);
-#endif
 	page = __alloc_pages_direct_reclaim(gfp_mask, order, alloc_flags, ac,
 							&did_some_progress);
 	if (page)
@@ -3949,9 +3942,6 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order,
 			ac.nodemask = &cpuset_current_mems_allowed;
 	}
 
-#ifdef CONFIG_HISI_SLOW_PATH_COUNT
-	pgalloc_count_inc(0, order);
-#endif
 	gfp_mask &= gfp_allowed_mask;
 
 	lockdep_trace_alloc(gfp_mask);

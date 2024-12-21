@@ -13,6 +13,3 @@ config HISI_COUL_HI6421V700
 config HISI_COUL_TEST
         bool "hisi coul test"
         default n
-config HISI_COUL_POLAR
-        bool "hisi coul polar"
-        default n

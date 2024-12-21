@@ -2609,18 +2609,7 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
 
 	spin_lock_irqsave(&callback_lock, flags);
 	rcu_read_lock();
-#ifdef CONFIG_HISI_BIG_MAXFREQ_HOTPLUG
-	/* return possible mask for tasks of top_cpuset,
-	 * because we do not update their cpus_allowed
-	 * to track online cpus.
-	 */
-	if (task_cs(tsk) == &top_cpuset)
-		cpumask_copy(pmask, cpu_possible_mask);
-	else
-		guarantee_online_cpus(task_cs(tsk), pmask);
-#else
 	guarantee_online_cpus(task_cs(tsk), pmask);
-#endif
 	rcu_read_unlock();
 	spin_unlock_irqrestore(&callback_lock, flags);
 }

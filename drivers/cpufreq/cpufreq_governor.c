@@ -219,9 +219,6 @@ unsigned int dbs_update(struct cpufreq_policy *policy)
 		if (load > max_load)
 			max_load = load;
 	}
-#ifdef CONFIG_HISI_BIG_MAXFREQ_HOTPLUG
-	set_bL_hifreq_load(max_load);
-#endif
 	return max_load;
 }
 EXPORT_SYMBOL_GPL(dbs_update);

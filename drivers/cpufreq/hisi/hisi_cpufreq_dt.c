@@ -305,9 +305,5 @@ int hisi_cpufreq_init(void)
 	if (ret)
 		return -EINVAL;
 
-#ifdef CONFIG_HISI_BIG_MAXFREQ_HOTPLUG
-	bL_hifreq_hotplug_init();
-#endif
-
 	return ret;
 }

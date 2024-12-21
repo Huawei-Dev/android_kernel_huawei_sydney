@@ -52,11 +52,6 @@ static int set_target(struct cpufreq_policy *policy, unsigned int index)
 {
 	struct private_data *priv = policy->driver_data;
 
-#ifdef CONFIG_HISI_BIG_MAXFREQ_HOTPLUG
-	if (hifreq_hotplug_is_enabled())
-		return bL_hifreq_hotplug_set_target(policy, priv->cpu_dev, policy->freq_table[index].frequency);
-#endif
-
 #ifdef CONFIG_HISI_HW_VOTE_CPU_FREQ
 	return hisi_cpufreq_set(priv->cpu_hvdev, policy->freq_table[index].frequency);
 #else
@@ -429,11 +424,6 @@ static int dt_cpufreq_probe(struct platform_device *pdev)
 	ret = hisi_cpufreq_init();
 	if (ret)
 		return ret;
-
-#ifdef CONFIG_HISI_BIG_MAXFREQ_HOTPLUG
-	if (hifreq_hotplug_is_enabled())
-		dt_cpufreq_driver.flags |= CPUFREQ_ASYNC_NOTIFICATION;
-#endif
 #endif
 
 	ret = cpufreq_register_driver(&dt_cpufreq_driver);

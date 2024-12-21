@@ -18,12 +18,6 @@ config HISI_ENABLE_HPM_DATA_COLLECT
 	help
 	  Hisilicon get avs hpm volt param.
 
-config HISI_BIG_MAXFREQ_HOTPLUG
-	tristate "Specific flow for Hisilicon Platform CPUfreq driver"
-	depends on CPUFREQ_DT && HOTPLUG_CPU
-	help
-	  This add Hotplug Flow in CPUfreq for Hisilicon Big-little Platform with boost freq.
-
 config HISI_CPUFREQ_DT
 	bool "Hisilicon cpufreq-dt enable"
 	depends on CPUFREQ_DT

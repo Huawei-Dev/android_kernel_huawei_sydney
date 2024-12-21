@@ -1942,10 +1942,8 @@ static int __target_index(struct cpufreq_policy *policy, int index)
 	int retval = -EINVAL;
 	bool notify;
 
-#ifndef CONFIG_HISI_BIG_MAXFREQ_HOTPLUG
 	if (newfreq == policy->cur)
 		return 0;
-#endif
 
 	notify = !(cpufreq_driver->flags & CPUFREQ_ASYNC_NOTIFICATION);
 	if (notify) {
@@ -2015,10 +2013,8 @@ int __cpufreq_driver_target(struct cpufreq_policy *policy,
 	 * exactly same freq is called again and so we can save on few function
 	 * calls.
 	 */
-#ifndef CONFIG_HISI_BIG_MAXFREQ_HOTPLUG
 	if (target_freq == policy->cur)
 		return 0;
-#endif
 
 	/* Save last value to restore later on errors */
 	policy->restore_freq = policy->cur;

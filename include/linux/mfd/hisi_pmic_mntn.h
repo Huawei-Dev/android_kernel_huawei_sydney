@@ -39,7 +39,7 @@ typedef enum {
 	PMIC_HRESET_HOT,
 }PMIC_HREST_TYPE;
 
-#if defined(CONFIG_HISI_PMIC_MNTN) || defined(CONFIG_HISI_PMIC_MNTN_SPMI)
+#ifdef CONFIG_HISI_PMIC_MNTN_SPMI
 //打开关闭smpl功能
 //SYS_CTRL1,0x0DC, np_smpl_open_en(bit 0), SMPL功能使能位。
 //enable:true, support smpl

@@ -884,12 +884,6 @@ config DRV_HISI_IP_REGULATOR
 	help
 	  This driver provides system interior bus switch support for the IP regulator on the HiSilicon system.
 
-config HISI_IP_REGULATOR_IPC
-	tristate "HiSilicon system interior bus mtcmos IPC control"
-	depends on HISI_MAILBOX
-	help
-	  This driver provides system interior bus switch support for the IP regulator IPC on the HiSilicon system.
-
 config ATLA_IP_PLATFORM
 	tristate "HiSilicon ATLA system interior bus control platform switch"
 	depends on MFD_HISI_IP_CORE
@@ -919,12 +913,6 @@ config IP_PLATFORM_COMMON
         depends on MFD_HISI_IP_CORE
         help
           This driver provides system interior bus switch for the IP regulator after ORLA AND PHON HiSilicon system.
-
-config REGULATOR_HI6250
-	tristate "HiSilicon system interior voltage PMIC"
-	help
-	  This driver provides support for the voltage regulators on the
-	  HiSilicon system interior voltage / Codec IC.
 
 config REGULATOR_IP_DEBUG
 	tristate "HiSilicon system regulator ip debug"

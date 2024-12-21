@@ -753,7 +753,7 @@ static int hisi_ip_to_atf_disabled(struct regulator_dev *dev)
 	return ret;
 }
 /**************************lpmcu****************************************/
-#if defined(CONFIG_HISI_RPROC) || defined(CONFIG_HISI_IP_REGULATOR_IPC)
+#ifdef CONFIG_HISI_RPROC 
 static int hisi_ip_regulator_cmd_send(struct regulator_dev *dev, int cmd)
 {
 	struct hisi_regulator_ip *sreg = rdev_get_drvdata(dev);

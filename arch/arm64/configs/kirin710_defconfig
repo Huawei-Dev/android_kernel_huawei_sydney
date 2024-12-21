@@ -4401,14 +4401,7 @@ CONFIG_BBP_ACORE=y
 #
 CONFIG_HISI_IVP=y
 CONFIG_IVP_SMMU=y
-# CONFIG_IVP_SMMU_TEST is not set
-# CONFIG_IVP_IVPV160 is not set
-# CONFIG_IVP_IVPV200 is not set
-# CONFIG_IVP_IVPV150 is not set
-# CONFIG_IVP_IVPV100 is not set
 CONFIG_IVP_IVPV120=y
-# CONFIG_IVP_IVPV210 is not set
-# CONFIG_IVP_IVPV250 is not set
 
 #
 # Hisi lpm3_debug options

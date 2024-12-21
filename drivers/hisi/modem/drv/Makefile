@@ -357,8 +357,7 @@ ifeq ($(strip $(CFG_FEATURE_NV_SEC_ON)),YES)
 drv-$(CONFIG_NVIM)              += sec_nvim/nv_ctrl.o sec_nvim/nv_comm.o sec_nvim/nv_base.o sec_nvim/nv_emmc.o sec_nvim/nv_debug.o sec_nvim/nv_index.o sec_nvim/nv_partition_upgrade.o sec_nvim/nv_partition_img.o sec_nvim/nv_partition_bakup.o sec_nvim/nv_partition_factory.o sec_nvim/nv_factory_check.o sec_nvim/nv_msg.o sec_nvim/nv_proc.o sec_nvim/nv_verify.o
 endif
 
-drv-$(CONFIG_HISI_SIM_HOTPLUG)          += sim_hotplug/hisi_sim_hotplug.o
-drv-$(CONFIG_HISI_SIM_HOTPLUG_SPMI)     += sim_hotplug/hisi_sim_hotplug_spmi.o
+obj-$(CONFIG_HISI_SIM_HOTPLUG_SPMI)     += sim_hotplug/
 
 subdir-ccflags-y    +=  -Idrivers/hisi/modem/drv/socp/soft_decode
 ifeq ($(strip $(CFG_ENABLE_BUILD_SOCP)),YES)
@@ -542,9 +541,6 @@ endif
 ifeq ($(strip $(CFG_CONFIG_MODULE_BUSSTRESS)),YES)
 obj-y                   += busstress/$(OBB_PRODUCT_NAME)/
 endif
-
-obj-$(CONFIG_HISI_SIM_HOTPLUG)          += sim_hotplug/
-obj-$(CONFIG_HISI_SIM_HOTPLUG_SPMI)     += sim_hotplug/
 
 else
 obj-y               += sysctrl/

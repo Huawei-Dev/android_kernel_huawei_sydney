@@ -4239,7 +4239,7 @@ static void coul_get_rm(struct smartstar_coul_device *di, int *rm)
 
 static void calc_initial_ocv(struct smartstar_coul_device *di)
 {
-#if (defined(CONFIG_HISI_CHARGER_ARCH) || defined(CONFIG_HUAWEI_CHARGER))
+#if defined(CONFIG_HUAWEI_CHARGER)
     int old_charge_state;
     old_charge_state = charge_set_charge_state(0);
 #endif
@@ -4249,7 +4249,7 @@ static void calc_initial_ocv(struct smartstar_coul_device *di)
     di->coul_dev_ops->save_ocv_temp((short)di->batt_ocv_temp);
     di->batt_ocv = coul_get_battery_voltage_mv()*1000;
     di->coul_dev_ops->save_ocv(di->batt_ocv, NOT_UPDATE_FCC);
-#if (defined(CONFIG_HISI_CHARGER_ARCH) || defined(CONFIG_HUAWEI_CHARGER))
+#if defined(CONFIG_HUAWEI_CHARGER)
     charge_set_charge_state(old_charge_state);
 #endif
     coul_clear_cc_register();

@@ -1529,9 +1529,9 @@ static int hisi_bci_battery_get_property(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_FCP_STATUS:
 		val->intval = 0;
-		#if (defined (CONFIG_HUAWEI_CHARGER) || defined (CONFIG_HISI_CHARGER_ARCH))
+#ifdef CONFIG_HUAWEI_CHARGER
 		val->intval = hisi_bci_battery_get_fcp_status(di);
-		#endif
+#endif
 		break;
 	case POWER_SUPPLY_PROP_SCP_STATUS:
 		val->intval = 0;

@@ -27,11 +27,7 @@
 #endif
 #include <linux/raid/pq.h>
 
-#ifndef CONFIG_HISI_CHARGER_ARCH
 #include <huawei_platform/power/huawei_charger.h>
-#else
-#include <linux/power/hisi/charger/hisi_charger.h>
-#endif
 
 #include <linux/power/hisi/coul/hisi_coul_drv.h>
 #include <linux/power/hisi/hisi_bci_battery.h>

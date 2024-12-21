@@ -2058,12 +2058,6 @@ config HW_SLUB_DF
 	  check this magic when free to avoid double free.
 	  place canary_malloc before return to user.
 
-config HW_SLUB_DF_BUGON
-	bool "When canary status is wrong, throw out a bugon."
-	default n
-	depends on HW_SLUB_DF
-	help
-	  When canary status is wrong, throw out a bugon
 config SLUB_CPU_PARTIAL
 	default y
 	depends on SLUB && SMP

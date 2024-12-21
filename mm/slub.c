@@ -347,9 +347,6 @@ static inline bool hw_check_canary(struct kmem_cache *s, void *object, unsigned 
 	if (*canary == hw_get_canary_value(canary, value))
 	{
 		upload_double_free_log(s, "harden double free checked");
-#ifdef CONFIG_HW_SLUB_DF_BUGON
-		BUG_ON(1);
-#endif
 		return false;
 	}
 	return true;
@@ -367,9 +364,6 @@ static inline bool hw_check_and_set_canary(struct kmem_cache *s, void *object, u
 	if (*canary == hw_get_canary_value(canary, value))
 	{
 		upload_double_free_log(s, "harden double free checked");
-#ifdef CONFIG_HW_SLUB_DF_BUGON
-		BUG_ON(1);
-#endif
 		return false;
 	}
 	*canary = hw_get_canary_value(canary, value);

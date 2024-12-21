@@ -1005,13 +1005,6 @@ void ufs_kirin_populate_dt(struct device *dev,
 #ifdef CONFIG_HISI_UFS_MANUAL_BKOPS
 	ufs_kirin_populate_mgc_dt(np, host);
 #endif
-#ifdef CONFIG_SCSI_UFS_KIRIN_LINERESET_CHECK
-	if (of_find_property(np, "ufs-kirin-linereset-check-disable", NULL))
-		host->hba->bg_task_enable = false;
-	else
-		host->hba->bg_task_enable = true;
-#endif
-
 	if (of_find_property(np, "ufs-kirin-use-auto-H8", NULL))
 		host->hba->caps |= UFSHCD_CAP_AUTO_HIBERN8;
 
@@ -1254,9 +1247,6 @@ const struct ufs_hba_variant_ops ufs_hba_kirin_vops = {
 #endif
 	.dbg_hci_dump = kirin_ufs_hci_log,
 	.dbg_uic_dump = kirin_ufs_uic_log,
-#ifdef CONFIG_SCSI_UFS_KIRIN_LINERESET_CHECK
-	.background_thread = ufs_kirin_daemon_thread,
-#endif
 #ifdef CONFIG_SCSI_UFS_HS_ERROR_RECOVER
 	.get_pwr_by_debug_register = ufs_kirin_get_pwr_by_sysctrl,
 #endif

@@ -487,7 +487,4 @@ int ufs_update_hc_fw(struct ufs_hba *hba);
 #ifdef CONFIG_SCSI_UFS_HS_ERROR_RECOVER
 int ufs_kirin_get_pwr_by_sysctrl(struct ufs_hba *hba);
 #endif
-#ifdef CONFIG_SCSI_UFS_KIRIN_LINERESET_CHECK
-int ufs_kirin_daemon_thread(void *d);
-#endif
 #endif /* UFS_KIRIN_H_ */

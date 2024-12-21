@@ -2,7 +2,7 @@ obj-$(CONFIG_HISI_COUL_HI6555V200)      += hi6xxx/
 obj-$(CONFIG_HISI_COUL_HI6555V300)      += hi6xxx/
 obj-$(CONFIG_HISI_COUL_HI6421V600)      += hi6xxx/
 obj-$(CONFIG_HISI_COUL_HI6421V700)      += hi6xxx/
-obj-$(CONFIG_HISI_COUL_HI6421V800)      += hi6xxx/
+
 EXTRA_CFLAGS += -Idrivers/hisi/tzdriver/libhwsecurec/
 
 ccflags-y  += -I$(srctree)/drivers/huawei_platform/inputhub/$(TARGET_BOARD_PLATFORM)/

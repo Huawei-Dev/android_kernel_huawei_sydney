@@ -3409,10 +3409,7 @@ static int mmc_blk_probe(struct mmc_card *card)
 {
 	struct mmc_blk_data *md, *part_md;
 	char cap_str[10];
-#ifdef CONFIG_SD_SCHEDULER_CFQ_ONLY
-	char cfq_name[15];
-	int ret = 0;
-#endif
+
 	/*
 	 * Check that the card supports the command class(es) we need.
 	 */
@@ -3432,16 +3429,6 @@ static int mmc_blk_probe(struct mmc_card *card)
 
 	if (mmc_blk_alloc_parts(card, md))
 		goto out;
-
-#ifdef CONFIG_SD_SCHEDULER_CFQ_ONLY
-	if (mmc_card_sd(card)) {
-		memset(cfq_name, 0 , sizeof(cfq_name));
-		snprintf(cfq_name, sizeof(cfq_name), "cfq");
-		ret = elevator_change(md->queue.queue, cfq_name);
-		if (ret)
-			pr_err("%s SD scheduler to cfq failed ret = %d.\n", __func__, ret);
-	}
-#endif
 
 	dev_set_drvdata(&card->dev, md);
 #ifdef CONFIG_HW_SD_HEALTH_DETECT

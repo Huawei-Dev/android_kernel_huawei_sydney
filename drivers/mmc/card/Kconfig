@@ -117,11 +117,3 @@ config HW_SYSTEM_HW_WR_PROTECT
 	bool "emmc hardware write protection function of system/cust partitions."
 	depends on HW_SYSTEM_WR_PROTECT
 	default n
-
-config SD_SCHEDULER_CFQ_ONLY
-	tristate "SD use cfq when io scheduler is row"
-	depends on MMC_BLOCK
-	default n
-	help
-	  This is an option to change sd io scheduler to cfq when
-	  block io scheduler is row.

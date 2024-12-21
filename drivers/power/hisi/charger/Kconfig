@@ -11,9 +11,6 @@ config HI6523_CHARGER_SENSORHUB
 	bool "hi6523 charger sensorhub"
 	depends on INPUTHUB
 	default n
-config SCHARGER_V600
-	bool "schargerV600"
-	default n
 config HISI_CHARGER_SYS_WDG
 	bool "hisi charger sys watchdog"
 	default n

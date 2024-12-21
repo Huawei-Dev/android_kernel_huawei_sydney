@@ -5,10 +5,6 @@ config HIFI_DSP_ONE_TRACK
      help
           hifi lpp device provide service for HIFI and AP, in case of HIFI ultra-low power audio play.
 
-config HISI_AUDIO_DEBUG
-    bool "support audio debug function"
-    help
-        support audio debug function
 source drivers/hisi/hifi_dsp/voice_proxy/Kconfig
 endmenu
 

@@ -40,13 +40,6 @@ endif
 EXTRA_CFLAGS += -Idrivers/hisi/hifi_mailbox/mailbox
 EXTRA_CFLAGS += -Idrivers/hisi/hifi_mailbox/ipcm
 EXTRA_CFLAGS += -Isound/usb/hifi/
-ifeq ($(CONFIG_HISI_AUDIO_DEBUG),y)
-ifeq ($(kcov),true)
-EXTRA_CFLAGS += -DENABLE_AUDIO_KCOV
-else
-EXTRA_CFLAGS += -DENABLE_HIFI_DEBUG
-endif
-endif
 
 obj-$(CONFIG_HIFI_DSP_ONE_TRACK)	+= hifi_lpp.o
 obj-$(CONFIG_HIFI_DSP_ONE_TRACK)	+= hifi_om.o
@@ -55,12 +48,6 @@ ifneq ($(HISI_EXTERNAL_MODEM), )
 obj-$(CONFIG_HIFI_DSP_ONE_TRACK)	+= audio_pcie_proc.o
 obj-$(CONFIG_HIFI_DSP_ONE_TRACK)	+= b5000_strategy_acore.o
 EXTRA_CFLAGS += -DHISI_EXTERNAL_MODEM
-endif
-ifeq ($(CONFIG_HISI_AUDIO_DEBUG),y)
-obj-$(CONFIG_SND_SOC_CODEC_STUB)	+= memcpy_opt.o
-ifeq ($(CONFIG_SND_SOC_CODEC_STUB),y)
-EXTRA_CFLAGS += -DDYNAMIC_LOAD_HIFIIMG
-endif
 endif
 
 obj-y	+= voice_proxy/

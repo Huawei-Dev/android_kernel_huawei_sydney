@@ -4157,7 +4157,6 @@ CONFIG_HISI_REENTRANT_EXCEPTION=y
 # Hifimisc driver serve HIFI dsp
 #
 CONFIG_HIFI_DSP_ONE_TRACK=y
-# CONFIG_HISI_AUDIO_DEBUG is not set
 
 #
 # voice proxy driver

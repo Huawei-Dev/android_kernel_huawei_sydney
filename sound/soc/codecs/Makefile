@@ -5,10 +5,6 @@ EXTRA_CFLAGS += -I$(src)/hisi/hs_auto_calib/
 EXTRA_CFLAGS += -Idrivers/hisi/hi64xx_dsp/
 EXTRA_CFLAGS +=	-Idrivers/hisi/slimbus/
 
-ifeq ($(CONFIG_HISI_AUDIO_DEBUG),y)
-EXTRA_CFLAGS += -DHI6XXX_FPGA_TEST
-endif
-
 ifeq ($(TARGET_VERSION_MODE),factory)
 EXTRA_CFLAGS += -DAUDIO_FACTORY_MODE
 endif

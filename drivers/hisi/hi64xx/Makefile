@@ -15,20 +15,6 @@ EXTRA_CFLAGS += -DANC_HEADSET
 EXTRA_CFLAGS += -DINVERT_HEADSET
 endif
 
-ifeq ($(CONFIG_HISI_AUDIO_DEBUG),y)
-EXTRA_CFLAGS += -DCONFIG_HUAWEI_HEADSET_DEBUG
-EXTRA_CFLAGS += -Idrivers/devkit/audiokit/headset_debug/
-ifeq ($(kcov),true)
-EXTRA_CFLAGS += -DKCOV_AUDIO
-else
-EXTRA_CFLAGS += -DENABLE_HI64XX_CODEC_DEBUG
-obj-y += hi64xx_mad.o
-endif
-#ifeq ($(CONFIG_SND_SOC_CODEC_STUB),y)
-#EXTRA_CFLAGS += -DHI6XXX_FPGA_CODEC_STUB
-#endif
-endif
-
 ccflags-y += -Idrivers/devkit/audiokit/
 
 obj-y += hi_cdc_ctrl.o

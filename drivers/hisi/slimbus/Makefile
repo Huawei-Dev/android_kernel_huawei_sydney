@@ -19,10 +19,4 @@ ifeq ($(CONFIG_SND_SOC_HI6405),y)
 hisilicon-slimbus-platform-objs += slimbus_6405.o
 endif
 
-
-ifeq ($(CONFIG_HISI_AUDIO_DEBUG),y)
-ifneq ($(kcov),true)
-hisilicon-slimbus-platform-objs += slimbus_debug.o
-endif
-endif
 obj-$(CONFIG_HISILICON_PLATFORM_SLIMBUS)		+= hisilicon-slimbus-platform.o

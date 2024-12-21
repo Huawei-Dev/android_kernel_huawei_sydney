@@ -1385,48 +1385,6 @@ void scp_cable_detect(void)
 	scp_set_stage_status(SCP_STAGE_SWITCH_DETECT);
 }
 
-#ifdef CONFIG_HUAWEI_POWER_MESG_INTERFACE
-static int direct_charge_af_srv_on_cb(void)
-{
-	g_power_ct_service_ready = 1;
-	return 0;
-}
-
-static int direct_charge_af_cb(unsigned char version, void * data, int len)
-{
-	struct direct_charge_device *di = g_di;
-
-	if (NULL == di)
-	{
-		hwlog_err("%s g_di is NULL\n", __func__);
-		return -1;
-	}
-
-	if (len != 1)
-		return -1;
-
-	di->dc_antifake_result = *(int *) data;
-	complete(&di->dc_af_completion);
-	hwlog_info("direct_charge_af_cb called! dc_antifake_result = %d\n", di->dc_antifake_result);
-	return 0;
-}
-
-static const easy_cbs_t dc_af_ops[DC_AF_INFO_NL_OPS_NUM] = {
-	{
-		.cmd = POWER_CMD_ADAPTOR_ANTIFAKE_HASH,
-		.doit = direct_charge_af_cb,
-	}
-};
-
-static power_mesg_node_t dc_af_info_node = {
-	.target = POWERCT_PORT,
-	.name = "DC_AF",
-	.ops = dc_af_ops,
-	.n_ops = DC_AF_INFO_NL_OPS_NUM,
-	.srv_on_cb = direct_charge_af_srv_on_cb,
-};
-#endif
-
 static int direct_charge_af_calc_hash(void)
 {
 	struct direct_charge_device *di = g_di;
@@ -1444,13 +1402,6 @@ static int direct_charge_af_calc_hash(void)
 	}
 
 	hwlog_info("%s. start\n", __func__);
-
-#ifdef CONFIG_HUAWEI_POWER_MESG_INTERFACE
-	if(power_easy_send(&dc_af_info_node, POWER_CMD_ADAPTOR_ANTIFAKE_HASH, 0,
-                           dc_af_key, DC_AF_KEY_LEN)) {
-		hwlog_err("mesg send failed in %s.\n", __func__);
-	}
-#endif
 
 	if (!wait_for_completion_timeout(&di->dc_af_completion, DC_AF_WAIT_CT_TIMEOUT)) {
 		/*if time out happend, we asume the powerct serivce is dead, return hash calc ok anyway*/
@@ -1482,13 +1433,6 @@ int direct_charge_gen_nl_init(struct platform_device *pdev)
 
 	if (!di->adaptor_antifake_check_enable)
 		return 0;
-
-#ifdef CONFIG_HUAWEI_POWER_MESG_INTERFACE
-	ret = power_easy_node_register(&dc_af_info_node);
-	if(ret) {
-		hwlog_err("power_genl_add_op failed!\n");
-	}
-#endif
 
 	return ret;
 }

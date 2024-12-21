@@ -15,14 +15,6 @@ config SCHED_HISI_DOWNMIGRATE_LOWER_LOAD
 	  option will recaculate a lower load for task downmigrate to
 	  prevent little core's frequency increase too much.
 
-config SCHED_HISI_CALC_CUM_WINDOW_DEMAND
-	bool "WALT calculate cum window demand"
-	depends on SCHED_HISI_USE_WALT
-	default n
-	help
-	  This option caculates WALT's cum_window_demand, which is not used
-	  currently.
-
 config SCHED_HISI_CHECK_IRQLOAD
 	bool "Scheduler check irqload when select task's cpu"
 	depends on SCHED_WALT
@@ -40,17 +32,6 @@ config SCHED_HISI_TOP_TASK
 	help
 	  Hisi schedutil governor may use the top task load as a guide to
 	  frequency evaluation.
-
-config SCHED_HISI_USE_WALT
-	bool "Scheduler use WALT for cpu util and task util"
-	depends on SCHED_WALT
-	default n
-	help
-	  This option enables calculation of WALT's task_util/cpu_util
-	  signal, and sets sysctl_sched_use_walt_[cpu/task]_util to 1.
-
-	  When enabled, you can still change the sysctl node to
-	  enable or disable walt signal for debug purpose.
 
 config SCHED_HISI_MIGRATE_SPREAD_LOAD
 	bool "Spread task's load when inter-cluster migration"

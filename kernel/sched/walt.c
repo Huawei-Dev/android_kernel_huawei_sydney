@@ -58,13 +58,6 @@ static unsigned int sync_cpu;
 static ktime_t ktime_last;
 static __read_mostly bool walt_ktime_suspended;
 
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-static unsigned int task_load(struct task_struct *p)
-{
-	return p->ravg.demand;
-}
-#endif
-
 static inline int exiting_task(struct task_struct *p)
 {
 	return p->flags & PF_EXITING;
@@ -379,64 +372,24 @@ static void rollover_top_task_load(struct task_struct *p, int nr_full_windows)
 
 static inline void fixup_cum_window_demand(struct rq *rq, s64 delta)
 {
-#ifdef CONFIG_SCHED_HISI_CALC_CUM_WINDOW_DEMAND
-	rq->cum_window_demand += delta;
-	if (unlikely((s64)rq->cum_window_demand < 0))
-		rq->cum_window_demand = 0;
-#endif
 }
 
 void
 walt_inc_cumulative_runnable_avg(struct rq *rq,
 				 struct task_struct *p)
 {
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-	rq->cumulative_runnable_avg += p->ravg.demand;
-
-	/*
-	 * Add a task's contribution to the cumulative window demand when
-	 *
-	 * (1) task is enqueued with on_rq = 1 i.e migration,
-	 *     prio/cgroup/class change.
-	 * (2) task is waking for the first time in this window.
-	 */
-	if (p->on_rq || (p->last_sleep_ts < rq->window_start))
-		fixup_cum_window_demand(rq, p->ravg.demand);
-#endif
 }
 
 void
 walt_dec_cumulative_runnable_avg(struct rq *rq,
 				 struct task_struct *p)
 {
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-	rq->cumulative_runnable_avg -= p->ravg.demand;
-	BUG_ON((s64)rq->cumulative_runnable_avg < 0);
-
-	/*
-	 * on_rq will be 1 for sleeping tasks. So check if the task
-	 * is migrating or dequeuing in RUNNING state to change the
-	 * prio/cgroup/class.
-	 */
-	if (task_on_rq_migrating(p) || p->state == TASK_RUNNING)
-		fixup_cum_window_demand(rq, -(s64)p->ravg.demand);
-#endif
 }
 
 static void
 fixup_cumulative_runnable_avg(struct rq *rq,
 			      struct task_struct *p, u64 new_task_load)
 {
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-	s64 task_load_delta = (s64)new_task_load - task_load(p);
-
-	rq->cumulative_runnable_avg += task_load_delta;
-	if ((s64)rq->cumulative_runnable_avg < 0)
-		panic("cra less than zero: tld: %lld, task_load(p) = %u\n",
-			task_load_delta, task_load(p));
-
-	fixup_cum_window_demand(rq, task_load_delta);
-#endif
 }
 
 u64 walt_ktime_clock(void)
@@ -473,17 +426,11 @@ late_initcall(walt_init_ops);
 void walt_inc_cfs_cumulative_runnable_avg(struct cfs_rq *cfs_rq,
 		struct task_struct *p)
 {
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-	cfs_rq->cumulative_runnable_avg += p->ravg.demand;
-#endif
 }
 
 void walt_dec_cfs_cumulative_runnable_avg(struct cfs_rq *cfs_rq,
 		struct task_struct *p)
 {
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-	cfs_rq->cumulative_runnable_avg -= p->ravg.demand;
-#endif
 }
 
 #ifdef CONFIG_SCHED_HISI_WALT_WINDOW_SIZE_TUNABLE
@@ -535,10 +482,6 @@ update_window_start(struct rq *rq, u64 wallclock)
 
 	nr_windows = div64_u64(delta, walt_ravg_window);
 	rq->window_start += (u64)nr_windows * (u64)walt_ravg_window;
-
-#ifdef CONFIG_SCHED_HISI_CALC_CUM_WINDOW_DEMAND
-	rq->cum_window_demand = rq->cumulative_runnable_avg;
-#endif
 }
 
 /*
@@ -1249,61 +1192,6 @@ static inline void update_group_nr_running(struct task_struct *p, int event, u64
  * IMPORTANT : Leave p->ravg.mark_start unchanged, as update_cpu_busy_time()
  * depends on it!
  */
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-static void update_task_demand(struct task_struct *p, struct rq *rq,
-	     int event, u64 wallclock)
-{
-	u64 mark_start = p->ravg.mark_start;
-	u64 delta, window_start = rq->window_start;
-	int new_window, nr_full_windows;
-	u32 window_size = walt_ravg_window;
-
-	update_group_demand(p, rq, event, wallclock);
-
-	new_window = mark_start < window_start;
-	if (!account_busy_for_task_demand(p, event)) {
-		if (new_window)
-			/* If the time accounted isn't being accounted as
-			 * busy time, and a new window started, only the
-			 * previous window need be closed out with the
-			 * pre-existing demand. Multiple windows may have
-			 * elapsed, but since empty windows are dropped,
-			 * it is not necessary to account those. */
-			update_history(rq, p, p->ravg.sum, 1, event);
-		return;
-	}
-
-	if (!new_window) {
-		/* The simple case - busy time contained within the existing
-		 * window. */
-		add_to_task_demand(rq, p, wallclock - mark_start);
-		return;
-	}
-
-	/* Busy time spans at least two windows. Temporarily rewind
-	 * window_start to first window boundary after mark_start. */
-	delta = window_start - mark_start;
-	nr_full_windows = div64_u64(delta, window_size);
-	window_start -= (u64)nr_full_windows * (u64)window_size;
-
-	/* Process (window_start - mark_start) first */
-	add_to_task_demand(rq, p, window_start - mark_start);
-
-	/* Push new sample(s) into task's demand history */
-	update_history(rq, p, p->ravg.sum, 1, event);
-	if (nr_full_windows)
-		update_history(rq, p, scale_exec_time(window_size, rq),
-			       nr_full_windows, event);
-
-	/* Roll window_start back to current to process any remainder
-	 * in current window. */
-	window_start += (u64)nr_full_windows * (u64)window_size;
-
-	/* Process (wallclock - window_start) next */
-	mark_start = window_start;
-	add_to_task_demand(rq, p, wallclock - mark_start);
-}
-#endif
 
 /* Reflect task activity on its demand and cpu's busy time statistics */
 void walt_update_task_ravg(struct task_struct *p, struct rq *rq,
@@ -1322,10 +1210,6 @@ void walt_update_task_ravg(struct task_struct *p, struct rq *rq,
 
 	if (!p->ravg.mark_start)
 		goto done;
-
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-	update_task_demand(p, rq, event, wallclock);
-#endif
 
 	update_cpu_busy_time(p, rq, event, wallclock, irqtime);
 

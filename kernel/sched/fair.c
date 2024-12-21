@@ -73,13 +73,8 @@ unsigned int task_boost_limit = SCHED_CAPACITY_SCALE; /* default no limit */
 #endif
 
 #ifdef CONFIG_SCHED_WALT
-#ifdef CONFIG_SCHED_HISI_USE_WALT
-__read_mostly unsigned int sysctl_sched_use_walt_cpu_util = 1;
-__read_mostly unsigned int sysctl_sched_use_walt_task_util = 1;
-#else
 __read_mostly unsigned int sysctl_sched_use_walt_cpu_util = 0;
 __read_mostly unsigned int sysctl_sched_use_walt_task_util = 0;
-#endif /* CONFIG_SCHED_HISI_USE_WALT */
 __read_mostly unsigned int sysctl_sched_use_walt_cpu_util_freq = 1;
 #ifdef CONFIG_HISI_EAS_SCHED
 __read_mostly unsigned int sysctl_sched_walt_cpu_high_irqload =

@@ -87,115 +87,6 @@ void hisi_cpufreq_exit_req(struct cpufreq_req *req)
 }
 EXPORT_SYMBOL(hisi_cpufreq_exit_req);
 
-#ifdef CONFIG_HISI_L2_DYNAMIC_RETENTION
-struct l2_retention_ctrl {
-	u64 l2_retention_backup;
-	u64 l2_retention_dis_mask;
-	u64 l2_retention_dis_value;
-	u32 l2_retention_dis_cluster;
-	u32 l2_retention_dis_freq;
-};
-static struct l2_retention_ctrl *l2_ret_ctrl = NULL;
-
-u64 l2_retention_read(void)
-{
-	u64 cfg;
-
-	asm volatile ("MRS %0,S3_1_C11_C0_3\n" \
-			: "=r"(cfg) \
-			: \
-			: "memory");
-
-	return cfg;
-}
-
-void l2_retention_write(u64 cfg)
-{
-	asm volatile ("MSR S3_1_C11_C0_3,%0\n" \
-			: \
-			: "r"(cfg) \
-			: "memory");
-}
-
-void l2_dynamic_retention_ctrl(struct cpufreq_policy *policy, unsigned int freq)
-{
-	u64 cfg;
-	int cluster;
-
-	if (IS_ERR_OR_NULL(l2_ret_ctrl)) {
-		pr_err("%s l2_ret_ctrl not init\n", __func__);
-		return;
-	}
-
-	cluster = topology_physical_package_id(policy->cpu);
-	if (cluster != l2_ret_ctrl->l2_retention_dis_cluster) {
-		return;
-	}
-
-	if (freq == l2_ret_ctrl->l2_retention_dis_freq) {
-		l2_ret_ctrl->l2_retention_backup = l2_retention_read();
-		cfg = l2_ret_ctrl->l2_retention_backup & (~(l2_ret_ctrl->l2_retention_dis_mask));
-		cfg |= l2_ret_ctrl->l2_retention_dis_value & l2_ret_ctrl->l2_retention_dis_mask;
-		l2_retention_write(cfg);
-	} else {
-		l2_retention_write(l2_ret_ctrl->l2_retention_backup);
-	}
-}
-
-int l2_dynamic_retention_init(void)
-{
-	struct device_node *np;
-	int ret = -ENODEV;
-
-	l2_ret_ctrl = kzalloc(sizeof(struct l2_retention_ctrl), GFP_KERNEL);
-	if (!l2_ret_ctrl) {
-		pr_err("%s: alloc l2_retention_ctrl err\n", __func__);
-		ret = -ENOMEM;
-		goto err_out;
-	}
-
-	np = of_find_compatible_node(NULL, NULL, "hisi,l2-retention-dis-freq");
-	if (!np) {
-		pr_err("[%s] doesn't have hisi,l2-retention-dis-freq node!\n", __func__);
-		goto err_out_free;
-	}
-
-	ret = of_property_read_u32(np, "dis_retention_cluster", &(l2_ret_ctrl->l2_retention_dis_cluster));
-	if (ret) {
-		pr_err("[%s]parse dis_retention_cluster fail!\n", __func__);
-		goto err_out_free;
-	}
-
-	ret = of_property_read_u32(np, "dis_retention_freq", &(l2_ret_ctrl->l2_retention_dis_freq));
-	if (ret) {
-		pr_err("[%s]parse dis_retention_freq fail!\n", __func__);
-		goto err_out_free;
-	}
-
-	ret = of_property_read_u64(np, "dis_retention_mask", &(l2_ret_ctrl->l2_retention_dis_mask));
-	if (ret) {
-		pr_err("[%s]parse dis_retention_mask fail!\n", __func__);
-		goto err_out_free;
-	}
-
-	ret = of_property_read_u64(np, "dis_retention_value", &(l2_ret_ctrl->l2_retention_dis_value));
-	if (ret) {
-		pr_err("[%s]parse dis_retention_value fail!\n", __func__);
-		goto err_out_free;
-	}
-
-	l2_ret_ctrl->l2_retention_backup = l2_retention_read();
-
-	return 0;
-err_out_free:
-	kfree(l2_ret_ctrl);
-	l2_ret_ctrl = NULL;
-	of_node_put(np);
-err_out:
-	return ret;
-}
-#endif
-
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
 int hisi_cpufreq_set_supported_hw(struct cpufreq_policy *policy)
 {
@@ -409,10 +300,6 @@ int hisi_cpufreq_init(void)
 
 	if (!of_find_compatible_node(NULL, NULL, "arm,generic-bL-cpufreq"))
 		return -ENODEV;
-
-#ifdef CONFIG_HISI_L2_DYNAMIC_RETENTION
-	l2_dynamic_retention_init();
-#endif
 
 	ret = hisi_cpufreq_get_dt_version();
 	if (ret)

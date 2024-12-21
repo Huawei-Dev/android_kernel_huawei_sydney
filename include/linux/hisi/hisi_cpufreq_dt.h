@@ -17,10 +17,6 @@ int hisi_cpufreq_init(void);
 #ifdef CONFIG_HISI_HW_VOTE_CPU_FREQ
 #include <linux/hisi/hisi_hw_vote.h>
 
-#ifdef CONFIG_HISI_L2_DYNAMIC_RETENTION
-void l2_dynamic_retention_ctrl(struct cpufreq_policy *policy, unsigned int freq);
-#endif
-
 struct hvdev *hisi_cpufreq_hv_init(struct device *cpu_dev);
 void hisi_cpufreq_hv_exit(struct hvdev *cpu_hvdev, unsigned int cpu);
 int hisi_cpufreq_set(struct hvdev *cpu_hvdev, unsigned int freq);

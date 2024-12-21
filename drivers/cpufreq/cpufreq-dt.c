@@ -48,9 +48,6 @@ static struct freq_attr *cpufreq_dt_attr[] = {
 	NULL,
 };
 
-#ifdef CONFIG_HISI_L2_DYNAMIC_RETENTION
-extern void l2_dynamic_retention_ctrl(struct cpufreq_policy *policy, unsigned int freq);
-#endif
 static int set_target(struct cpufreq_policy *policy, unsigned int index)
 {
 	struct private_data *priv = policy->driver_data;
@@ -61,9 +58,6 @@ static int set_target(struct cpufreq_policy *policy, unsigned int index)
 #endif
 
 #ifdef CONFIG_HISI_HW_VOTE_CPU_FREQ
-#ifdef CONFIG_HISI_L2_DYNAMIC_RETENTION
-	l2_dynamic_retention_ctrl(policy, policy->freq_table[index].frequency);
-#endif
 	return hisi_cpufreq_set(priv->cpu_hvdev, policy->freq_table[index].frequency);
 #else
 	return dev_pm_opp_set_rate(priv->cpu_dev,

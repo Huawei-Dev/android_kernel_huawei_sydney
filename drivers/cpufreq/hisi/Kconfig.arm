@@ -38,13 +38,6 @@ config HISI_HW_VOTE_CPU_FREQ
 	help
 	  Hisilicon cpufreq-hw_vote enable.
 
-config HISI_L2_DYNAMIC_RETENTION
-	bool "Hisilicon l2 dynamic retention by freq"
-	depends on HISI_HW_VOTE_CPU_FREQ
-	default n
-	help
-	  Hisilicon l2 dynamic retention.
-
 config HISI_CPUDDR_FREQ_LINK
 	bool "Hisilicon cpu ddr freq link enable"
 	depends on CPUFREQ_DT

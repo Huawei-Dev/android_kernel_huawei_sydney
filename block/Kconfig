@@ -156,62 +156,6 @@ config HW_SYSTEM_WR_PROTECT
 	depends on BLOCK
 	default n
 
-config HISI_PARTITION_HI3650
-        bool "hi3650 partition"
-        depends on HISI_PARTITION
-        default n
-        help
-           config partition for hi3650 platform
-
-config HISI_PARTITION_HI6250
-        bool "hi6250 partition"
-        depends on HISI_PARTITION
-        default n
-        help
-           config partition for hi6250 platform
-
-config HISI_PARTITION_HI3660
-        bool "hi3660 partition"
-        depends on HISI_PARTITION
-        default n
-        help
-           config partition for hi3660 platform
-
-config HISI_PARTITION_CAPRICORN
-        bool "capricorn partition"
-        depends on HISI_PARTITION
-        default n
-        help
-          config partition for capricorn platform
-
-config HISI_PARTITION_LIBRA
-	bool "libra partition"
-	depends on HISI_PARTITION
-	default n
-	help
-	  config partition for libra platform
-
-config HISI_PARTITION_KIRIN970
-        bool "kirin970 partition"
-        depends on HISI_PARTITION
-        default n
-        help
-	  config partition for kirin970 platform
-
-config HISI_PARTITION_CANCER
-        bool "cancer partition"
-        depends on HISI_PARTITION
-        default n
-        help
-           config partition for cancer platform
-
-config HISI_PARTITION_TAURUS
-        bool "taurus partition"
-        depends on HISI_PARTITION
-        default n
-        help
-           config partition for taurus platform
-
 config MMC_BLOCK_IOMMU_64BIT
 	bool "Block bounce limit"
 	depends on BLOCK

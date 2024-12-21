@@ -25,32 +25,6 @@ enum {
 
 #define UNIT_USING_COUNT       		(4)
 
-
-#if ((defined CONFIG_HISI_PARTITION_HI3650) || (defined CONFIG_HISI_PARTITION_HI6250))
-
-/*ptable*/
-#define SECBOOT_PTN_PTABLE_START        (0)
-#define SECBOOT_PTN_PTABLE_SIZE         (512 * 1024)
-#define SECBOOT_PTN_PTABLE_FLAGS	(EMMC_USER_PART)
-/*xloader*/
-#define SECBOOT_PTN_XLOADER_START	(0)
-#define SECBOOT_PTN_XLOADER_SIZE	(256 * 1024)
-#define SECBOOT_PTN_XLOADER_FLAGS	(EMMC_BOOT_MAJOR_PART)
-/*vrl*/
-#define SECBOOT_PTN_VRL_START           (512 * 1024)
-#define SECBOOT_PTN_VRL_SIZE		(256 * 1024)
-#define SECBOOT_PTN_VRL_FLAGS           (EMMC_USER_PART)
-/*vrl backup*/
-#define SECBOOT_PTN_VRL_BACKUP_START    (768 * 1024)
-#define SECBOOT_PTN_VRL_BACKUP_SIZE	(256 * 1024)
-#define SECBOOT_PTN_VRL_BACKUP_FLAGS    (EMMC_USER_PART)
-/*fastboot*/
-#define SECBOOT_PTN_FASTBOOT_START	(2048 * 1024)
-#define SECBOOT_PTN_FASTBOOT_SIZE	(4096 * 1024)
-#define SECBOOT_PTN_FASTBOOT_FLAGS      (EMMC_USER_PART)
-
-#endif
-
 /*partition macro definition*/
 #define PART_XLOADER                   "xloader"
 #define PART_XLOADER_INSE           "xloader_inse"

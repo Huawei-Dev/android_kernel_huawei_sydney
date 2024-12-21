@@ -1465,61 +1465,6 @@ static int fingerprint_reset_gpio_init(struct fp_data* fingerprint)
 {
     int error = 0;
 
-#if defined (CONFIG_HISI_PARTITION_KIRIN970)
-#elif defined (CONFIG_HISI_PARTITION_LIBRA)
-#elif defined (CONFIG_HISI_PARTITION_CANCER)
-#elif defined CONFIG_HISI_PARTITION_TAURUS
-#else
-    error = gpio_request(fingerprint->rst_gpio, "fingerprint_reset_gpio");
-
-    if (error)
-    {
-        hwlog_err(" %s gpio_request (reset_gpio) failed.\n",__func__);
-        error = -EINVAL;
-        return error;
-    }
-
-
-    fingerprint->pctrl = devm_pinctrl_get(&fingerprint->pf_dev->dev);
-
-    if (IS_ERR(fingerprint->pctrl))
-    {
-        hwlog_err("%s devm_pinctrl_get failed\n", __func__);
-        error = -EINVAL;
-        return error;
-    }
-
-    fingerprint->pins_default = pinctrl_lookup_state(fingerprint->pctrl, "default");
-
-    if (IS_ERR(fingerprint->pins_default))
-    {
-        hwlog_err("%s pinctrl_lookup_state failed\n", __func__);
-        error = -EINVAL;
-        goto err_pinctrl_put;
-    }
-
-    error = pinctrl_select_state(fingerprint->pctrl, fingerprint->pins_default);
-
-    if (error < 0)
-    {
-        hwlog_err("%s pinctrl_select_state failed error=%d\n", __func__, error);
-        error = -EINVAL;
-        goto err_pinctrl_put;
-    }
-
-    error = gpio_direction_output(fingerprint->rst_gpio, 0);
-
-    if (error)
-    {
-        hwlog_err("%s gpio_direction_output failed\n", __func__);
-        return error;
-    }
-
-    return error;
-
-err_pinctrl_put:
-    devm_pinctrl_put(fingerprint->pctrl);
-#endif
     return error;
 }
 

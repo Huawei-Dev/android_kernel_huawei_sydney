@@ -394,14 +394,10 @@ LINUXINCLUDE    := \
 		$(if $(KBUILD_SRC), -I$(srctree)/include) \
 		-I$(objtree)/include
 
-LINUXINCLUDE += -I$(srctree)/arch/$(hdr-arch)/include/generated \
-		$(USERINCLUDE) \
-		-I$(srctree)/mm \
-		-I$(srctree)/include \
+LINUXINCLUDE += -I$(srctree)/include \
 		-I$(srctree)/include/linux/hisi \
 		-I$(srctree)/drivers \
 		-I$(srctree)/drivers/huawei_platform \
-		-I$(srctree)/fs/proc \
 		-I$(objtree)/drivers/devkit/lcdkit/lcdkit1.0 \
 		-I$(srctree)/drivers/hisi/ap/platform/$(TARGET_BOARD_PLATFORM)
 

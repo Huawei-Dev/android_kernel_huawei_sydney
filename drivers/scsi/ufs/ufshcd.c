@@ -57,6 +57,7 @@
 #include <linux/thermal.h>
 #include <linux/sched.h>
 #include <linux/wakelock.h>
+#include <uapi/scsi/ufs/ufs.h>
 
 #include <linux/cpu.h>
 #include <linux/delay.h>

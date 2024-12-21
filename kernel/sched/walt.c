@@ -55,25 +55,6 @@ static inline unsigned int task_load_freq(struct task_struct *p)
 	return p->ravg.load_avg;
 }
 
-#ifdef CONFIG_SCHED_HISI_DOWNMIGRATE_LOWER_LOAD
-#define TASK_LOAD_FREQ_AVG_HIST_SIZE 3
-static unsigned int task_load_freq_avg(struct task_struct *p)
-{
-	u32 *hist;
-	int widx;
-	u64 sum = 0;
-	unsigned int hist_size;
-
-	hist = &p->ravg.load_sum_history[0];
-	hist_size = TASK_LOAD_FREQ_AVG_HIST_SIZE;
-
-	for (widx = 0; widx < hist_size; widx++)
-		sum += hist[widx];
-
-	return sum / hist_size;
-}
-#endif
-
 static inline u8 curr_table(struct rq *rq)
 {
 	return rq->curr_table;
@@ -274,18 +255,6 @@ static void
 migrate_top_task(struct task_struct *p, struct rq *src_rq, struct rq *dest_rq)
 {
 	bool is_top_task = schedtune_top_task(p) > 0;
-
-#ifdef CONFIG_SCHED_HISI_DOWNMIGRATE_LOWER_LOAD
-	/* Clear p's top task load in downmigrate case */
-	if (capacity_orig_of(cpu_of(src_rq)) > capacity_orig_of(cpu_of(dest_rq))) {
-		del_top_task_load(src_rq, curr_table(src_rq), p->ravg.curr_load, is_top_task);
-		del_top_task_load(src_rq, prev_table(src_rq), p->ravg.prev_load, is_top_task);
-		p->ravg.curr_load = p->ravg.prev_load = 0;
-
-		trace_walt_update_top_task(src_rq, p);
-		return;
-	}
-#endif
 
 	add_top_task_load(dest_rq, curr_table(dest_rq), p->ravg.curr_load, is_top_task);
 	add_top_task_load(dest_rq, prev_table(dest_rq), p->ravg.prev_load, is_top_task);
@@ -1288,22 +1257,6 @@ migrate_cpu_busy_time(struct task_struct *p,
 #endif
 	unsigned long flags;
 	int i;
-
-#ifdef CONFIG_SCHED_HISI_DOWNMIGRATE_LOWER_LOAD
-	int src_cpu = cpu_of(src_rq);
-
-	/* For task downmigrate, lower task's prev/curr window to prevent
-	 * little cluster's freq increase too much. */
-	if (capacity_orig_of(src_cpu) > capacity_orig_of(new_cpu)) {
-		u32 task_load = task_load_freq_avg(p);
-
-		if (unlikely(is_new_task(p)))
-			task_load = UINT_MAX;
-
-		p->ravg.curr_window = min(p->ravg.curr_window, task_load);
-		p->ravg.prev_window = min(p->ravg.prev_window, task_load);
-	}
-#endif
 
 	/* Add task's prev/curr window to dest */
 #ifdef CONFIG_SCHED_HISI_MIGRATE_SPREAD_LOAD

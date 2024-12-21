@@ -1,9 +1,5 @@
-
 config HISI_COUL
         bool "hisi coul"
-        default n
-config HISI_COUL_HI6421V500
-        bool "hisi hi6421v500 coul"
         default n
 config HISI_COUL_HI6421V600
 	bool "hisi hi6421v600 coul"

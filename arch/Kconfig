@@ -416,14 +416,6 @@ config GCC_PLUGIN_RANDSTRUCT_OPERATIONS
 	  If you say Y here, the RANDSTRUCT randomization will make a
 	  ops struction randomized.
 
-config GCC_PLUGIN_RANDSTRUCT_DEBUGFS
-	bool "open struct layout debugfs node to watch struct layout randomize"
-	depends on GCC_PLUGIN_RANDSTRUCT
-	default n
-	help
-	Turn on the struct layout randomize debugfs
-
-
 config GCC_PLUGIN_STRUCTLEAK
 	bool "Force initialization of variables containing userspace addresses"
 	depends on GCC_PLUGINS

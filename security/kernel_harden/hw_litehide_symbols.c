@@ -120,146 +120,6 @@ bool is_hide_symbols(const char *symbol)
 }
 EXPORT_SYMBOL(is_hide_symbols);
 
-#ifdef CONFIG_HUAWEI_HIDESYMS_DEBUGFS
-static struct dentry *hidesym_d;
-
-static int s_show(struct seq_file *file, void *v)
-{
-	const struct symbol_node *p = list_entry(v, struct symbol_node, list);
-	if (p == NULL || p->sym == NULL)
-		return -EINVAL;
-
-	seq_printf(file, "%s\n", p->sym);
-
-	return 0;
-}
-
-static void *s_start(struct seq_file *m, loff_t *pos)
-{
-	mutex_lock(&hidesyms_lock);
-	return seq_list_start(&hidesyms_blacklist, *pos);
-}
-
-static void *s_next(struct seq_file *file, void *v, loff_t *pos)
-{
-	return seq_list_next(v, &hidesyms_blacklist, pos);
-}
-
-static void s_stop(struct seq_file *m, void *p)
-{
-	mutex_unlock(&hidesyms_lock);
-}
-
-static const struct seq_operations hide_syms_sops = {
-	.start = s_start,
-	.next = s_next,
-	.stop = s_stop,
-	.show = s_show,
-};
-
-static int parse_user_input(struct symbol_node *node, const char __user *ubuf,
-		size_t cnt)
-{
-	char ch;
-	size_t read = 0, index = 0;
-	int ret = -1;
-
-	ret = get_user(ch, ubuf++);
-	if (ret)
-		goto out;
-
-	read++;
-	cnt--;
-
-	while (cnt && !isspace(ch)) {
-		if (index < SYM_NAME_LEN - 1)
-			node->sym[index++] = ch;
-		else {
-			ret = -EINVAL;
-			goto out;
-		}
-
-		ret = get_user(ch, ubuf++);
-		if (ret)
-			goto out;
-
-		read++;
-		cnt--;
-	}
-
-	if (isspace(ch) || cnt == 0)
-		node->sym[index] = '\0';
-	else {
-		ret = -EINVAL;
-		goto out;
-	}
-
-	ret = read;
-
-out:
-	return ret;
-}
-
-static int litehide_syms_open(struct inode *inode, struct file *file)
-{
-	return seq_open(file, &hide_syms_sops);
-}
-
-static ssize_t litehide_syms_write(struct file *filp, const char __user *ubuf,
-	size_t cnt, loff_t *ppos)
-{
-	struct symbol_node *node;
-	ssize_t write = 0;
-
-	/* Clear the hidesym_blacklist by 'echo > litehide_syms' */
-	if (cnt == 1 && *ubuf == '\n') {
-		clear_blacklist();
-
-		return cnt;
-	}
-
-	mutex_lock(&hidesyms_lock);
-
-	while (cnt > write) {
-		int count;
-
-		node = litehide_sym_node_alloc();
-		if (!node) {
-			mutex_unlock(&hidesyms_lock);
-			return -ENOMEM;
-		}
-
-		count = parse_user_input(node, ubuf + write, cnt - write);
-		if (count > 0) {
-			if (!find_sym_from_blacklist(node->sym))
-				list_add_tail(&node->list, &hidesyms_blacklist);
-
-			*ppos += count;
-			write += count;
-			count = 0;
-		} else {
-			litehide_sym_node_free(node);
-			mutex_unlock(&hidesyms_lock);
-
-			return -EINVAL;
-		}
-	}
-
-	mutex_unlock(&hidesyms_lock);
-
-	return write;
-}
-
-static const struct file_operations hide_syms_fops = {
-	.owner = THIS_MODULE,
-	.open = litehide_syms_open,
-	.read = seq_read,
-	.write = litehide_syms_write,
-	.llseek = seq_lseek,
-	.release = seq_release,
-};
-#endif
-
 static __init int initialize_blacklist(void)
 {
 	int i;
@@ -287,12 +147,6 @@ static __init int initialize_blacklist(void)
 
 static int __init hw_litehide_symbols_init(void)
 {
-#ifdef CONFIG_HUAWEI_HIDESYMS_DEBUGFS
-	/*create sys/kernel/debug/litehide_syms for debug*/
-	hidesym_d = debugfs_create_file("litehide_syms", 0644, NULL, NULL, &hide_syms_fops);
-	if (!hidesym_d)
-		return -ENOMEM;
-#endif
 	initialize_blacklist();
 
 	return 0;
@@ -300,9 +154,6 @@ static int __init hw_litehide_symbols_init(void)
 
 static void __exit hw_litehide_symbols_exit(void)
 {
-#ifdef CONFIG_HUAWEI_HIDESYMS_DEBUGFS
-	debugfs_remove(hidesym_d);
-#endif
 	clear_blacklist();
 }
 

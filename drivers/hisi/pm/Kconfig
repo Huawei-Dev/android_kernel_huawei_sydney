@@ -40,13 +40,6 @@ config PM_SEC_IO
 	help
 	  tell us if this platform have SEC IO
 
-config HISI_SR_TICK
-	bool "Hisilicon sr tick"
-	depends on SUSPEND
-	default n
-	help
-	  mark kernel sr position
-
 config PM_FCM
 	bool "Hisilicon FCM architecture"
 	default n

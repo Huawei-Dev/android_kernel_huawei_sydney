@@ -1,10 +1,3 @@
-config SCHED_HISI_WALT_WINDOW_SIZE_TUNABLE
-	bool "Make WALT window size tunable"
-	depends on SCHED_WALT
-	default n
-	help
-	  Make walt_ravg_window tunable in early param.
-
 config SCHED_HISI_DOWNMIGRATE_LOWER_LOAD
 	bool "Schedutil governor use lower load when task downmigrate"
 	depends on SCHED_WALT

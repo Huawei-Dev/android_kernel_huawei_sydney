@@ -87,10 +87,6 @@ static inline u64 walt_ktime_clock(void) { return 0; }
 
 #endif /* CONFIG_SCHED_WALT */
 
-#ifdef CONFIG_SCHED_HISI_WALT_WINDOW_SIZE_TUNABLE
-extern bool walt_disabled;
-#else
 extern const bool walt_disabled;
-#endif
 
 #endif

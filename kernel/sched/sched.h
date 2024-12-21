@@ -1732,13 +1732,8 @@ static inline unsigned long capacity_orig_of(int cpu)
 
 extern unsigned int sysctl_sched_use_walt_cpu_util;
 extern unsigned int sysctl_sched_use_walt_cpu_util_freq;
-#ifdef CONFIG_SCHED_HISI_WALT_WINDOW_SIZE_TUNABLE
-extern unsigned int walt_ravg_window;
-extern bool walt_disabled;
-#else
 extern const unsigned int walt_ravg_window;
 extern const bool walt_disabled;
-#endif
 
 #ifdef CONFIG_HISI_EAS_SCHED
 static inline unsigned long task_util(struct task_struct *p)

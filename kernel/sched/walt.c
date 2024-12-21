@@ -36,23 +36,9 @@ static __read_mostly unsigned int walt_io_is_busy = 0;
 
 unsigned int sysctl_sched_walt_init_task_load_pct = 40;
 
-#ifdef CONFIG_SCHED_HISI_WALT_WINDOW_SIZE_TUNABLE
-/* true -> use PELT based load stats, false -> use window-based load stats */
-bool __read_mostly walt_disabled = false;
-
-/*
- * Window size (in ns). Adjust for the tick size so that the window
- * rollover occurs just before the tick boundary.
- */
-__read_mostly unsigned int walt_ravg_window =
-					    (20000000 / TICK_NSEC) * TICK_NSEC;
-#define MIN_SCHED_RAVG_WINDOW ((10000000 / TICK_NSEC) * TICK_NSEC)
-#define MAX_SCHED_RAVG_WINDOW ((1000000000 / TICK_NSEC) * TICK_NSEC)
-#else
 const bool walt_disabled = false;
 const unsigned int walt_ravg_window =
 				(20000000 / TICK_NSEC) * TICK_NSEC;
-#endif
 
 static unsigned int sync_cpu;
 static ktime_t ktime_last;
@@ -432,37 +418,6 @@ void walt_dec_cfs_cumulative_runnable_avg(struct cfs_rq *cfs_rq,
 		struct task_struct *p)
 {
 }
-
-#ifdef CONFIG_SCHED_HISI_WALT_WINDOW_SIZE_TUNABLE
-static int __init set_walt_ravg_window(char *str)
-{
-	unsigned int adj_window;
-	bool no_walt = walt_disabled;
-
-	get_option(&str, &walt_ravg_window);
-
-	/* Adjust for CONFIG_HZ */
-	adj_window = (walt_ravg_window / TICK_NSEC) * TICK_NSEC;
-
-	/* Warn if we're a bit too far away from the expected window size */
-	WARN(adj_window < walt_ravg_window - NSEC_PER_MSEC,
-	     "tick-adjusted window size %u, original was %u\n", adj_window,
-	     walt_ravg_window);
-
-	walt_ravg_window = adj_window;
-
-	walt_disabled = walt_disabled ||
-			(walt_ravg_window < MIN_SCHED_RAVG_WINDOW ||
-			 walt_ravg_window > MAX_SCHED_RAVG_WINDOW);
-
-	WARN(!no_walt && walt_disabled,
-	     "invalid window size, disabling WALT\n");
-
-	return 0;
-}
-
-early_param("walt_ravg_window", set_walt_ravg_window);
-#endif
 
 static void
 update_window_start(struct rq *rq, u64 wallclock)

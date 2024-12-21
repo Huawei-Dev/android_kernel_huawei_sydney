@@ -70,7 +70,6 @@ obj-$(CONFIG_COMPAT) += compat.o
 obj-$(CONFIG_CGROUPS) += cgroup.o
 obj-$(CONFIG_CGROUP_FREEZER) += cgroup_freezer.o
 obj-$(CONFIG_CGROUP_PIDS) += cgroup_pids.o
-obj-$(CONFIG_HW_CGROUP_IONICE) += cgroup_ionice.o
 obj-$(CONFIG_CGROUP_IOLIMIT) += cgroup_io_limit.o
 obj-$(CONFIG_CPUSETS) += cpuset.o
 obj-$(CONFIG_UTS_NS) += utsname.o

@@ -71,10 +71,6 @@ SUBSYS(pids)
 SUBSYS(debug)
 #endif
 
-#if IS_ENABLED(CONFIG_HW_CGROUP_IONICE)
-SUBSYS(ionice)
-#endif
-
 #if IS_ENABLED(CONFIG_CGROUP_IOLIMIT)
 SUBSYS(iolimit)
 #endif

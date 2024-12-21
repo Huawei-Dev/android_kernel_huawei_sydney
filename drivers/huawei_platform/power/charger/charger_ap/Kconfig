@@ -15,9 +15,6 @@ config BQ2560X_CHARGER
 config BQ2429X_CHARGER
 	bool "bq2429x charger"
 	default n
-config BQ25892_CHARGER
-	bool "bq25892 charger"
-	default n
 config RT9466_CHARGER
 	bool "rt9466 charger"
 	default n

@@ -1,7 +1,6 @@
 obj-$(CONFIG_HUAWEI_CHARGER_AP) += huawei_charger.o charging_core.o
 obj-$(CONFIG_BQ2419X_CHARGER) += bq2419x/
 obj-$(CONFIG_BQ2429X_CHARGER) += bq2429x/
-obj-$(CONFIG_BQ25892_CHARGER) += bq25892/
 obj-$(CONFIG_BQ2560X_CHARGER) += bq2560x/
 obj-$(CONFIG_RT9466_CHARGER) += rt9466/
 obj-$(CONFIG_HL7019_CHARGER) += hl7019/

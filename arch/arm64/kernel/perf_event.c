@@ -571,27 +571,6 @@ static inline int armv8pmu_select_counter(int idx)
 	return idx;
 }
 
-#ifdef CONFIG_HISI_HARDEN_BRANCH_PREDICTOR
-u32 armv8pmu_get_counter(struct perf_event *event)
-{
-	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
-	struct hw_perf_event *hwc = &event->hw;
-	int idx = hwc->idx;
-	u32 counter = 0;
-
-	if (!armv8pmu_counter_valid(cpu_pmu, idx)) {
-		pr_err("CPU%u reading wrong counter %d\n",
-			smp_processor_id(), idx);
-		/* set the value to zero */
-		counter = ARMV8_IDX_CYCLE_COUNTER;
-	}  else	{
-		counter = ARMV8_IDX_TO_COUNTER(idx);
-	}
-
-	return counter;
-}
-#endif
-
 static inline u32 armv8pmu_read_counter(struct perf_event *event)
 {
 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);

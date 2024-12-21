@@ -59,24 +59,6 @@ static inline struct bp_hardening_data *arm64_get_bp_hardening_data(void)
 	return this_cpu_ptr(&bp_hardening_data);
 }
 
-#ifdef CONFIG_HISI_HARDEN_BRANCH_PREDICTOR
-extern bool need_to_apply(int cpu);
-static inline void arm64_apply_bp_hardening_check(void)
-{
-	struct bp_hardening_data *d;
-	int cpu;
-
-	if (!cpus_have_cap(ARM64_HARDEN_BRANCH_PREDICTOR))
-		return;
-
-	cpu = smp_processor_id();
-
-	d = arm64_get_bp_hardening_data();
-	if (d->fn && need_to_apply(cpu))
-		d->fn();
-}
-#endif
-
 static inline void arm64_apply_bp_hardening(void)
 {
 	struct bp_hardening_data *d;

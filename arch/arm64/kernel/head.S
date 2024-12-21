@@ -430,19 +430,7 @@ __primary_switched:
 	add	sp, x4, #THREAD_SIZE
 	adr_l	x5, init_task
 	msr	sp_el0, x5			// Save thread_info
-#ifdef CONFIG_HISI_HARDEN_BRANCH_PREDICTOR
-	mrs	x4, mpidr_el1
-	isb
-	ubfx	x4, x4, #8, #8
-	cmp	x4, #0x4
-
-	adr_l	x5, vectors
-	adr_l	x8, bigcpus_vectors
-
-	csel	x8, x5, x8, lt
-#else
 	adr_l	x8, vectors			// load VBAR_EL1 with virtual
-#endif
 	msr	vbar_el1, x8			// vector table address
 	isb
 
@@ -704,19 +692,7 @@ secondary_startup:
 ENDPROC(secondary_startup)
 
 __secondary_switched:
-#ifdef CONFIG_HISI_HARDEN_BRANCH_PREDICTOR
-	mrs	x1, mpidr_el1
-	isb
-	ubfx	x1, x1, #8, #8
-	cmp	x1, #0x4
-
-	adr_l	x0, vectors
-	adr_l	x5, bigcpus_vectors
-
-	csel	x5, x0, x5, lt
-#else
 	adr_l	x5, vectors
-#endif
 	msr	vbar_el1, x5
 	isb
 

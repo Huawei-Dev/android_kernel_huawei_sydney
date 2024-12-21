@@ -85,11 +85,7 @@
 #define BAD_FIQ		2
 #define BAD_ERROR	3
 
-#ifdef CONFIG_HISI_HARDEN_BRANCH_PREDICTOR
-	.macro kernel_ventry, el, label, regsize = 64, pmu_check = 0
-#else
 	.macro kernel_ventry, el, label, regsize = 64
-#endif
 	.align 7
 #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
 alternative_if ARM64_UNMAP_KERNEL_AT_EL0
@@ -105,32 +101,6 @@ alternative_else_nop_endif
 #endif
 
 	sub	sp, sp, #S_FRAME_SIZE
-
-#ifdef CONFIG_HISI_HARDEN_BRANCH_PREDICTOR
-	/* check pmu for wa 2*/
-	.if	\el == 0 && \pmu_check == 1
-	stp	x0, x1, [sp, #16 * 0]
-	stp	x2, x3, [sp, #16 * 1]
-	mov	x3, xzr
-	ldr_this_cpu	x0, pmu_counter, x1
-	msr	pmselr_el0, x0
-	isb
-	mrs	x2, pmxevcntr_el0
-	isb
-	cbnz	x3, 1f
-1:
-	isb
-	mrs	x0, pmxevcntr_el0
-	isb
-	cmp	x0, x2
-	cset	x3, ne
-	adr_l	x0, v2_apply
-	str	x3, [x0, x1]
-	ldp	x0, x1, [sp, #16 * 0]
-	ldp	x2, x3, [sp, #16 * 1]
-	.endif
-#endif
-
 
 	b	el\()\el\()_\label
 	.endm
@@ -485,55 +455,6 @@ ENTRY_NOTAG(vectors)
 	kernel_ventry	0, error_invalid, 32		// Error 32-bit EL0
 #endif
 END(vectors)
-
-#ifdef CONFIG_HISI_HARDEN_BRANCH_PREDICTOR
-/*
- * Exception vectors.
- */
-	.pushsection ".entry.text", "ax"
-
-	.align	11
-ENTRY_NOTAG(bigcpus_vectors)
-	kernel_ventry	1, sync_invalid			// Synchronous EL1t
-	kernel_ventry	1, irq_invalid			// IRQ EL1t
-	kernel_ventry	1, fiq_invalid			// FIQ EL1t
-	kernel_ventry	1, error_invalid		// Error EL1t
-
-	kernel_ventry	1, sync				// Synchronous EL1h
-	kernel_ventry	1, irq				// IRQ EL1h
-#ifdef CONFIG_HISI_FIQ
-	kernel_ventry	1, fiq			        // FIQ EL1h
-#else
-	kernel_ventry	1, fiq_invalid			// FIQ EL1h
-#endif
-	kernel_ventry	1, error_invalid		// Error EL1h
-
-	kernel_ventry	0, sync, 64, 1			// Synchronous 64-bit EL0
-	kernel_ventry	0, irq, 64, 1			// IRQ 64-bit EL0
-#ifdef CONFIG_HISI_FIQ
-	kernel_ventry	0, fiq, 64, 1   	        // FIQ 64-bit EL0
-#else
-	kernel_ventry	0, fiq_invalid			// FIQ 64-bit EL0
-#endif
-	kernel_ventry	0, error_invalid		// Error 64-bit EL0
-
-#ifdef CONFIG_COMPAT
-	kernel_ventry	0, sync_compat, 32, 1		// Synchronous 32-bit EL0
-	kernel_ventry	0, irq_compat, 32, 1		// IRQ 32-bit EL0
-#ifdef CONFIG_HISI_FIQ
-	kernel_ventry	0, fiq_compat, 32, 1		// FIQ 32-bit EL0
-#else
-	kernel_ventry	0, fiq_invalid_compat, 32	// FIQ 32-bit EL0
-#endif
-	kernel_ventry	0, error_invalid_compat, 32	// Error 32-bit EL0
-#else
-	kernel_ventry	0, sync_invalid, 32		// Synchronous 32-bit EL0
-	kernel_ventry	0, irq_invalid, 32		// IRQ 32-bit EL0
-	kernel_ventry	0, fiq_invalid, 32		// FIQ 32-bit EL0
-	kernel_ventry	0, error_invalid, 32		// Error 32-bit EL0
-#endif
-END(bigcpus_vectors)
-#endif
 
 /*
  * Invalid mode handlers

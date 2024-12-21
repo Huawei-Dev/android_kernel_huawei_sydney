@@ -802,13 +802,6 @@ config HARDEN_BRANCH_PREDICTOR
 
 	  If unsure, say Y.
 
-config HISI_HARDEN_BRANCH_PREDICTOR
-	bool "Hisilicon Harden the branch predictor solution" if EXPERT
-	default n
-	depends on HARDEN_BRANCH_PREDICTOR
-	help
-	  Hisilicon optimizations for harden branch predictor schema.
-
 config ARM64_SSBD
 	bool "Speculative Store Bypass Disable" if EXPERT
 	default y

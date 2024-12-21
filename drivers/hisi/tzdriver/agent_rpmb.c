@@ -1,4 +1,4 @@
-﻿#include <linux/fs.h>
+#include <linux/fs.h>
 #include <linux/mmc/ioctl.h>	/* for struct mmc_ioc_rpmb */
 #include <linux/mmc/card.h>	/* for struct mmc_card */
 #include <linux/list.h>

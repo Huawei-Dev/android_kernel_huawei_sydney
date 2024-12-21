@@ -36,7 +36,3 @@ config HW_WIFIPRO_PROC
 	bool "Huawei wifipro proc support"
 	depends on HW_WIFIPRO
 	default n
-
-config HW_SNIFFER
-	bool "hw sniffer"
-	default n

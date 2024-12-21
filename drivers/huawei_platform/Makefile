@@ -16,7 +16,6 @@ obj-y   += inputhub/
 
 obj-$(CONFIG_MAXQ616_POWER_SWITCH) += irda/
 
-obj-$(CONFIG_HW_STAT_MM) += mm/
 obj-$(CONFIG_NFC_DEVICES)   += nfc/
 obj-$(CONFIG_HW_WIFI)   += net/
 obj-y   += power/

@@ -25,7 +25,6 @@ obj-$(CONFIG_HUAWEI_SENSORS_INPUT_INFO)   += sensor/
 obj-y   += storage/
 obj-$(CONFIG_HUAWEI_TS)   += touthscreen/
 obj-y   += usb/
-obj-$(CONFIG_HUAWEI_VIBRATOR) += vibrator/
 obj-$(CONFIG_MADAPT) += madapt/
 obj-$(CONFIG_HUAWEI_IO_TRACING) += iotrace/
 obj-$(CONFIG_HUAWEI_EMCOM) += emcom/

@@ -499,21 +499,13 @@ u64 walt_irqload(int cpu)
 
 int walt_cpu_high_irqload(int cpu)
 {
-#ifdef CONFIG_SCHED_HISI_CHECK_IRQLOAD
-	return walt_irqload(cpu) >= sysctl_sched_walt_cpu_high_irqload;
-#else
 	return 0;
-#endif
 }
 
 #ifdef CONFIG_HISI_EAS_SCHED
 int walt_cpu_overload_irqload(int cpu)
 {
-#ifdef CONFIG_SCHED_HISI_CHECK_IRQLOAD
-	return walt_irqload(cpu) >= sysctl_sched_walt_cpu_overload_irqload;
-#else
 	return 0;
-#endif
 }
 #endif
 

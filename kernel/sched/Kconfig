@@ -1,13 +1,3 @@
-config SCHED_HISI_CHECK_IRQLOAD
-	bool "Scheduler check irqload when select task's cpu"
-	depends on SCHED_WALT
-	default n
-	help
-	  WALT caculates an irqload for each cpu and scheduler will avoid
-	  placing task on a high irqload cpu (if WALT enabled).
-	  Default disabled because we haven't tested to find out which
-	  threshold is the best.
-
 config SCHED_HISI_TOP_TASK
 	bool "Maintain the top task load of each cpu"
 	depends on SCHED_WALT

@@ -927,12 +927,6 @@ config HISI_IP_REGULATOR
 	  This driver provides support for the IP regulator on the
 	  HiSilicon system.
 
-config HISI_REGULATOR_HI3660
-	tristate "HiSilicon system interior voltage PMIC"
-	depends on HISI_IP_PMIC
-	help
-	  This driver provides support for the IP regulator on the
-	  HiSilicon system.
 config REGULATOR_HI6250
 	tristate "HiSilicon system interior voltage PMIC"
 	help

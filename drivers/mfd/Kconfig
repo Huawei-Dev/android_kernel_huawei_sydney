@@ -1619,12 +1619,6 @@ config HISI_IP_CORE
 	help
 	  This driver control HiSilicon system interior area power management.
 
-config HISI_IP_PMIC
-	tristate "Control HiSilicon system interior area voltage"
-	depends on OF
-	help
-	  This driver control HiSilicon system interior area power management.
-
 config HISI_FREQ_AUTODOWN
 	tristate "Support HiSilicon Bus automatic frequency reduction"
 	depends on OF

@@ -59,12 +59,6 @@ config HISI_RECORD_SP
         help
            Say 'Y' here if you want to support record sp.
 
-config HISI_HW_SP
-        bool "Hisilicon platform hw sp"
-        default n
-        help
-           Say 'Y' here if you want to support hw sp.
-
 config HISI_L3CACHE_ECC
         bool "Hisilicon platform l3cache ecc driver"
         default n

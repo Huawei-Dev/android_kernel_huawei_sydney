@@ -88,10 +88,6 @@
 #include <hwnet/ipv4/wifipro_tcp_monitor.h>
 #endif
 
-#ifdef CONFIG_WIFI_DELAY_STATISTIC
-#include <hwnet/ipv4/wifi_delayst.h>
-#endif
-
 #ifdef CONFIG_MPTCP
 #include <net/mptcp.h>
 #include <net/mptcp_v4.h>
@@ -3910,11 +3906,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
 	 */
 	if (after(ack, tp->snd_nxt))
 		goto invalid_ack;
-#ifdef CONFIG_WIFI_DELAY_STATISTIC
-	if(DELAY_STATISTIC_SWITCH_ON) {
-		delay_record_rcv_combine(skb,sk,TP_SKB_TYPE_TCP);
-	}
-#endif
+
 	skb_mstamp_get(&now);
 
 	if (icsk->icsk_pending == ICSK_TIME_EARLY_RETRANS ||

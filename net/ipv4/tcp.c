@@ -308,9 +308,6 @@
 #include <huawei_platform/chr/chr_interface.h>
 #endif
 
-#ifdef CONFIG_WIFI_DELAY_STATISTIC
-#include <hwnet/ipv4/wifi_delayst.h>
-#endif
 int sysctl_tcp_min_tso_segs __read_mostly = 2;
 
 int sysctl_tcp_autocorking __read_mostly = 1;
@@ -1092,11 +1089,7 @@ new_segment:
 						  skb_queue_empty(&sk->sk_write_queue));
 			if (!skb)
 				goto wait_for_memory;
-#ifdef CONFIG_WIFI_DELAY_STATISTIC
-			if(DELAY_STATISTIC_SWITCH_ON) {
-				delay_record_first_combine(sk,skb,TP_SKB_DIRECT_SND,TP_SKB_TYPE_TCP);
-			}
-#endif
+
 			skb_entail(sk, skb);
 			copy = size_goal;
 		}
@@ -1463,11 +1456,7 @@ new_segment:
 						  first_skb);
 			if (!skb)
 				goto wait_for_memory;
-#ifdef CONFIG_WIFI_DELAY_STATISTIC
-			if(DELAY_STATISTIC_SWITCH_ON) {
-				delay_record_first_combine(sk,skb,TP_SKB_DIRECT_SND,TP_SKB_TYPE_TCP);
-			}
-#endif
+
 			process_backlog = true;
 #ifdef CONFIG_MPTCP
 			/*
@@ -2038,11 +2027,7 @@ int tcp_recvmsg(struct sock *sk, struct msghdr *msg, size_t len, int nonblock,
 				goto found_ok_skb;
 			if (TCP_SKB_CB(skb)->tcp_flags & TCPHDR_FIN)
 				goto found_fin_ok;
-#ifdef CONFIG_WIFI_DELAY_STATISTIC
-			if(DELAY_STATISTIC_SWITCH_ON) {
-				delay_record_rcv_combine(skb,sk,TP_SKB_TYPE_TCP);
-			}
-#endif
+
 			WARN(!(flags & MSG_PEEK),
 			     "TCP recvmsg seq # bug 2: copied %X, seq %X, rcvnxt %X, fl %X\n",
 			     *seq, TCP_SKB_CB(skb)->seq, tp->rcv_nxt, flags);

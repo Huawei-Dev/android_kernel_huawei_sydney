@@ -1,5 +1,3 @@
-
-
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -24,7 +22,7 @@
 #include <linux/sched/mm.h>
 #endif
 
-#include "wifipro_tcp_monitor.h"
+#include <hwnet/ipv4/wifipro_tcp_monitor.h>
 
 #ifndef CONFIG_HW_WIFIPRO
 #undef CONFIG_HW_WIFIPRO_PROC

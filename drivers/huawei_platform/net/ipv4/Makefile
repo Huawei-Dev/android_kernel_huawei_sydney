@@ -3,4 +3,6 @@
 #
 obj-$(CONFIG_HW_CROSSLAYER_OPT) += tcp_crosslayer.o
 obj-$(CONFIG_HW_CROSSLAYER_OPT_DBG) = aspen_netlink.o
-
+obj-$(CONFIG_HW_WIFIPRO) += wifipro_tcp_monitor.o
+obj-$(CONFIG_HW_SNIFFER) += sysctl_sniffer.o
+obj-$(CONFIG_WIFI_DELAY_STATISTIC) += wifi_delayst.o

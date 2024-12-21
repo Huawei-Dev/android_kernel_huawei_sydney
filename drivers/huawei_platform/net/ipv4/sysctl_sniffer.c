@@ -19,7 +19,7 @@
 #include <linux/fs.h>
 #include <linux/syscalls.h>
 #include <linux/statfs.h>
-#include "sysctl_sniffer.h"
+#include <hwnet/ipv4/sysctl_sniffer.h>
 
 #ifdef CONFIG_HW_SNIFFER
 /*******************************************************************************/

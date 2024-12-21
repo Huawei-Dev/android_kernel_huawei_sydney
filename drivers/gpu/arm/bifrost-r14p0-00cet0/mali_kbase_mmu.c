@@ -1736,12 +1736,6 @@ static void kbase_mmu_flush_invalidate_noretain(struct kbase_context *kctx,
 
 		kbdev->error_num.soft_reset++;
 		kbdev->error_num.ts = hisi_getcurtime();
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-		/*benchmark data collect */
-		if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-			rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
-		}
-#endif
 		if (kbase_prepare_to_reset_gpu_locked(kbdev))
 			kbase_reset_gpu_locked(kbdev);
 	}
@@ -1796,12 +1790,6 @@ static void kbase_mmu_flush_invalidate_as(struct kbase_device *kbdev,
 
 				kbdev->error_num.soft_reset++;
 				kbdev->error_num.ts = hisi_getcurtime();
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-				/*benchmark data collect */
-				if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-					rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
-				}
-#endif
 		/* for AS BIT STUCK most time GPU is total abnormal, so softstop and
 		 * job on GPU running can not progress, so always 3 sec reset timeout
 		 * too long to let user will notice this recover, so this case queue
@@ -2443,12 +2431,6 @@ void bus_fault_worker(struct work_struct *data)
 
 		kbdev->error_num.soft_reset++;
 		kbdev->error_num.ts = hisi_getcurtime();
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-		/*benchmark data collect */
-		if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-			rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
-		}
-#endif
 		reset_status = kbase_prepare_to_reset_gpu(kbdev);
 	}
 #endif /* KBASE_GPU_RESET_EN */
@@ -2734,12 +2716,6 @@ static void kbase_mmu_report_fault_and_kill(struct kbase_context *kctx,
 #endif
 	kbdev->error_num.page_fault++;
 	kbdev->error_num.ts = hisi_getcurtime();
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-	/*benchmark data collect */
-	if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-		rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
-	}
-#endif
 #ifdef CONFIG_MALI_GPU_BUG_ON
 		if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0016)) {
 			struct kbase_mem_pool *pool = &kctx->mem_pool;
@@ -2787,12 +2763,6 @@ static void kbase_mmu_report_fault_and_kill(struct kbase_context *kctx,
 #endif
 		kbdev->error_num.page_fault++;
 		kbdev->error_num.ts = hisi_getcurtime();
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-		/*benchmark data collect */
-		if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-			rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
-		}
-#endif
 #ifdef CONFIG_MALI_GPU_BUG_ON
 		if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0016)) {
 			rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
@@ -3016,12 +2986,6 @@ void kbase_mmu_interrupt_process(struct kbase_device *kbdev, struct kbase_contex
 
 			kbdev->error_num.soft_reset++;
 			kbdev->error_num.ts = hisi_getcurtime();
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-			/*benchmark data collect */
-			if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-				rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
-			}
-#endif
 			reset_status = kbase_prepare_to_reset_gpu_locked(kbdev);
 			if (reset_status)
 				kbase_reset_gpu_locked(kbdev);

@@ -1255,13 +1255,6 @@ void kbase_gpu_complete_hw(struct kbase_device *kbdev, int js,
 			dev_warn(kbdev->dev, "error detected from slot %d, job status 0x%08x (%s)",
 				js, completion_code,
 				kbase_exception_name(kbdev,completion_code));
-
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-				/*benchmark data collect */
-				if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-					rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
-				}
-#endif
 		}
 
 #if KBASE_TRACE_DUMP_ON_JOB_SLOT_ERROR != 0

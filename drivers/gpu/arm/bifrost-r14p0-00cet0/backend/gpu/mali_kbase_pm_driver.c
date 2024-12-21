@@ -1685,12 +1685,6 @@ static int kbase_pm_do_reset(struct kbase_device *kbdev)
 #endif
 		kbdev->error_num.hard_reset++;
 		kbdev->error_num.ts = hisi_getcurtime();
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-		/*benchmark data collect */
-		if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-			rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);//lint !e730
-		}
-#endif
 	}
 	return -EINVAL;
 }

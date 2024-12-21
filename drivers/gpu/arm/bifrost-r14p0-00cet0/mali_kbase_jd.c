@@ -1313,12 +1313,6 @@ void kbase_jd_done_worker(struct work_struct *data)
 
 		kbdev->error_num.gpu_fault++;
 		kbdev->error_num.ts = hisi_getcurtime();
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-		/*benchmark data collect */
-		if (kbase_has_hi_feature(kbdev, KBASE_FEATURE_HI0009)) {
-			rdr_syserr_process_for_ap((u32)MODID_AP_S_PANIC_GPU, 0ull, 0ull);  //lint !e730
-		}
-#endif
 	}
 
 	if (kbase_hw_has_issue(kbdev, BASE_HW_ISSUE_8316))

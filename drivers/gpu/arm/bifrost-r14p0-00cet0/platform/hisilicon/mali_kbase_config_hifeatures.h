@@ -68,9 +68,6 @@ static const enum kbase_hi_feature kbase_hi_feature_tMIx_r0p0[] = {
 	KBASE_FEATURE_HI0004,
 	KBASE_FEATURE_HI0006,
 	KBASE_FEATURE_HI0008,
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-	KBASE_FEATURE_HI0009,
-#endif
 	KBASE_HI_FEATURE_END
 };
 static const enum kbase_hi_feature kbase_hi_feature_tHEx_r0p0[] = {
@@ -86,9 +83,6 @@ static const enum kbase_hi_feature kbase_hi_feature_tHEx_r0p0[] = {
 static const enum kbase_hi_feature kbase_hi_feature_tNOx_r0p0[] = {
 	KBASE_FEATURE_HI0007,
 	KBASE_FEATURE_HI0008,
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-	KBASE_FEATURE_HI0009,
-#endif
 	KBASE_FEATURE_HI0015,
 	KBASE_FEATURE_HI0016,
 #ifdef CONFIG_MALI_TRYM
@@ -99,9 +93,6 @@ static const enum kbase_hi_feature kbase_hi_feature_tNOx_r0p0[] = {
 static const enum kbase_hi_feature kbase_hi_feature_tGOx_r1p0[] = {
 	KBASE_FEATURE_HI0007,
 	KBASE_FEATURE_HI0008,
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-	KBASE_FEATURE_HI0009,
-#endif
 	KBASE_FEATURE_HI0015,
 	KBASE_FEATURE_HI0016,
 	KBASE_HI_FEATURE_END
@@ -111,9 +102,6 @@ static const enum kbase_hi_feature kbase_hi_feature_tSIx_r1p1[] = {
 	KBASE_FEATURE_HI0005,
 	KBASE_FEATURE_HI0007,
 	KBASE_FEATURE_HI0008,
-#ifdef CONFIG_HISI_ENABLE_HPM_DATA_COLLECT
-	KBASE_FEATURE_HI0009,
-#endif
 	KBASE_FEATURE_HI0010,
 	KBASE_FEATURE_HI0012,
 	KBASE_HI_FEATURE_END

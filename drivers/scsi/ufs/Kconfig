@@ -226,19 +226,6 @@ config SCSI_UFS_ENHANCED_INLINE_CRYPTO
 
 	If unsure, say N.
 
-config SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-	tristate "UFS inline crytpo driver based on Kirin UFS Host Controller (enhanced v2)"
-	depends on SCSI_UFS_ENHANCED_INLINE_CRYPTO
-
-	---help---
-	This selects the Kirin UFS inline enhanced crypto driver V2.
-
-	Select this if you want to use Hardware Crypto Engine
-	and using its interface for some special cryto func.
-	Otherwise, if you love my driver code, say Y or M here.
-
-	If unsure, say N.
-
 config SCSI_UFS_HS_ERROR_RECOVER
 	tristate "UFS use this config to recover ufs hs error"
 	depends on SCSI_UFSHCD && SCSI_UFS_KIRIN

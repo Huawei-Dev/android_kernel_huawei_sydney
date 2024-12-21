@@ -3682,7 +3682,6 @@ out:
 	return ret;
 }
 
-#ifndef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
 #ifdef CONFIG_SCSI_UFS_INLINE_CRYPTO
 int ufshcd_keyregs_remap_wc(struct ufs_hba *hba,
 	resource_size_t hci_reg_base)
@@ -3712,7 +3711,6 @@ int ufshcd_keyregs_remap_wc(struct ufs_hba *hba,
 
 	return 0;
 }
-#endif
 #endif
 
 /**

@@ -117,94 +117,6 @@ static int f2fs_get_keyinfo_from_keyring(struct key *keyring_key,
 	return 0;
 }
 
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-static int f2fs_derive_get_keyindex(u8 *descriptor, u8 keyring_type)
-{
-	struct key *keyring_key;
-	const struct user_key_payload *ukp;
-	struct fscrypt_key *master_key;
-	struct fscrypt_sdp_key *master_sdp_key;
-	int res = 0;
-
-	keyring_key = f2fs_fscrypt_request_key(descriptor,
-		FS_KEY_DESC_PREFIX, FS_KEY_DESC_PREFIX_SIZE);
-	if (IS_ERR(keyring_key)) {
-		pr_err("f2fs_sdp %s: request_key failed!\n", __func__);
-		return PTR_ERR(keyring_key);
-	}
-
-	down_read(&keyring_key->sem);
-	if (keyring_key->type != &key_type_logon) {
-		up_read(&keyring_key->sem);
-		pr_err("f2fs_sdp %s: key type must be logon\n", __func__);
-		res = -ENOKEY;
-		return res;
-	}
-
-	ukp = user_key_payload_locked(keyring_key);
-	if (!ukp) {
-		up_read(&keyring_key->sem);
-		/* key was revoked before we acquired its semaphore */
-		printk_once(KERN_WARNING "f2fs_sdp %s: key was revoked\n",
-			__func__);
-		res = -EKEYREVOKED;
-		goto out;
-	}
-
-	if (keyring_type == FSCRYPT_CE_CLASS) {
-		if (ukp->datalen != sizeof(struct fscrypt_key)) {
-			up_read(&keyring_key->sem);
-			printk_once(KERN_WARNING
-			"f2fs_sdp %s: fscrypt key full size incorrect: %d\n",
-			__func__, ukp->datalen);
-			res = -EINVAL;
-			goto out;
-		}
-		master_key = (struct fscrypt_key *)ukp->data;
-
-		if (master_key->size != FS_AES_256_GCM_KEY_SIZE) {
-			up_read(&keyring_key->sem);
-			printk_once(KERN_WARNING
-			"f2fs_sdp %s: fscrypt key size incorrect: %d\n",
-			__func__, master_key->size);
-			res = -ENOKEY;
-			goto out;
-		}
-
-		res = (int) (*(master_key->raw + FS_KEY_INDEX_OFFSET) & 0xff);
-	} else {
-		if (ukp->datalen != sizeof(struct fscrypt_sdp_key)) {
-			up_read(&keyring_key->sem);
-			printk_once(KERN_WARNING
-			"f2fs_sdp %s: sdp full key size incorrect: %d\n",
-			__func__, ukp->datalen);
-			res = -EINVAL;
-			goto out;
-		}
-
-		master_sdp_key = (struct fscrypt_sdp_key *)ukp->data;
-
-		if (master_sdp_key->sdpclass == FSCRYPT_SDP_ECE_CLASS) {
-			if (master_sdp_key->size != FS_AES_256_GCM_KEY_SIZE) {
-				up_read(&keyring_key->sem);
-				printk_once(KERN_WARNING
-				"f2fs_sdp %s: sdp key size incorrect: %d\n",
-				__func__, master_sdp_key->size);
-				res = -ENOKEY;
-				goto out;
-			}
-
-			res = (int) (*(master_sdp_key->raw + FS_KEY_INDEX_OFFSET) & 0xff);
-		}
-	}
-
-	up_read(&keyring_key->sem);
-out:
-	key_put(keyring_key);
-	return res;
-}
-#endif
-
 static int f2fs_derive_special_key(u8 *descriptor, u8 keyring_type,
 	u8 *nonce, u8 *dst_key, u8 *iv, int enc)
 {
@@ -390,16 +302,6 @@ static int f2fs_get_sdp_ece_crypt_info_from_context(struct inode *inode,
 			get_random_bytes(iv, FS_KEY_DERIVATION_IV_SIZE);
 		}
 	}
-
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-	crypt_info->ci_key_index = f2fs_derive_get_keyindex(
-						ctx->master_key_descriptor,
-						FSCRYPT_CE_CLASS);
-	if (crypt_info->ci_key_index < 0 || crypt_info->ci_key_index > 31) {
-		pr_err("ece_key %s: %d\n", __func__, crypt_info->ci_key_index);
-		BUG();
-	}
-#endif
 
 	res = f2fs_get_crypt_info_file_key(inode, crypt_info, nonce);
 	if (res) {
@@ -659,16 +561,6 @@ static int f2fs_get_sdp_sece_crypt_info_from_context(struct inode *inode,
 			haspubkey = 0;
 		}
 	}
-
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-	crypt_info->ci_key_index = f2fs_derive_get_keyindex(
-							ctx->master_key_descriptor,
-							FSCRYPT_CE_CLASS);
-	if (crypt_info->ci_key_index < 0 || crypt_info->ci_key_index > 31) {
-		pr_err("sece_class %s: %d\n", __func__, crypt_info->ci_key_index);
-		BUG();
-	}
-#endif
 
 	res = f2fs_get_crypt_info_file_key(inode, crypt_info, nonce);
 	if (res) {

@@ -7,7 +7,3 @@ config SCHARGER_V200
 config SCHARGER_V300
 	bool "schargerV300"
 	default n
-config HI6523_CHARGER_SENSORHUB
-	bool "hi6523 charger sensorhub"
-	depends on INPUTHUB
-	default n

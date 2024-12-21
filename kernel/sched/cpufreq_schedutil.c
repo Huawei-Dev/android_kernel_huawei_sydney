@@ -1012,10 +1012,6 @@ void sugov_mark_util_change(int cpu, unsigned int flags)
 		sg_policy->skip_hispeed_logic = true;
 #endif
 
-#ifdef CONFIG_SCHED_HISI_TOP_TASK_SKIP_HISPEED_LOGIC
-	if (flags & ADD_TOP_TASK)
-		sg_policy->skip_hispeed_logic = true;
-#endif
 	if (flags & FORCE_UPDATE) {
 		sg_policy->skip_min_sample_time = true;
 		sg_policy->skip_hispeed_logic = true;

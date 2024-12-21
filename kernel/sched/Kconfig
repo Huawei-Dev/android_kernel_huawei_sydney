@@ -17,14 +17,6 @@ config SCHED_HISI_MIGRATE_SPREAD_LOAD
 	  will move to dest cpu and that will make dest cpu's cpu load
 	  very high in same cases.
 
-config SCHED_HISI_TOP_TASK_SKIP_HISPEED_LOGIC
-	bool "Let top task ignore above_hipeed_delay"
-	depends on SCHED_HISI_TOP_TASK
-	default n
-	help
-	  For schedutil governor, this option skips hispeed logic when
-	  ADD_TOP_TASK event triggers freq update.
-
 config SCHED_HISI_FORCE_CMP_BACKUP
 	bool "Always consider backup cpu in non-preferidle case"
 	depends on HISI_EAS_SCHED

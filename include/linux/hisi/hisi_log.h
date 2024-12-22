@@ -37,7 +37,6 @@
 #define MNTN_BBOX_DIAGINFO  "bbox_diaginfo"
 #define HISI_NOC_TRACE_TAG "noc_trace"
 #define HISI_STM_TRACE_TAG "stm_trace"
-#define HISI_AXI_TAG "hisi_axi"
 #define MEMORY_DUMP_TAG "memory_dump"
 #define HISI_BLACKBOX_TAG "blackbox"
 #define HISI_BOOTTIME_TAG "boottime"

@@ -40,7 +40,6 @@ ifneq (,$(findstring $(CONFIG_HISI_BALONG_MODEM),y m))
 obj-y += modem/
 endif
 endif
-obj-$(CONFIG_HISI_AXI) += axi/
 obj-$(CONFIG_HISI_PERFHUB) += perfhub/
 obj-$(CONFIG_HISI_TIMEKEEPER) += timekeeper/
 obj-$(CONFIG_TLB_CONFLICT_WORKAROUND) += tlb_conflict/

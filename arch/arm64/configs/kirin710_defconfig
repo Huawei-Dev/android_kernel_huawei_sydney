@@ -4286,7 +4286,6 @@ CONFIG_HISI_SIM_HOTPLUG_SPMI=y
 # ccore image load driver
 #
 CONFIG_BBP_ACORE=y
-# CONFIG_HISI_AXI is not set
 
 #
 # Hisilicon IVP

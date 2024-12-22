@@ -214,8 +214,6 @@ source "drivers/hisi/Kconfig"
 
 source "drivers/huawei_platform/Kconfig"
 
-source "drivers/dsm/Kconfig"
-
 source "drivers/connectivity/Kconfig"
 
 source "drivers/contexthub/Kconfig"

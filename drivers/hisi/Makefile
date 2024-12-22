@@ -50,3 +50,4 @@ obj-$(CONFIG_LOGGER_EXTEND) += log/
 obj-$(CONFIG_HW_ZEROHUNG) += hwzerohung/
 obj-$(CONFIG_HW_FDLEAK) += hwfdleak/
 obj-$(CONFIG_HUAWEI_DUBAI) += dubai/
+obj-$(CONFIG_HUAWEI_DSM)        += dsm/

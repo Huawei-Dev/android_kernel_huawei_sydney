@@ -28,11 +28,7 @@
 #include "../hisi-clk-debug.h"
 #endif
 
-#ifndef CONFIG_HISI_CLK_ALWAYS_ON
-/*lint -e750 -esym(750,*)*/
 #define hi3xxx_CLK_GATE_DISABLE_OFFSET		0x4
-#endif
-
 #define hi3xxx_CLK_GATE_STATUS_OFFSET		0x8
 #define hi3xxx_RST_DISABLE_REG_OFFSET		0x4
 
@@ -264,7 +260,6 @@ static void hi3xxx_clkgate_disable(struct clk_hw *hw)
 	if (pclk->reset)
 		writel(pclk->rbits, pclk->reset);
 
-#ifndef CONFIG_HISI_CLK_ALWAYS_ON
 	if (pclk->enable) {
 		if (!pclk->always_on)
 			writel(pclk->ebits, pclk->enable + hi3xxx_CLK_GATE_DISABLE_OFFSET);
@@ -279,7 +274,6 @@ static void hi3xxx_clkgate_disable(struct clk_hw *hw)
 		}
 		__clk_disable(friend_clk);
 	}
-#endif
 }
 
 static void hi3xxx_clkgate_unprepare(struct clk_hw *hw)
@@ -292,7 +286,6 @@ static void hi3xxx_clkgate_unprepare(struct clk_hw *hw)
 #ifdef CONFIG_HISI_PERIDVFS
 	hisi_peri_dvfs_unprepare(pclk);
 #endif
-#ifndef CONFIG_HISI_CLK_ALWAYS_ON
 	if (pclk->friend) {
 		friend_clk = __clk_lookup(pclk->friend);
 		if (IS_ERR_OR_NULL(friend_clk)) {
@@ -305,7 +298,6 @@ static void hi3xxx_clkgate_unprepare(struct clk_hw *hw)
 		clk_core_unprepare(friend_clk->core);
 #endif
 	}
-#endif
 }
 
 #ifdef CONFIG_HISI_CLK_DEBUG

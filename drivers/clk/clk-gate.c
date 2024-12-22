@@ -93,9 +93,7 @@ static int clk_gate_enable(struct clk_hw *hw)
 
 static void clk_gate_disable(struct clk_hw *hw)
 {
-#ifndef CONFIG_HISI_CLK_ALWAYS_ON
 	clk_gate_endisable(hw, 0);
-#endif
 }
 
 static int clk_gate_is_enabled(struct clk_hw *hw)

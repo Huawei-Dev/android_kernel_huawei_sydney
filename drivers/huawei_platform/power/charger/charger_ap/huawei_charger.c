@@ -2410,7 +2410,6 @@ static void charge_select_charging_current(struct charge_device_info *di)
 		&& (1 == ico_enable))
 		select_ico_current(di);
 
-#ifndef CONFIG_HLTHERM_RUNTEST
 	if (strstr(saved_command_line, "androidboot.swtype=factory")
 	    && (!is_hisi_battery_exist())) {
 		if (first_in) {
@@ -2419,7 +2418,6 @@ static void charge_select_charging_current(struct charge_device_info *di)
 			first_in = 0;
 		}
 	} else {
-#endif
 		if (di->sysfs_data.charge_limit == TRUE) {
 			di->input_current = di->input_current < di->core_data->iin ?
 				di->input_current : di->core_data->iin;
@@ -2447,9 +2445,7 @@ static void charge_select_charging_current(struct charge_device_info *di)
 				}
 			}
 		}
-#ifndef CONFIG_HLTHERM_RUNTEST
 	}
-#endif
 
 	if (0 != di->sysfs_data.inputcurrent)
 		di->input_current = di->sysfs_data.inputcurrent;
@@ -4904,7 +4900,6 @@ static ssize_t charge_sysfs_store(struct device *dev,
 			   di->sysfs_data.adc_conv_rate);
 		break;
 	case CHARGE_SYSFS_IIN_THERMAL:
-#ifndef CONFIG_HLTHERM_RUNTEST
 		if ((strict_strtol(buf, 10, &val) < 0) || (val < 0) || (val > di->core_data->iin_max))
 			return -EINVAL;
 		if (di->is_dual_charger == 0) {
@@ -4935,10 +4930,8 @@ static ssize_t charge_sysfs_store(struct device *dev,
 			hwlog_info("THERMAL set input current main = %d\n",
 				   di->sysfs_data.iin_thl_main);
 		}
-#endif
 		break;
 	case CHARGE_SYSFS_ICHG_THERMAL:
-#ifndef CONFIG_HLTHERM_RUNTEST
 		if ((strict_strtol(buf, 10, &val) < 0) || (val < 0) || (val > di->core_data->ichg_max))
 			return -EINVAL;
 		if (di->is_dual_charger == 0) {
@@ -4977,10 +4970,8 @@ static ssize_t charge_sysfs_store(struct device *dev,
 			hwlog_info("THERMAL set charge current main = %d\n",
 				   di->sysfs_data.ichg_thl_main);
 		}
-#endif
 		break;
 	case CHARGE_SYSFS_IIN_THERMAL_AUX:
-#ifndef CONFIG_HLTHERM_RUNTEST
 		if (di->is_dual_charger == 0)
 			break;
 		if ((strict_strtol(buf, 10, &val) < 0) || (val < 0) || (val > 3000))
@@ -4999,10 +4990,8 @@ static ssize_t charge_sysfs_store(struct device *dev,
 						   di->sysfs_data.iin_thl_aux);
 		hwlog_info("THERMAL set input current aux = %d\n",
 			   di->sysfs_data.iin_thl_aux);
-#endif
 		break;
 	case CHARGE_SYSFS_ICHG_THERMAL_AUX:
-#ifndef CONFIG_HLTHERM_RUNTEST
 		if (di->is_dual_charger == 0)
 			break;
 		if ((strict_strtol(buf, 10, &val) < 0) || (val < 0) || (val > 3000))
@@ -5026,7 +5015,6 @@ static ssize_t charge_sysfs_store(struct device *dev,
 						    di->sysfs_data.ichg_thl_aux);
 		hwlog_info("THERMAL set charge current aux = %d\n",
 			   di->sysfs_data.ichg_thl_aux);
-#endif
 		break;
 	case CHARGE_SYSFS_IIN_RUNNINGTEST:
 		if ((strict_strtol(buf, 10, &val) < 0) || (val < 0) || (val > di->core_data->iin_max))

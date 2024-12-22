@@ -474,7 +474,6 @@ static void check_ntc_error(void)
     hwlog_info("check ntc error, temp = %d\n", temp);
     if (temp > CHECK_NTC_TEMP_MAX || temp < CHECK_NTC_TEMP_MIN)
     {
-        #ifndef CONFIG_HLTHERM_RUNTEST
         if (!dsm_client_ocuppy(power_dsm_get_dclient(POWER_DSM_USCP)))
         {
             huawei_battery_temp(BAT_TEMP_MIXED, &tbatt);
@@ -484,7 +483,6 @@ static void check_ntc_error(void)
                 temp,tbatt,batt_id);
             dsm_client_notify(power_dsm_get_dclient(POWER_DSM_USCP), ERROR_NO_USB_SHORT_PROTECT_NTC);
         }
-        #endif
         protect_enable = 0;
     }
     else

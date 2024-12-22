@@ -13,7 +13,3 @@ obj-$(CONFIG_BQ25882_CHARGER) += bq25882/
 obj-$(CONFIG_VBUS_CHANNEL) += vbus_channel/
 obj-$(CONFIG_SERIES_BATT) += series_batt_charger.o
 obj-$(CONFIG_BATTERY_BALANCE) += battery_balance.o
-
-ifeq ($(HLTHERM_RUNTEST), true)
-    CFLAGS_KERNEL += -DCONFIG_HLTHERM_RUNTEST
-endif

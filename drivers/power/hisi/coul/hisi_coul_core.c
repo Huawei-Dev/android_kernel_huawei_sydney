@@ -2283,10 +2283,6 @@ int coul_is_battery_exist(void)
     int temp;
     struct smartstar_coul_device *di = g_smartstar_coul_dev;
 
-#ifdef CONFIG_HLTHERM_RUNTEST
-    di->batt_exist = 0;
-    return 0;
-#endif
     if (NULL == di)
     {
         coul_core_err("error, di is NULL, return default exist\n");

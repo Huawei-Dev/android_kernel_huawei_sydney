@@ -790,22 +790,18 @@ static int hisi_charger_event(struct notifier_block *nb, unsigned long event,
 #if defined(CONFIG_HUAWEI_DSM)
 int check_batt_not_exist(char *buf)
 {
-#ifndef CONFIG_HLTHERM_RUNTEST
 	if (!is_hisi_battery_exist()) {
 		return 1;
 	}
-#endif
 	return 0;
 }
 
 int check_batt_temp_overlow(char *buf)
 {
 	int batt_temp = hisi_battery_temperature();
-#ifndef CONFIG_HLTHERM_RUNTEST
 	if (batt_temp < BATT_TEMP_OVERLOW_TH) {
 		return 1;
 	}
-#endif
 	return 0;
 }
 
@@ -1021,7 +1017,6 @@ int check_charge_curr_zero(char *buf)
 #define LOW_TEMP  (0)
 int check_charge_temp_fault(char *buf)
 {
-#ifndef CONFIG_HLTHERM_RUNTEST
 	struct hisi_bci_device_info *di = g_hisi_bci_dev;
 	int batt_temp = INVALID_TEMP_VAL;
 
@@ -1034,14 +1029,12 @@ int check_charge_temp_fault(char *buf)
 		snprintf(buf, DSM_BATTERY_MAX_SIZE, "temp fault cause not charging\n");
 		return 1;
 	}
-#endif
 	return 0;
 }
 
 #define WARM_TEMP (45)
 int check_charge_warm_status(char *buf)
 {
-#ifndef CONFIG_HLTHERM_RUNTEST
 	struct hisi_bci_device_info *di = g_hisi_bci_dev;
 	int temp = hisi_battery_temperature();
 
@@ -1049,21 +1042,18 @@ int check_charge_warm_status(char *buf)
 		snprintf(buf, DSM_BATTERY_MAX_SIZE, "warm temp triggered: temp = %d\n", temp);
 		return 1;
 	}
-#endif
 	return 0;
 }
 
 #define SHUTDOWN_TEMP (68)
 int check_charge_batt_shutdown_temp(char *buf)
 {
-#ifndef CONFIG_HLTHERM_RUNTEST
 	int temp = hisi_battery_temperature();
 
 	if (SHUTDOWN_TEMP <= temp) {
 		snprintf(buf, DSM_BATTERY_MAX_SIZE, "shutdown because batt_temp = %d\n", temp);
 		return 1;
 	}
-#endif
 	return 0;
 }
 
@@ -1124,7 +1114,6 @@ int check_charge_otg_ture(char *buf)
 int check_soc_vary_err(char *buf)
 {
 	int report_flag = 0;
-#ifndef CONFIG_HLTHERM_RUNTEST
 	static int data_invalid = 0;
 	static int monitor_cnt = 0;
 	int deta_soc = 0;
@@ -1149,7 +1138,6 @@ int check_soc_vary_err(char *buf)
 		data_invalid = 0;
 	}
 	monitor_cnt++;
-#endif
 	return report_flag;
 }
 void batt_info_dump(char* pstr)
@@ -1479,11 +1467,7 @@ static int hisi_bci_battery_get_property(struct power_supply *psy,
 		val->intval = di->bat_current;
 		break;
 	case POWER_SUPPLY_PROP_TEMP:
-#ifdef CONFIG_HLTHERM_RUNTEST
-		val->intval = 250;
-#else
 		val->intval = di->bat_temperature * 10;
-#endif
 		break;
 	case POWER_SUPPLY_PROP_PRESENT:
 	case POWER_SUPPLY_PROP_ONLINE:

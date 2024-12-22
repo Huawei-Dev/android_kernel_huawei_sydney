@@ -397,7 +397,6 @@ LINUXINCLUDE    := \
 LINUXINCLUDE += -I$(srctree)/include \
 		-I$(srctree)/include/linux/hisi \
 		-I$(srctree)/drivers \
-		-I$(srctree)/drivers/huawei_platform \
 		-I$(objtree)/drivers/devkit/lcdkit/lcdkit1.0 \
 		-I$(srctree)/drivers/hisi/ap/platform/$(TARGET_BOARD_PLATFORM)
 

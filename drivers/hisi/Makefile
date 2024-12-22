@@ -43,3 +43,4 @@ obj-y += hisi_lmk/
 obj-$(CONFIG_HISI_PERF_CTRL) += perf_ctrl/
 obj-$(CONFIG_HUAWEI_WPA_DMD) += wpa_dmd/
 obj-$(CONFIG_SWITCH)		+= switch/
+obj-$(CONFIG_HUAWEI_STORAGE_ROFA) += storage_rofa/

@@ -538,6 +538,12 @@ config HISI_USB_CONFIGFS
 	help
 	  USB Gadget set up through configfs in Hisilicon platforms.
 
+config HW_GADGET
+	tristate "huawei gadget class support"
+	default n
+	help
+	  Say Y here to enable hw gadget feature.
+
 choice
 	tristate "USB Gadget Drivers"
 	default USB_ETH

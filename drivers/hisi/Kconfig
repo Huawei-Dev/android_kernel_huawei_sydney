@@ -58,7 +58,8 @@ source "drivers/hisi/hwzerohung/Kconfig"
 source "drivers/hisi/hwfdleak/Kconfig"
 source "drivers/hisi/dubai/Kconfig"
 source "drivers/hisi/dsm/Kconfig"
-source "drivers/cpuload/Kconfig"
+source "drivers/hisi/cpuload/Kconfig"
+source "drivers/hisi/bootdevice/Kconfig"
 endif #HISILICON_PLATFORM
 
 endmenu

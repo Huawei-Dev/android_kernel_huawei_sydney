@@ -52,3 +52,4 @@ obj-$(CONFIG_HW_FDLEAK) += hwfdleak/
 obj-$(CONFIG_HUAWEI_DUBAI) += dubai/
 obj-$(CONFIG_HUAWEI_DSM)        += dsm/
 obj-$(CONFIG_HW_CPULOAD_NOTI) += cpuload/
+obj-$(CONFIG_HISI_BOOTDEVICE)   += bootdevice/

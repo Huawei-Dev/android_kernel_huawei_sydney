@@ -1,30 +1,10 @@
 # Add your debugging flag (or not) to CFLAGS
 
-ifeq ($(CONFIG_VCODEC_PLATFORM_KIRIN970), y)
-PLATFORM := HiVCodecV200
-endif
-
 ifeq ($(CONFIG_VCODEC_PLATFORM_HIVCODECV210), y)
 EXTRA_CFLAGS += -DHIVCODEC_V210
 EXTRA_CFLAGS += -DHIVCODEC_PLATFORM_ECONOMIC
 PLATFORM := HiVCodecV210
 endif
-
-ifeq ($(CONFIG_VCODEC_PLATFORM_HIVCODECV300), y)
-PLATFORM := HiVCodecV300
-endif
-
-ifeq ($(CONFIG_VCODEC_PLATFORM_HIVCODECV310), y)
-EXTRA_CFLAGS += -DHIVCODEC_V310
-EXTRA_CFLAGS += -DHIVCODEC_PLATFORM_ECONOMIC
-PLATFORM := HiVCodecV310
-endif
-
-ifeq ($(CONFIG_VCODEC_PLATFORM_HIVCODECV500), y)
-PLATFORM := HiVCodecV500
-EXTRA_CFLAGS += -DHIVCODECV500
-endif
-
 
 include drivers/vcodec/hi_vcodec/venc_hivna/drv/venc/drv_venc_make.cfg
 
@@ -50,11 +30,6 @@ hi_omxvenc-objs :=  venc_regulator.o     \
                     drv_venc.o           \
                     hi_drv_mem.o         \
                     ../product/$(PLATFORM)/hal_venc.o  \
-
-ifeq ($(CONFIG_VCODEC_PLATFORM_HIVCODECV500), y)
-hi_omxvenc-objs := $(hi_omxvenc-objs) ../product/$(PLATFORM)/smmu.o
-endif
-
 
 #obj-m += venc.o
 #venc-y :=           venc_regulator.o     \

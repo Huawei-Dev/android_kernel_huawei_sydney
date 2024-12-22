@@ -114,9 +114,6 @@ struct hotplug_t {
 	bool need_down;
 	bool need_up;
 	long current_temp;
-#ifdef CONFIG_HISI_HOTPLUG_EMULATION
-	int emul_temp;
-#endif
 	bool cpu_downed;
 	struct task_struct *hotplug_task;
 	spinlock_t hotplug_lock;
@@ -178,34 +175,6 @@ get_power_t get_board_power[NUM_BOARD_CDEV] = {
 
 struct thermal_cooling_device *board_power_cooling_register(struct device_node *np, get_power_t get_power);
 void board_cooling_unregister(struct thermal_cooling_device *cdev);
-
-#ifdef CONFIG_HISI_HOTPLUG_EMULATION
-static ssize_t
-hotplug_emul_temp_store(struct device *dev, struct device_attribute *attr,
-		     const char *buf, size_t count)
-{
-	int temperature;
-
-	if (dev == NULL || attr == NULL)
-		return -EINVAL;
-
-	if (kstrtoint(buf, 10, &temperature))
-		return -EINVAL;
-
-#ifdef CONFIG_HISI_IPA_THERMAL
-	temperature = thermal_zone_temp_check(temperature);
-#endif
-	thermal_info.hotplug.emul_temp = temperature;
-	pr_err("hotplug emul temp set : %d\n", temperature);
-
-	return (long)count;
-}
-
-/*lint -e84 -e846 -e514 -e778 -e866 -esym(84,846,514,778,866,*)*/
-static DEVICE_ATTR(hotplug_emul_temp, S_IWUSR, NULL, hotplug_emul_temp_store);
-/*lint -e84 -e846 -e514 -e778 -e866 +esym(84,846,514,778,866,*)*/
-
-#endif
 
 #ifdef CONFIG_HISI_THERMAL_HOTPLUG
 static ssize_t
@@ -752,10 +721,6 @@ void hisi_thermal_hotplug_check(int *temp)
 {
 	unsigned long flags;
 
-#ifdef CONFIG_HISI_HOTPLUG_EMULATION
-	if (thermal_info.hotplug.emul_temp)
-		*temp = thermal_info.hotplug.emul_temp;
-#endif
 	if (thermal_info.hotplug.initialized && !thermal_info.hotplug.disabled) {
 		spin_lock_irqsave(&thermal_info.hotplug.hotplug_lock, flags); /*lint !e550*/
 		thermal_info.hotplug.current_temp = *temp;
@@ -1523,13 +1488,6 @@ static int hisi_thermal_init(void)
 #endif
 	}
 
-#ifdef CONFIG_HISI_HOTPLUG_EMULATION
-	ret = device_create_file(thermal_info.hotplug.device, &dev_attr_hotplug_emul_temp);
-	if (ret) {
-		pr_err("Hotplug emulation temp create error\n");
-		goto device_destroy;
-	}
-#endif
 	ret = device_create_file(thermal_info.hotplug.device, &dev_attr_hotplug_mode);
 	if (ret) {
 		pr_err("Hotplug mode create error\n");

@@ -43,13 +43,6 @@ config HISI_THERMAL_HOTPLUG
 	help
 	  Enable thermal hotplug
 
-config HISI_HOTPLUG_EMULATION
-	bool "Hisi thermal hotplug emulation support"
-	depends on HISI_THERMAL_HOTPLUG
-	default n
-	help
-	  Enable thermal hotplug emulation
-
 config HISI_THERMAL_TRIP
 	bool "Hisi trip point for thermal zone"
 	depends on HISI_THERMAL_TSENSOR

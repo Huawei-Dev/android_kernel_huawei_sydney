@@ -41,3 +41,4 @@ obj-$(CONFIG_HISI_TIMEKEEPER) += timekeeper/
 obj-$(CONFIG_TLB_CONFLICT_WORKAROUND) += tlb_conflict/
 obj-y += hisi_lmk/
 obj-$(CONFIG_HISI_PERF_CTRL) += perf_ctrl/
+obj-$(CONFIG_HUAWEI_WPA_DMD) += wpa_dmd/

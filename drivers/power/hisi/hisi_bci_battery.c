@@ -662,16 +662,6 @@ static void update_charging_status(struct hisi_bci_device_info *di, unsigned lon
 			if (WIRELESS_CHANNEL_OFF == wireless_charge_get_wireless_channel_state()) {
 #endif
 
-#ifdef CONFIG_HUAWEI_CHARGER_SENSORHUB
-				if (hisi_get_charger_type() == CHARGER_TYPE_NONE) {
-					di->usb_online = 0;
-					di->ac_online = 0;
-					di->charge_status = POWER_SUPPLY_STATUS_DISCHARGING;
-					di->power_supply_status = POWER_SUPPLY_HEALTH_UNKNOWN;
-					di->charge_full_count = 0;
-				}
-#endif
-
 #ifdef CONFIG_WIRELESS_CHARGER
 			}
 #endif

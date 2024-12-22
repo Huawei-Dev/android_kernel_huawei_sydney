@@ -11,9 +11,6 @@
 #define DCR_MAX_BATTERY_CURRENT_MA   (100)
 #endif
 #include <linux/power/hisi/coul/hisi_coul_event.h>
-#ifdef CONFIG_HUAWEI_CHARGER_SENSORHUB
-#include "inputhub_bridge.h"
-#endif
 
 #define COUL_CORE_INFO
 #ifndef COUL_CORE_INFO
@@ -8402,42 +8399,6 @@ static int get_ntc_table(struct device_node* np)
 
     return 0;
 }
-#ifdef CONFIG_HUAWEI_CHARGER_SENSORHUB
-static void coul_sensorhub_init(struct platform_device *pdev, struct smartstar_coul_device *di)
-{
-
-	if (NULL == pdev || NULL == di)
-		return;
-	g_di_coul_info_sh = (struct coul_core_info_sh *)devm_kzalloc(&pdev->dev,sizeof(struct coul_core_info_sh), GFP_KERNEL);
-	if (NULL == g_di_coul_info_sh) {
-		coul_core_err("g_di_coul_info_sh allocate fail!\n");
-		return;
-	}
-	g_di_coul_info_sh->ntc_compensation_is = di->ntc_compensation_is;
-	g_di_coul_info_sh->basp_learned_fcc = basp_learned_fcc;
-	g_di_coul_info_sh->basp_level = di->basp_level;
-	g_di_coul_info_sh->basp_total_level = di->basp_total_level;
-	g_di_coul_info_sh->v_offset_a = v_offset_a;
-	g_di_coul_info_sh->v_offset_b = v_offset_b;
-	g_di_coul_info_sh->c_offset_a = c_offset_a;
-	g_di_coul_info_sh->c_offset_b = c_offset_b;
-	coul_core_info("vbat calibration parameter: v_offset_a=%d,v_offset_b=%d,c_offset_a=%d,c_offset_b=%d\n", g_di_coul_info_sh->v_offset_a, g_di_coul_info_sh->v_offset_b, g_di_coul_info_sh->c_offset_a, g_di_coul_info_sh->c_offset_b);
-	memcpy((void*)g_di_coul_info_sh->basp_policy, (void*)basp_policy,
-		sizeof(struct battery_aging_safe_policy)*BASP_LEVEL_CNT);
-	memcpy((void*)g_di_coul_info_sh->ntc_temp_compensation_para, (void*)di->ntc_temp_compensation_para,
-		sizeof(struct ntc_temp_compensation_para_data)*COMPENSATION_PARA_LEVEL);
-	coul_core_info("coul_sensorhub:get ntc_compensation_is=%d,basp_learned_fcc=%d,basp_level=%d\n",
-			g_di_coul_info_sh->ntc_compensation_is, g_di_coul_info_sh->basp_learned_fcc, g_di_coul_info_sh->basp_level);
-}
-
-extern struct CONFIG_ON_DDR* pConfigOnDDr;
-int update_coul_sensorhub_info(void)
-{
-	pConfigOnDDr->g_di_coul_info_sh.basp_level = g_smartstar_coul_dev->basp_level;
-	pConfigOnDDr->g_di_coul_info_sh.basp_learned_fcc = basp_learned_fcc;
-	return 0;
-}
-#endif
 
 static void basp_match_battery(struct smartstar_coul_device *di)
 {
@@ -10248,9 +10209,7 @@ coul_no_battery:
         coul_core_err("failed to register coul ops\n");
         goto coul_failed_4;
     }
-#ifdef CONFIG_HUAWEI_CHARGER_SENSORHUB
-	coul_sensorhub_init(pdev, di);
-#endif
+
     /*create sysfs*/
     //retval = sysfs_create_group(&di->dev->kobj, &coul_attr_group);
     retval = coul_create_sysfs(di);

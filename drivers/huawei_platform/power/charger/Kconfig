@@ -1,5 +1,4 @@
 source "drivers/huawei_platform/power/charger/charger_ap/Kconfig"
-source "drivers/huawei_platform/power/charger/charger_sensorhub/Kconfig"
 source "drivers/huawei_platform/power/charger/charger_protocol/Kconfig"
 
 config HUAWEI_CHARGER

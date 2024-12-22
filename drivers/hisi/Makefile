@@ -51,3 +51,4 @@ obj-$(CONFIG_HW_ZEROHUNG) += hwzerohung/
 obj-$(CONFIG_HW_FDLEAK) += hwfdleak/
 obj-$(CONFIG_HUAWEI_DUBAI) += dubai/
 obj-$(CONFIG_HUAWEI_DSM)        += dsm/
+obj-$(CONFIG_HW_CPULOAD_NOTI) += cpuload/

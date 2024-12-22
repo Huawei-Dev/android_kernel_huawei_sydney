@@ -189,4 +189,3 @@ obj-$(CONFIG_CONTEXTHUB)        += contexthub/
 obj-$(CONFIG_HUAWEI_BFM) += hwbfm/
 obj-y += devkit/tpkit/
 obj-$(CONFIG_AUDIOKIT) += devkit/audiokit/
-obj-$(CONFIG_HW_CPULOAD_NOTI) += cpuload/

@@ -5,7 +5,6 @@ source "drivers/media/huawei/camera/hisp/Kconfig"
 source "drivers/media/huawei/camera/sensor/Kconfig"
 source "drivers/media/huawei/camera/laser/Kconfig"
 source "drivers/media/huawei/camera/fd/Kconfig"
-source "drivers/media/huawei/camera/pmic/Kconfig"
 
 source "drivers/media/huawei/camera/platform/Kconfig"
 

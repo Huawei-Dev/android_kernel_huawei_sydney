@@ -1,5 +1,3 @@
-
-
 #include <huawei_platform/power/battery_type_identify.h>
 #include "hisi_coul_core.h"
 #ifdef CONFIG_HISI_SOH
@@ -8320,39 +8318,6 @@ static void coul_fault_work(struct work_struct *work)
 
 static void contexthub_thermal_init(void)
 {
-#ifdef CONFIG_HISI_THERMAL_CONTEXTHUB
-	int i, v_t_table[T_V_ARRAY_LENGTH+1][2];
-	struct hw_chan_table* p_ddr_header;
-	char* p_chub_ddr;
-
-	void __iomem *g_share_addr = ioremap_wc(CONTEXTHUB_THERMAL_DDR_HEADER_ADDR,
-		CONTEXTHUB_THERMAL_DDR_TOTAL_SIZE);
-	if (NULL == g_share_addr) {
-		pr_err("[%s]share_addr ioremap_wc failed.\n", __func__);
-		return;
-	}
-	memset((void*)g_share_addr, 0xFF, CONTEXTHUB_THERMAL_DDR_TOTAL_SIZE);
-	p_chub_ddr = g_share_addr + CONTEXTHUB_THERMAL_DDR_MEMBERS_SIZE;
-	p_ddr_header =  (struct hw_chan_table*)g_share_addr;
-	p_ddr_header++;
-	p_ddr_header->usr_id = 0xFFFF;
-	p_ddr_header->hw_channel = (unsigned short int)adc_batt_temp;
-	p_ddr_header->table_id = (unsigned short int)HKADC_BAT_TABLEID;
-	p_ddr_header->table_size = sizeof(v_t_table);
-	if(p_ddr_header->table_size > CONTEXTHUB_THERMAL_DDR_MEMBERS_SIZE) {
-		pr_err("[%s]tableSIZE[%d]MAX[%d]\n", __func__, p_ddr_header->table_size,
-			CONTEXTHUB_THERMAL_DDR_MEMBERS_SIZE);
-		return;
-	}
-
-	for(i = 0; i <= T_V_ARRAY_LENGTH; i++) {
-		v_t_table[i][0] = adc_to_volt(T_V_TABLE[T_V_ARRAY_LENGTH - i][1]);/*lint !e679*/
-		v_t_table[i][1] = T_V_TABLE[T_V_ARRAY_LENGTH - i][0];/*lint !e679*/
-	}
-
-	memcpy((void*)(p_chub_ddr + CONTEXTHUB_THERMAL_DDR_MEMBERS_SIZE * HKADC_BAT_TABLEID),
-		(void*)v_t_table, p_ddr_header->table_size);
-#endif
 }
 
 /**********************************************************

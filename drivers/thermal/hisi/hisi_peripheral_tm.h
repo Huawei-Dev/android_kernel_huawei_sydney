@@ -6,13 +6,6 @@
 #define NTC_TEMP_MAX_VALUE	(125)
 #define ADC_RTMP_DEFAULT_VALUE	(44)
 
-#ifdef CONFIG_HISI_THERMAL_CONTEXTHUB
-struct contexthub_chip {
-	void __iomem *share_addr;
-	struct hw_chan_table adc_table[0];
-};
-#endif
-
 struct periph_tsens_tm_device_sensor {
 	struct thermal_zone_device	*tz_dev;
 	enum thermal_device_mode	mode;
@@ -36,9 +29,6 @@ struct hisi_peripheral_tm_chip {
 	struct work_struct			tsens_work;
 	struct delayed_work		tsens_periph_tm_work;
 	int				average_period;
-#ifdef CONFIG_HISI_THERMAL_CONTEXTHUB
-	struct contexthub_chip*  chub;
-#endif
 	int				tsens_num_sensor;
 	struct periph_tsens_tm_device_sensor sensor[0];
 };

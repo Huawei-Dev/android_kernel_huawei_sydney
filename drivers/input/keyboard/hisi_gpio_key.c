@@ -113,12 +113,6 @@ struct hisi_gpio_key {
 	int					gpio_back;
 	int					key_back_irq;
 #endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	struct delayed_work	gpio_keysmart_work;
-	struct timer_list		key_smart_timer;
-	int					gpio_smart;
-	int					key_smart_irq;
-#endif
 	struct pinctrl *pctrl;
 	struct pinctrl_state *pins_default;
 	struct pinctrl_state *pins_idle;
@@ -126,9 +120,6 @@ struct hisi_gpio_key {
 
 #ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_HI6XXX
 static struct wake_lock back_key_lock;
-#endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-static struct wake_lock smart_key_lock;
 #endif
 
 #if defined (CONFIG_HUAWEI_DSM)
@@ -322,37 +313,6 @@ static void hisi_gpio_keyback_work(struct work_struct *work)
 }
 #endif
 
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-static void hisi_gpio_keysmart_work(struct work_struct *work)
-{
-	struct hisi_gpio_key *gpio_key = container_of(work,
-		struct hisi_gpio_key, gpio_keysmart_work.work);
-
-	unsigned int keysmart_value = 0;
-	unsigned int report_action = GPIO_KEY_RELEASE;
-
-	keysmart_value = gpio_get_value((unsigned int)gpio_key->gpio_smart);
-	/*judge key is pressed or released.*/
-	if (keysmart_value == GPIO_LOW_VOLTAGE) {
-		report_action = GPIO_KEY_PRESS;
-	} else if (keysmart_value == GPIO_HIGH_VOLTAGE) {
-		report_action = GPIO_KEY_RELEASE;
-	} else {
-		printk(KERN_ERR "[gpiokey][%s]invalid gpio key_value.\n", __FUNCTION__);
-		return;
-	}
-
-	printk(KERN_INFO "[gpiokey]smart key %u action %u\n", KEY_F24, report_action);
-	input_report_key(gpio_key->input_dev, KEY_F24, report_action);
-	input_sync(gpio_key->input_dev);
-
-	if (keysmart_value == GPIO_HIGH_VOLTAGE)
-		wake_unlock(&smart_key_lock);
-
-	return;
-}
-#endif
-
 static void gpio_keyup_timer(unsigned long data)
 {
 	int keyup_value;
@@ -416,23 +376,6 @@ static void gpio_keyback_timer(unsigned long data)
                 wake_lock(&back_key_lock);
 
 	schedule_delayed_work(&(gpio_key->gpio_keyback_work), 0);
-
-	return;
-}
-#endif
-
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-static void gpio_keysmart_timer(unsigned long data)
-{
-	int keysmart_value;
-	struct hisi_gpio_key *gpio_key = (struct hisi_gpio_key *)(uintptr_t)data;
-
-	keysmart_value = gpio_get_value((unsigned int)gpio_key->gpio_smart);
-        /*judge key is pressed or released.*/
-        if (keysmart_value == GPIO_LOW_VOLTAGE)
-                wake_lock(&smart_key_lock);
-
-	schedule_delayed_work(&(gpio_key->gpio_keysmart_work), 0);
 
 	return;
 }
@@ -511,11 +454,6 @@ static irqreturn_t hisi_gpio_key_irq_handler(int irq, void *dev_id)
 	} else if (irq == gpio_key->key_back_irq) {
 		mod_timer(&(gpio_key->key_back_timer), jiffies + msecs_to_jiffies(TIMER_DEBOUNCE));
 		wake_lock_timeout(&back_key_lock, 50);
-#endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	} else if (support_smart_key && irq == gpio_key->key_smart_irq) {
-		mod_timer(&(gpio_key->key_smart_timer), jiffies + msecs_to_jiffies(TIMER_DEBOUNCE));
-		wake_lock_timeout(&smart_key_lock, 50);
 #endif
 	} else {
 		printk(KERN_ERR "[gpiokey] [%s]invalid irq %d!\n", __FUNCTION__, irq);
@@ -635,11 +573,6 @@ static int hisi_gpio_key_probe(struct platform_device* pdev)
 #ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_HI6XXX
 	set_bit(KEY_BACK, input_dev->keybit);
 #endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key) {
-		set_bit(KEY_F24, input_dev->keybit);
-	}
-#endif
 	input_dev->open = hisi_gpio_key_open;
 	input_dev->close = hisi_gpio_key_close;
 
@@ -654,13 +587,6 @@ static int hisi_gpio_key_probe(struct platform_device* pdev)
 	INIT_DELAYED_WORK(&(gpio_key->gpio_keyback_work), hisi_gpio_keyback_work);
 	wake_lock_init(&back_key_lock, WAKE_LOCK_SUSPEND, "key_back_wake_lock");
 #endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key) {
-		INIT_DELAYED_WORK((struct delayed_work *)(uintptr_t)(&(gpio_key->gpio_keysmart_work)), hisi_gpio_keysmart_work);
-		wake_lock_init(&smart_key_lock, WAKE_LOCK_SUSPEND, "key_smart_wake_lock");
-	}
-#endif
-
 	gpio_key->gpio_up = of_get_key_gpio(pdev->dev.of_node, "gpio-keyup,gpio-irq", 0, 0, &flags);
 	if (!gpio_is_valid(gpio_key->gpio_up)) {
 		printk(KERN_INFO "%s: gpio of volume up is not valid, check DTS\n", __FUNCTION__);
@@ -677,15 +603,6 @@ static int hisi_gpio_key_probe(struct platform_device* pdev)
 		printk(KERN_INFO "%s: gpio of back key is not valid, check DTS\n", __FUNCTION__);
 	}
 #endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key) {
-		gpio_key->gpio_smart = of_get_key_gpio(pdev->dev.of_node, "gpio-keysmart,gpio-irq", 0, 0, &flags);
-		if (!gpio_is_valid(gpio_key->gpio_smart)) {
-			printk(KERN_INFO "%s: gpio of smart key is not valid, check DTS\n", __FUNCTION__);
-		}
-	}
-#endif
-
 	vol_up_gpio = gpio_key->gpio_up;
 	vol_up_active_low = GPIO_KEY_PRESS;
 	vol_down_gpio = gpio_key->gpio_down;
@@ -749,25 +666,6 @@ static int hisi_gpio_key_probe(struct platform_device* pdev)
 		}
 	}
 #endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key && gpio_is_valid(gpio_key->gpio_smart)) {
-		err = gpio_request((unsigned int)gpio_key->gpio_smart, "gpio_smart");
-		if (err) {
-			dev_err(&pdev->dev, "Fail request gpio:%d\n", gpio_key->gpio_smart);
-			goto err_gpio_smart_req;
-		}
-
-		gpio_direction_input((unsigned int)gpio_key->gpio_smart);
-
-		gpio_key->key_smart_irq = gpio_to_irq((unsigned int)gpio_key->gpio_smart);
-		if (gpio_key->key_smart_irq < 0) {
-			dev_err(&pdev->dev, "Failed to get gpio key release irq!\n");
-			err = gpio_key->key_smart_irq;
-			goto err_gpio_to_irq;
-		}
-	}
-#endif
-
 	gpio_key->pctrl = devm_pinctrl_get(&pdev->dev);
 	if (IS_ERR(gpio_key->pctrl)) {
 		dev_err(&pdev->dev, "failed to devm pinctrl get\n");
@@ -804,11 +702,6 @@ static int hisi_gpio_key_probe(struct platform_device* pdev)
 	setup_timer(&(gpio_key->key_down_timer), gpio_keydown_timer, (uintptr_t )gpio_key);
 #ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_HI6XXX
 	setup_timer(&(gpio_key->key_back_timer), gpio_keyback_timer, (uintptr_t )gpio_key);
-#endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key) {
-		setup_timer(&(gpio_key->key_smart_timer), gpio_keysmart_timer, (uintptr_t )gpio_key);
-	}
 #endif
 
 #if defined (CONFIG_HUAWEI_DSM)
@@ -847,16 +740,6 @@ static int hisi_gpio_key_probe(struct platform_device* pdev)
 		}
 	}
 #endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key && gpio_is_valid(gpio_key->gpio_smart)) {
-		err = request_irq(gpio_key->key_smart_irq, hisi_gpio_key_irq_handler, IRQF_NO_SUSPEND | IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, pdev->name, gpio_key);
-		if (err) {
-			dev_err(&pdev->dev, "Failed to request release interupt handler!\n");
-			goto err_smart_irq_req;
-		}
-	}
-#endif
-
 	err = input_register_device(gpio_key->input_dev);
 	if (err) {
 		dev_err(&pdev->dev, "Failed to register input device!\n");
@@ -888,12 +771,6 @@ err_register_dev:
 	free_irq(gpio_key->key_back_irq, gpio_key);
 err_back_irq_req:
 #endif
-#ifdef  CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key) {
-		free_irq(gpio_key->key_smart_irq, gpio_key);
-	}
-err_smart_irq_req:
-#endif
 	free_irq(gpio_key->volume_down_irq, gpio_key);
 err_down_irq_req:
 	free_irq(gpio_key->volume_up_irq, gpio_key);
@@ -906,23 +783,12 @@ err_gpio_to_irq:
 	gpio_free((unsigned int)gpio_key->gpio_back);
 err_gpio_back_req:
 #endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key) {
-		gpio_free((unsigned int)gpio_key->gpio_smart);
-	}
-err_gpio_smart_req:
-#endif
 err_get_gpio:
 	input_free_device(input_dev);
 	wake_lock_destroy(&volume_down_key_lock);
 	wake_lock_destroy(&volume_up_key_lock);
 #ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_HI6XXX
 	wake_lock_destroy(&back_key_lock);
-#endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key) {
-		wake_lock_destroy(&smart_key_lock);
-	}
 #endif
 	pr_info(KERN_ERR "[gpiokey]K3v3 gpio key probe failed! ret = %d.\n", err);
 	return err;/*lint !e593*/
@@ -952,15 +818,6 @@ static int hisi_gpio_key_remove(struct platform_device* pdev)
 	cancel_delayed_work(&(gpio_key->gpio_keyback_work));
 	wake_lock_destroy(&back_key_lock);
 #endif
-#ifdef CONFIG_HISI_GPIO_KEY_SUPPORT_SMART_KEY
-	if (support_smart_key) {
-		free_irq(gpio_key->key_smart_irq, gpio_key);
-		gpio_free((unsigned int)gpio_key->gpio_smart);
-		cancel_delayed_work(&(gpio_key->gpio_keysmart_work));
-		wake_lock_destroy(&smart_key_lock);
-	}
-#endif
-
 	input_unregister_device(gpio_key->input_dev);
 	platform_set_drvdata(pdev, NULL);
 #ifdef CONFIG_VOLUME_KEY_MASK

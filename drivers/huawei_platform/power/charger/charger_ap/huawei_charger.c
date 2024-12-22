@@ -67,7 +67,6 @@
 #endif
 #include <huawei_platform/power/battery_voltage.h>
 #include <huawei_platform/power/huawei_battery_temp.h>
-#include <huawei_platform/power/series_batt_charger.h>
 
 #ifdef CONFIG_HUAWEI_YCABLE
 #include <huawei_platform/usb/hw_ycable.h>
@@ -171,6 +170,18 @@ static unsigned int otg_ctrl_enable = 0;
 static int fcp_output_vol_retry_cnt;
 #endif
 struct completion emark_detect_comp;
+
+#define CHARGERLOG_SIZE (256)
+
+static inline int get_series_batt_chargelog_head(char *chargelog_head)
+{
+	return 0;
+}
+
+static inline int get_series_batt_chargelog(char *chargelog)
+{
+	return 0;
+}
 
 void emark_detect_complete(void)
 {

@@ -417,17 +417,12 @@ void ion_cma_heap_destroy(struct ion_heap *);
 struct ion_heap *ion_cma_pool_heap_create(struct ion_platform_heap *);
 void ion_cma_pool_heap_destroy(struct ion_heap *);
 
-#ifdef CONFIG_ION_HISI_SECCM
-struct ion_heap *ion_seccm_heap_create(struct ion_platform_heap *);
-void ion_seccm_heap_destroy(struct ion_heap *);
-#else
 static inline struct ion_heap *ion_seccm_heap_create(struct ion_platform_heap
 		*iph)
 {
 	return NULL;
 }
 static inline void ion_seccm_heap_destroy(struct ion_heap *ih){ }
-#endif
 
 #ifdef CONFIG_ION_HISI_SECSG
 struct ion_heap *ion_secsg_heap_create(struct ion_platform_heap *);
@@ -441,7 +436,7 @@ static inline struct ion_heap *ion_secsg_heap_create(struct ion_platform_heap
 static inline void ion_secsg_heap_destroy(struct ion_heap *ih){ }
 #endif
 
-#if (defined CONFIG_ION_HISI_SECSG) || (defined CONFIG_ION_HISI_SECCM)
+#ifdef CONFIG_ION_HISI_SECSG
 int ion_secmem_heap_phys(struct ion_heap *heap,
 		struct ion_buffer *buffer,
 		phys_addr_t *addr, size_t *len);

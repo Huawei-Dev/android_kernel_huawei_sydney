@@ -11,8 +11,6 @@ obj-$(CONFIG_HUAWEI_HW_DEV_DCT)  += devdetect/
 
 obj-y   += inputhub/
 
-obj-$(CONFIG_MAXQ616_POWER_SWITCH) += irda/
-
 obj-$(CONFIG_NFC_DEVICES)   += nfc/
 obj-$(CONFIG_HW_WIFI)   += net/
 obj-y   += power/

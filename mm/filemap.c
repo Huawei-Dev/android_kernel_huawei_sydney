@@ -35,7 +35,6 @@
 #include <linux/memcontrol.h>
 #include <linux/cleancache.h>
 #include <linux/rmap.h>
-#include <linux/hisi/pagecache_manage.h>
 #include <linux/hisi/pagecache_debug.h>
 #include <linux/hisi/page_tracker.h>
 #include "internal.h"
@@ -2147,14 +2146,10 @@ static void do_sync_mmap_readahead(struct vm_area_struct *vma,
 	/*
 	 * mmap read-around
 	 */
-#ifndef CONFIG_HISI_PAGECACHE_HELPER
 	ra->start = max_t(long, 0, offset - ra->ra_pages / 2);
 	ra->size = ra->ra_pages;
 	ra->async_size = ra->ra_pages / 4;
 	ra_submit(ra, mapping, file);
-#else
-	pch_read_around(ra, mapping, file, offset);
-#endif
 }
 
 /*

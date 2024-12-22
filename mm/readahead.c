@@ -19,7 +19,6 @@
 #include <linux/syscalls.h>
 #include <linux/file.h>
 #include <linux/mm_inline.h>
-#include <linux/hisi/pagecache_manage.h>
 
 #include "internal.h"
 

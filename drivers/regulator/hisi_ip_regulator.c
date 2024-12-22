@@ -127,24 +127,6 @@ enum ip_regulator_id {
 	G3D_ID,
 	ASP_ID,
 };
-#elif defined CONFIG_IP_PLATFORM_COMMON
-enum ip_regulator_id {
-	MEDIA1_SUBSYS_ID = 0,
-	MEDIA2_SUBSYS_ID,
-	VIVOBUS_ID,
-	VCODECSUBSYS_ID,
-	DSSSUBSYS_ID,
-	ISPSUBSYS_ID,
-	IVP_ID,
-	VDEC_ID,
-	VENC_ID,
-	ISP_R8_ID,
-	ASP_ID,
-	G3D_ID,
-	ICS_ID,
-	ICS2_ID,
-	NPU_ID,
-};
 #else
 enum ip_regulator_id {
 	VIVOBUS_ID = 0,
@@ -199,12 +181,12 @@ struct hisi_regulator_ip {
 #ifdef CONFIG_HISI_NOC_HI3650_PLATFORM
 	const char *noc_node_name;
 #endif
-#if defined (CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM) || defined(CONFIG_IP_PLATFORM_COMMON)
+#if defined(CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM)
 	u32 dss_boot_check[2];
 #endif
 };
 
-#if defined (CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM) || defined(CONFIG_IP_PLATFORM_COMMON)
+#if defined(CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM)
 #define DSS_SOFTRESET_STATE_CHECK_BIT			0
 #else
 #define DSS_SOFTRESET_STATE_CHECK_BIT			SOC_CRGPERIPH_PERRSTEN3_ip_rst_dss_START
@@ -347,7 +329,7 @@ static int hisi_clock_state_check(struct hisi_regulator_ip *sreg)
 	IP_REGULATOR_DEBUG("<[%s]: end regulator_id=%d>\n", __func__, sreg->regulator_id);
 	return 0;
 }
-#if defined (CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM) || defined(CONFIG_IP_PLATFORM_COMMON)
+#if defined(CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM)
 static int get_softreset_state(struct hisi_regulator_ip_core *pmic, struct hisi_regulator_ip *sreg, unsigned int value)
 {
 	int ret = 0;
@@ -911,7 +893,7 @@ static int hisi_dt_parse_ip_atf(struct hisi_regulator_ip *sreg,
 	struct device_node *np = NULL;
 	int id = 0, fake = 0, type = 0;
 	int ret = 0;
-#if defined (CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM) || defined(CONFIG_IP_PLATFORM_COMMON)
+#if defined(CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM)
 	unsigned int register_info[2] = {0};
 #endif
 
@@ -1031,7 +1013,7 @@ static int hisi_dt_parse_ip_atf(struct hisi_regulator_ip *sreg,
 		}
 	}
 
-#if defined (CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM) || defined(CONFIG_IP_PLATFORM_COMMON)
+#if defined(CONFIG_BOST_IP_PLATFORM) || defined(CONFIG_MIA_IP_PLATFORM) || defined(CONFIG_ATLA_IP_PLATFORM) || defined(CONFIG_PHOE_IP_PLATFORM)
 	if ((DSSSUBSYS_ID == sreg->regulator_id)) {
 		of_property_read_u32_array(np, "hisilicon,hisi-regulator-dss-boot-check",
 							register_info, 2);

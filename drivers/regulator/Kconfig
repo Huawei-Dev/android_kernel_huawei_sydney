@@ -908,28 +908,10 @@ config PHOE_IP_PLATFORM
 	help
 	  This driver provides system interior bus switch for the IP regulator on the PHOE HiSilicon system.
 
-config IP_PLATFORM_COMMON
-        tristate "HiSilicon COMMON system interior bus control platform switch"
-        depends on MFD_HISI_IP_CORE
-        help
-          This driver provides system interior bus switch for the IP regulator after ORLA AND PHON HiSilicon system.
-
-config REGULATOR_IP_DEBUG
-	tristate "HiSilicon system regulator ip debug"
-	help
-	  This driver provides support for system ip control test.
-
 config HISI_REGULATOR_DEBUG
 	tristate "HiSilicon regulator debug info"
 	help
 	  This driver provides support for regulator control info.
-
-config HISI_REGULATOR
-	tristate "HiSilicon  PMIC regulators"
-	depends on HISI_PMIC
-	help
-	  This driver provides support for the voltage regulators on the
-	  HiSilicon Hisi PMU / Codec IC.
 
 config HISI_REGULATOR_SPMI
 	tristate "HiSilicon  PMIC regulators from spmi device"
@@ -957,12 +939,6 @@ config HISI_CHARGER_REGULATOR
 	help
 	  This driver provides support for the voltage regulators on the
 	  Hisi Charger.
-
-config HISI_REGULATOR_VIVOBUS
-        tristate "HiSilicon  vivobus regulator interface"
-        depends on PHOE_IP_PLATFORM
-        help
-          This driver provides support for vivobus regulator interface
 
 endif
 

@@ -14,7 +14,7 @@
 #include <linux/mmc/core.h>
 #include <linux/mod_devicetable.h>
 #ifdef CONFIG_HISI_MMC_MANUAL_BKOPS
-#include <linux/hisi-bkops-core.h>
+#include <linux/hisi/hisi-bkops-core.h>
 #endif
 #ifdef CONFIG_HUAWEI_EMMC_DSM
 #define EXT_CSD_PRE_EOL_INFO_NORMAL     0x01

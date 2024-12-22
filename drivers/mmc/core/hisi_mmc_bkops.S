@@ -1034,7 +1034,7 @@ bkops_status_str_mmc:
 	.file 120 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/interrupt.h"
 	.file 121 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mmc/core.h"
 	.file 122 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mmc/host.h"
-	.file 123 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi-bkops-core.h"
+	.file 123 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi/hisi-bkops-core.h"
 	.file 124 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mmc/card.h"
 	.file 125 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/leds.h"
 	.file 126 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/wakelock.h"

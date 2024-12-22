@@ -16,13 +16,12 @@
 #include <linux/slab.h>
 #include <linux/of_device.h>
 #include <linux/platform_device.h>
-#include <linux/hisi-spmi.h>
 #include <linux/module.h>
 #include <linux/pm_runtime.h>
 #include <linux/uaccess.h>
 #define CREATE_TRACE_POINTS
 #include <trace/events/spmi.h>
-#include <linux/of_hisi_spmi.h>
+#include <linux/hisi/of_hisi_spmi.h>
 #include "hisi-spmi-dbgfs.h"
 #include <linux/hisi/hisi_log.h>
 #define HISI_LOG_TAG HISI_SPMI_TAG

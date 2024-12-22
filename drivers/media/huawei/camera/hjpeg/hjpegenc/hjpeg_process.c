@@ -38,7 +38,7 @@
 #include <asm/uaccess.h>
 #include <linux/rpmsg.h>
 #include <linux/ioport.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/platform_data/remoteproc-hisi.h>
 #include <linux/wakelock.h>
 #include <linux/version.h>

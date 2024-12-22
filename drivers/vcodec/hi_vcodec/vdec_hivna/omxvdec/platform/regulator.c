@@ -13,7 +13,7 @@
 #include "regulator.h"
 #include "platform.h"
 
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/iommu.h>
 #include <linux/platform_device.h>
 #include <linux/regulator/consumer.h>

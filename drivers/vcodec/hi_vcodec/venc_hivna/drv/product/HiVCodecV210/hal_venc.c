@@ -3,7 +3,7 @@
 #include "drv_venc_efl.h"
 #include "drv_venc_osal.h"
 #include "hi_drv_mem.h"
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/iommu.h>
 
 

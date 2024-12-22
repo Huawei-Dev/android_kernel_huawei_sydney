@@ -47,7 +47,7 @@
 #include "platform/sensor_commom.h"
 #include <linux/wakelock.h>
 #include <linux/hisi/hisi_ion.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/platform_data/remoteproc-hisi.h>
 #include <linux/iommu.h>
 #include <linux/mutex.h>

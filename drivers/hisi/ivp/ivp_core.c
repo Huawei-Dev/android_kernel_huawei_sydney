@@ -18,7 +18,7 @@
 #include <linux/wakelock.h>
 #include <linux/ion.h>
 #include <linux/hisi/hisi_ion.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
 #include <linux/ion-iommu.h>
 #endif

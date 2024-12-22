@@ -19,7 +19,7 @@
 #include <linux/device.h>
 #include <linux/platform_device.h>
 #include <linux/version.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include "hisi_dss.h"
 
 struct dss_mm_info {

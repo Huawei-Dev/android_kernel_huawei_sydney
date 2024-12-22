@@ -28,12 +28,12 @@ typedef void (bio_throtl_end_io_t) (struct bio *);
 #undef  ADDITEM
 #define ADDITEM( _etype, _comment, _func_pointer )      _etype
 enum bio_process_stage_enum {
-	#include <linux/hisi_bio_stage_def.h>
+#include <linux/hisi/hisi_bio_stage_def.h>
     BIO_PROC_STAGE_MAX
 };
 
 enum req_process_stage_enum {
-	#include <linux/hisi_req_stage_def.h>
+#include <linux/hisi/hisi_req_stage_def.h>
     REQ_PROC_STAGE_MAX
 };
 #undef  ADDITEM

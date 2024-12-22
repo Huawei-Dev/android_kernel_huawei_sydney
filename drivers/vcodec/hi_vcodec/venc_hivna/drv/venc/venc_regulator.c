@@ -2,7 +2,7 @@
 #include <linux/of_irq.h>
 #include <linux/of_address.h>
 #include <linux/regulator/consumer.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 
 #include "venc_regulator.h"
 #include "drv_venc_osal.h"

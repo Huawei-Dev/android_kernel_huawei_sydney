@@ -36,8 +36,7 @@
 #include <linux/version.h>
 #include <linux/seq_file.h>
 #include <linux/uaccess.h>
-#include <linux/hisi-spmi.h>
-#include <linux/of_hisi_spmi.h>
+#include <linux/hisi/of_hisi_spmi.h>
 #include <linux/hisi/hisi_log.h>
 #define HISI_LOG_TAG HISI_PMIC_REGULATOR_TAG
 

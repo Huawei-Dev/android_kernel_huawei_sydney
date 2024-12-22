@@ -19,7 +19,7 @@
 #include <linux/ion.h>
 #include <linux/fb.h>
 #include <linux/version.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0)
 #define CONFIG_ION_ALLOC_BUFFER (0)

@@ -16,7 +16,7 @@
 #include <linux/err.h>
 #include <linux/hisi/hisi_ion.h>
 #include <linux/platform_device.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/slab.h>
 #include <linux/of.h>
 #include <linux/mm.h>

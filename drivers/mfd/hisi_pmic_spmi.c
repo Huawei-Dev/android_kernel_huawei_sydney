@@ -31,8 +31,7 @@
 #include <linux/of_irq.h>
 #include <linux/mfd/hisi_pmic.h>
 #include <linux/irq.h>
-#include <linux/hisi-spmi.h>
-#include <linux/of_hisi_spmi.h>
+#include <linux/hisi/of_hisi_spmi.h>
 #include <linux/hisi/hisi_log.h>
 #define HISI_LOG_TAG HISI_PMIC_TAG
 

@@ -23,7 +23,7 @@
 #include <linux/spinlock.h>
 #include <asm/pgalloc.h>
 #include <linux/debugfs.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/uaccess.h>
 #include <linux/bitops.h>
 #include <linux/hisi/rdr_hisi_ap_hook.h>

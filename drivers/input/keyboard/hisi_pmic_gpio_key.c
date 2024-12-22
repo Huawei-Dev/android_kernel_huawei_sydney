@@ -42,8 +42,7 @@
 #include <linux/uaccess.h>
 #include <linux/proc_fs.h>
 #include <linux/mfd/hisi_pmic.h>
-#include <linux/hisi-spmi.h>
-#include <linux/of_hisi_spmi.h>
+#include <linux/hisi/of_hisi_spmi.h>
 #include "../../hisi/tzdriver/libhwsecurec/securec.h"
 
 #if defined (CONFIG_HUAWEI_DSM)

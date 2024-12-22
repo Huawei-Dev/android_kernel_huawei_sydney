@@ -4,7 +4,7 @@
 #include <linux/types.h>
 #include <linux/cdev.h>
 #include <linux/platform_device.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/dma-mapping.h>
 #include <linux/dma-iommu.h>
 #include <linux/dma-buf.h>
@@ -1016,7 +1016,7 @@ static struct file_operations VENC_FOPS =
 	.owner          = THIS_MODULE,/*lint !e64 */
 	.open           = VENC_DRV_Open,
 	.unlocked_ioctl = VENC_DRV_Ioctl,
-	.compat_ioctl   = VENC_DRV_Ioctl,  //ÓÃ»§Ì¬ £¬ÄÚºËÌ¬Æ½Ì¨Î»¿í²»Ò»ÖÂµÄÊ±ºò£¬»áµ÷ÓÃ
+	.compat_ioctl   = VENC_DRV_Ioctl,  //\D3Ã»\A7Ì¬ \A3\AC\C4Úº\CBÌ¬Æ½Ì¨Î»\BF\ED\B2\BBÒ»\D6Âµ\C4Ê±\BAò£¬»\E1\B5\F7\D3\C3
 	.release        = VENC_DRV_Close,
 	//.mmap         = VENC_DRV_MMap,   // reserve
 };/*lint !e785 */
@@ -1073,7 +1073,7 @@ static HI_S32 VENC_DRV_SetupCdev(VENC_ENTRY *venc, const struct file_operations 
 	venc->cdev.ops = &VENC_FOPS;
 	err = cdev_add(&(venc->cdev), venc->dev, 1);
 
-	/*ÔÚ/sys/class/Ä¿Â¼ÏÂ´´½¨Éè±¸Àà±ðÄ¿Â¼hi_venc*/
+	/*\D4\DA/sys/class/Ä¿Â¼\CFÂ´\B4\BD\A8\C9è±¸\C0\E0\B1\F0Ä¿Â¼hi_venc*/
 	venc->venc_class = class_create(THIS_MODULE, "hi_venc");/*lint !e64 */
 	if (IS_ERR(venc->venc_class)) {
 		err = PTR_ERR(venc->venc_class);/*lint !e712 */
@@ -1082,7 +1082,7 @@ static HI_S32 VENC_DRV_SetupCdev(VENC_ENTRY *venc, const struct file_operations 
 		//return HI_FAILURE;/*lint !e438 */
 	}
 
-	/*ÔÚ/dev/Ä¿Â¼ºÍ/sys/class/hi_vencÄ¿Â¼ÏÂ·Ö±ð´´½¨Éè±¸ÎÄ¼þhi_venc*/
+	/*\D4\DA/dev/Ä¿Â¼\BA\CD/sys/class/hi_vencÄ¿Â¼\CFÂ·Ö±ð´´½\A8\C9è±¸\CEÄ¼\FEhi_venc*/
 	venc->venc_device = device_create(venc->venc_class, NULL, venc->dev, "%s", "hi_venc");
 	if (IS_ERR(venc->venc_device)) {
 		err = PTR_ERR(venc->venc_device);/*lint !e712 */
@@ -1112,7 +1112,7 @@ unregister_region:
 
 static HI_S32 VENC_DRV_CleanupCdev(VENC_ENTRY *venc)
 {
-	/*Ïú»ÙÉè±¸Àà±ðºÍÉè±¸*/
+	/*\CF\FA\BB\D9\C9è±¸\C0\E0\B1\F0\BA\CD\C9è±¸*/
 	if (venc->venc_class) {
 		device_remove_file(venc->venc_device, &dev_attr_omxvenc_misc);
 		device_destroy(venc->venc_class,venc->dev);

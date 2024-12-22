@@ -140,7 +140,7 @@ hisi_bkops_remove_debugfs:
 	.file 106 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/bsg.h"
 	.file 107 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/wbt.h"
 	.file 108 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/elevator.h"
-	.file 109 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi-bkops-core.h"
+	.file 109 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi/hisi-bkops-core.h"
 	.file 110 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/cachetype.h"
 	.file 111 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/printk.h"
 	.file 112 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/kernel.h"

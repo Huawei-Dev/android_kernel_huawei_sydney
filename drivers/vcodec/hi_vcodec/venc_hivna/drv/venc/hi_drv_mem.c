@@ -4,7 +4,7 @@
 #include <linux/dma-iommu.h>
 #include <linux/dma-buf.h>
 #include <linux/iommu.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/slab.h>
 
 #include "drv_venc_osal.h"

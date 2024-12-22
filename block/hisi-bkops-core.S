@@ -2139,7 +2139,7 @@ hisi_bkops_inited:
 	.file 132 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/block/hisi-blk.h"
 	.file 133 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/block/blk.h"
 	.file 134 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/sbitmap.h"
-	.file 135 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi-bkops-core.h"
+	.file 135 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi/hisi-bkops-core.h"
 	.file 136 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/linux/elf.h"
 	.file 137 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/moduleparam.h"
 	.file 138 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/rbtree_latch.h"

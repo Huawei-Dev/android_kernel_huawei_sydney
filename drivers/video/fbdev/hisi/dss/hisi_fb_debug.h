@@ -63,7 +63,7 @@
 #include <linux/file.h>
 #include <linux/dma-buf.h>
 #include <linux/genalloc.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #if defined (CONFIG_HUAWEI_DSM)
 #include <dsm/dsm_pub.h>
 #endif

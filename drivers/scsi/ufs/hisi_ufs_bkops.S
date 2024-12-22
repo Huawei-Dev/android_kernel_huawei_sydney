@@ -1335,7 +1335,7 @@ bkops_status_str_hynix:
 	.file 122 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/scsi/scsi_host.h"
 	.file 123 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/scsi/scsi_device.h"
 	.file 124 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/scsi/scsi_cmnd.h"
-	.file 125 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi-bkops-core.h"
+	.file 125 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi/hisi-bkops-core.h"
 	.file 126 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/stddef.h"
 	.file 127 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/linux/elf.h"
 	.file 128 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/moduleparam.h"

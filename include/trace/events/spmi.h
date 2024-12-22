@@ -5,7 +5,7 @@
 #define _TRACE_SPMI_H
 
 #ifdef CONFIG_HISI_SPMI
-#include <linux/hisi-spmi.h>
+#include <linux/hisi/hisi-spmi.h>
 #else
 #include <linux/spmi.h>
 #endif

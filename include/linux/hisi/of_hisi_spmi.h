@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  */
 
-#include <linux/hisi-spmi.h>
+#include <linux/hisi/hisi-spmi.h>
 #include <linux/of_irq.h>
 
 #ifdef CONFIG_HISI_SPMI

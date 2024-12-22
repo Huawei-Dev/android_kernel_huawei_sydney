@@ -25,7 +25,7 @@
 #include <hicam_buf.h>
 #include <cam_log.h>
 
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/device.h>
 #include <linux/rbtree.h>
 #include <linux/ion.h>

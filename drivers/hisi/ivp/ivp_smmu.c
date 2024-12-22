@@ -26,7 +26,7 @@
 #include <linux/scatterlist.h>
 #include <linux/platform_device.h>
 #include <linux/delay.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include "ivp_smmu.h"
 #include <linux/hisi/rdr_hisi_platform.h>
 //lint -save -e750 -e753 -e750 -e528 -e144 -e82 -e64 -e785 -e715 -e712 -e40

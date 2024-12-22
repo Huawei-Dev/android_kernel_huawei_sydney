@@ -17,11 +17,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/*lint -e752 -esym(502,*)*/
-/*lint -e753 -esym(753,*)*/
-/*lint -e528 -esym(528,*)*/
-/*lint -save -e713 -e734 -e502 -e774 -e838 -e438 -e701 -e64 -e826 -e838 -e715 -e613 -e747 -e838 -e732 -e785 -e647 -e528 -e753 -e752 */
-
 #include <linux/module.h>
 #include <linux/string.h>
 #include <linux/kernel.h>
@@ -35,8 +30,7 @@
 #include <linux/of_address.h>
 #include <linux/of_device.h>
 #include <linux/interrupt.h>
-#include <linux/hisi-spmi.h>
-#include <linux/of_hisi_spmi.h>
+#include <linux/hisi/of_hisi_spmi.h>
 #include <linux/mfd/hisi_pmic.h>
 #include <linux/pm_wakeup.h>
 #include "hisi_sim_hotplug.h"
@@ -57,9 +51,6 @@
 #include "securec.h"
 #include <adrv.h>
 #include <bsp_print.h>
-
-
-
 
 //#define TAG                     "[SIM_HOTPLUG]"
 //#define LOGI(fmt, ...)          printk(KERN_INFO TAG" "fmt, ##__VA_ARGS__)
@@ -522,7 +513,7 @@ static int sim_read_pmu_dts(struct hisi_sim_hotplug_info *info, struct device_no
     }
     info->pmu_ldo12_vset_value = pmu_ldo12_vset_value;
 
-    /*为了区分v4和v4之前的版本，默认配置为1，v4分支以后由终端定制DTS,根据DTS实际情况赋值*/
+    /*为\C1\CB\C7\F8\B7\D6v4\BA\CDv4之前\B5陌姹綷A3\AC默\C8\CF\C5\E4\D6\C3为1\A3\ACv4\B7\D6支\D2院\F3\D3\C9\D6斩硕\A8\D6\C6DTS,\B8\F9\BE\DDDTS实\BC\CA\C7\E9\BF\F6\B8\B3值*/
     ret = of_property_read_u32(np, "pmu_ldo12_pull_down", &pmu_ldo12_pull_down);
     if (ret < 0)
     {
@@ -534,7 +525,7 @@ static int sim_read_pmu_dts(struct hisi_sim_hotplug_info *info, struct device_no
         LOGI("read pmu_ldo12_pull_down use dts value 0x%x\n",pmu_ldo12_pull_down);
         info->pmu_ldo12_pull_down = pmu_ldo12_pull_down;
     }
-    /*最后一个分支可能读不到对应的dts，不判断ret，能走到最后说明前面已经返回成功*/
+    /*\D7\EE\BA\F3一\B8\F6\B7\D6支\BF\C9\C4芏\C1\B2\BB\B5\BD\B6\D4应\B5\C4dts\A3\AC\B2\BB\C5卸\CFret\A3\AC\C4\DC\D7叩\BD\D7\EE\BA\F3说\C3\F7前\C3\E6\D2丫\AD\B7\B5\BB爻晒\A6*/
     LOGI("pmu_status1_address: 0x%02X, pmu_irq_address: 0x%02X, pmu_irq_mask_address: 0x%02X, "
             "pmu_sim_ctrl_address: 0x%02X, pmu_sim_deb_ctrl_address: 0x%02X\n",
             pmu_status1_address, pmu_irq_address, pmu_irq_mask_address, pmu_sim_ctrl_address, pmu_sim_deb_ctrl_address);

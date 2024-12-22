@@ -39,7 +39,7 @@
 #include <asm/cacheflush.h>
 #include <linux/firmware.h>
 #include <linux/iommu.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/crc32.h>
 #include <linux/ion.h>
 #include <linux/hisi/hisi_ion.h>

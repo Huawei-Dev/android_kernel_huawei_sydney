@@ -60,7 +60,7 @@
 #include <linux/wakelock.h>
 #endif
 #ifdef CONFIG_HISI_UFS_MANUAL_BKOPS
-#include <linux/hisi-bkops-core.h>
+#include <linux/hisi/hisi-bkops-core.h>
 #endif
 
 #include <asm/irq.h>

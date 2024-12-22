@@ -22,9 +22,7 @@
 #include <linux/clk.h>
 #include <linux/notifier.h>
 #include <linux/mfd/hisi_pmic.h>
-
-#include <linux/hisi-spmi.h>
-#include <linux/of_hisi_spmi.h>
+#include <linux/hisi/of_hisi_spmi.h>
 
 #include <linux/of_device.h>
 #include <linux/hisi/hisi_log.h>

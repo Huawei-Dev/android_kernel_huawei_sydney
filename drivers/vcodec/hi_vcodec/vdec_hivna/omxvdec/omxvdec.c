@@ -13,7 +13,7 @@
 #include <linux/clk.h>
 #include <linux/of.h>
 #include <linux/io.h>
-#include <linux/hisi-iommu.h>
+#include <linux/hisi/hisi-iommu.h>
 #include <linux/dma-mapping.h>
 #include <linux/dma-iommu.h>
 #include <linux/dma-buf.h>

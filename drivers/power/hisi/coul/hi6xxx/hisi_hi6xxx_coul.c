@@ -1,9 +1,6 @@
-
-
 #include "hisi_hi6xxx_coul.h"
-#include <../hisi_coul_core.h>
-#include <linux/hisi-spmi.h>
-#include <linux/of_hisi_spmi.h>
+#include "../hisi_coul_core.h"
+#include <linux/hisi/of_hisi_spmi.h>
 #include "securec.h"
 
 extern struct atomic_notifier_head coul_fault_notifier_list;

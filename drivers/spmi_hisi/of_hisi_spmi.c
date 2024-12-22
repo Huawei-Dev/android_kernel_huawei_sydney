@@ -10,7 +10,6 @@
  * GNU General Public License for more details.
  */
 
-#include <linux/hisi-spmi.h>
 #include <linux/irq.h>
 #include <linux/of.h>
 #include <linux/of_address.h>
@@ -18,7 +17,7 @@
 #include <linux/slab.h>
 #include <linux/module.h>
 #include <linux/types.h>
-#include <linux/of_hisi_spmi.h>
+#include <linux/hisi/of_hisi_spmi.h>
 
 struct of_spmi_dev_info {
 	struct spmi_controller *ctrl;

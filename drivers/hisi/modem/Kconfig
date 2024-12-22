@@ -17,11 +17,5 @@ config BALONG_OAM_PS
         help
          tlmsp tlps gumsp gups taf acore image
 
-config VOWIFI_NEW_FRW
-	bool "vowifi android n&o frw diff"
-	default n
-	help
-	vowifi android n&o frw diff
-
 source "drivers/hisi/modem/drv/Kconfig"
 endmenu

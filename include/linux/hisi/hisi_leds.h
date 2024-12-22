@@ -50,18 +50,6 @@
 #define DR_DEL09		0x09
 #define DR_DELAY_ON	    0xF0
 
-#ifdef CONFIG_HISI_LEDS_BLUE_TP_COLOR_SWITCH
-#define BLUE	0x96
-#define FLASH_MODE_HAVE_CONFIGERED 0x1
-
-#define DR4_ISET_1MA 0x00
-#define DR_TIME_CONFIG1_ON 0x33
-#define DR_TIME_CONFIG1_OFF 0x00
-#define DR_MODE_SEL_RESET 0x00
-#define DR_EN_MODE_345_RESET 0x00
-#define DR_START_DEL_512_OFF    0x00 /* start_delay off */
-#endif
-
 #define	DR_BRIGHTNESS_HALF	0x1  /* dr3,4,5 half_brightness config */
 #define	DR_BRIGHTNESS_FULL	0x7  /* dr3,4,5 full_brightness config */
 
@@ -120,19 +108,4 @@ struct hisi_led_platform_data {
 	u8 leds_size;
 };
 
-#ifdef CONFIG_HISI_LEDS_BLUE_TP_COLOR_SWITCH
-struct hisi_led_flash_data {
-	unsigned int dr_en_mode_345_address;
-	unsigned int flash_period_dr345_address;
-	unsigned int flash_on_dr345_address;
-	unsigned int dr_mode_sel_address;
-
-	unsigned int dr_en_mode_345_conf;
-	unsigned int flash_period_dr345_conf;
-	unsigned int flash_on_dr345_conf;
-	unsigned int dr_mode_sel_dr4_conf;
-};
-#endif
-
 #endif /* __LINUX_LEDS_HISI_H */
-

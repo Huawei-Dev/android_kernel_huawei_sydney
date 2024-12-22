@@ -18,7 +18,7 @@
 #include <linux/mutex.h>
 #include <linux/rwsem.h>
 #include "leds.h"
-#if defined(CONFIG_LEDS_HISI) || defined(CONFIG_LEDS_HISI_SPMI)
+#if defined(CONFIG_LEDS_HISI_SPMI)
 #include <linux/string.h>
 #endif
 
@@ -242,7 +242,7 @@ void led_set_brightness(struct led_classdev *led_cdev,
 		 * work queue task to avoid problems in case we are called
 		 * from hard irq context.
 		 */
-#if defined(CONFIG_LEDS_HISI) || defined(CONFIG_LEDS_HISI_SPMI)
+#if defined(CONFIG_LEDS_HISI_SPMI)
 		if(!(strcmp(led_cdev->name, "red") && strcmp(led_cdev->name, "green") && strcmp(led_cdev->name, "blue"))) {
 			led_stop_software_blink(led_cdev);
 			led_set_brightness_nosleep(led_cdev, brightness);

@@ -25,7 +25,7 @@
 #include <linux/input.h>
 #include <sound/soc.h>
 #include <sound/jack.h>
-#include <linux/switch.h>
+#include <linux/hisi/switch.h>
 #include <linux/version.h>
 #include <dsm_audio/dsm_audio.h>
 #include <linux/hisi/hi64xx/hi64xx_utils.h>

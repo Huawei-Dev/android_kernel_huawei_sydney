@@ -23,7 +23,7 @@
 #include <linux/delay.h>
 #include <linux/crash_dump.h>
 #include <linux/prefetch.h>
-#include <linux/wbt.h>
+#include <linux/hisi/wbt.h>
 
 #include <trace/events/block.h>
 

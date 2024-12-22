@@ -38,7 +38,7 @@
 #include <linux/hisi/pagecache_debug.h>
 #include <linux/hisi/page_tracker.h>
 #include "internal.h"
-#include <linux/iolimit_cgroup.h>
+#include <linux/hisi/iolimit_cgroup.h>
 #ifdef CONFIG_TASK_PROTECT_LRU
 #include <linux/hisi/protect_lru.h>
 #endif
@@ -53,7 +53,7 @@
 
 #include <asm/mman.h>
 #ifdef CONFIG_HW_CGROUP_WORKINGSET
-#include <linux/workingset_cgroup.h>
+#include <linux/hisi/workingset_cgroup.h>
 #endif
 #ifdef CONFIG_HUAWEI_IO_TRACING
 #include <trace/iotrace.h>

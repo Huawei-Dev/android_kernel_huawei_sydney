@@ -24,7 +24,7 @@
 #include <trace/events/f2fs.h>
 
 #ifdef CONFIG_ACM
-#include <linux/acm_f2fs.h>
+#include <linux/hisi/acm_f2fs.h>
 #include <log/log_usertype.h>
 #define ACM_PHOTO	1
 #define ACM_VIDEO	2

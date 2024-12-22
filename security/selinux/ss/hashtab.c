@@ -7,7 +7,7 @@
 #include <linux/slab.h>
 #include <linux/errno.h>
 #include <linux/sched.h>
-#include <linux/pmalloc.h>
+#include <linux/hisi/pmalloc.h>
 #include "hashtab.h"
 
 extern struct gen_pool *selinux_pool;

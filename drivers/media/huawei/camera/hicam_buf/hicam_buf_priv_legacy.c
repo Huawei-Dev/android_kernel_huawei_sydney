@@ -28,7 +28,7 @@
 #include <linux/hisi/hisi-iommu.h>
 #include <linux/device.h>
 #include <linux/rbtree.h>
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/dma-buf.h>
 #include <linux/kernel.h>
 #include <linux/hisi/hisi_ion.h>

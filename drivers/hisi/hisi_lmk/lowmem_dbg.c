@@ -15,7 +15,7 @@
 #include <linux/workqueue.h>
 #include <linux/freezer.h>
 #include <linux/ksm.h>
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/hisi/hisi_ion.h>
 #include <linux/version.h>
 #include <linux/hisi/page_tracker.h>

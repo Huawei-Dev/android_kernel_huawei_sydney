@@ -30,7 +30,7 @@
 #include <linux/slab.h>
 #include <linux/types.h>
 #include <linux/hisi/hisi-iommu.h>
-#include <linux/ion-iommu.h>
+#include <linux/hisi/ion-iommu.h>
 
 #define MAX_IOVA_SIZE_2G 0x80000000UL
 #define MAX_IOVA_START_ADDR_4G 0x100000000UL

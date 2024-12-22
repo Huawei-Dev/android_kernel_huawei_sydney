@@ -19,7 +19,7 @@
 #include <linux/pci.h>
 #include "hisi_dss_ion.h"
 #if CONFIG_DP_ENABLE
-#include <linux/switch.h>
+#include <linux/hisi/switch.h>
 #endif
 #include "dp/drm_dp_helper.h"
 #include "dp/drm_dp_helper_additions.h"

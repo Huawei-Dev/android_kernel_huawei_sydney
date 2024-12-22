@@ -17,7 +17,7 @@
 #define _LINUX_HISI_ION_H
 
 #include <linux/dma-buf.h>
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/sizes.h>
 #include <linux/version.h>
 

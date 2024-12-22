@@ -8,8 +8,6 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-/*lint -e715 -e838 -e529 -e438 -e30 -e142 -e528 -e750 -e753 -e754 -e785 -e655 -e749 -e732 -e747 -e708 -e712 -e64 -e661 -e574 -e737 -e713 -e826 -e530 -e570
- -esym(715,*) -esym(838,*) -esym(529,*) -esym(438,*) -esym(30,*) -esym(142,*) -esym(528,*) -esym(750,*) -esym(753,*) -esym(754,*) -esym(785,*) -esym(655,*) -esym(749,*) -esym(732,*) -esym(747,*) -esym(708,*) -esym(712,*) -esym(64,*) -esym(661,*) -esym(574,*) -esym(737,*) -esym(713,*) -esym(826,*) -esym(530,*) -esym(570,*)*/
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -23,7 +21,7 @@
 #include <linux/of.h>
 #include <linux/delay.h>
 #include <linux/miscdevice.h>
-#include <linux/rproc_share.h>
+#include <linux/hisi/rproc_share.h>
 #include <linux/version.h>
 #include <linux/of_irq.h>
 #include <linux/platform_data/remoteproc-hisi.h>

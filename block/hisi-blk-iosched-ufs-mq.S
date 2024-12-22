@@ -8585,7 +8585,7 @@ ufs_mq_make_request:
 .LBE3221:
 .LBB3222:
 .LBB3223:
-	.file 21 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/wbt.h"
+	.file 21 "/mnt/disk/jenkins/ci/workspace/chipset_9.1.0_sne_ine/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hisi/wbt.h"
 	.loc 21 29 0 is_stmt 1
 	ldr	x0, [x0,512]
 .LVL801:

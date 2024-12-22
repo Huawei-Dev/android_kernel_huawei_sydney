@@ -14,7 +14,7 @@
 #define HISI_FB_VIDEO_IDLE_H
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
-#include <linux/ion-iommu.h>
+#include <linux/hisi/ion-iommu.h>
 #endif
 #include "hisi_fb.h"
 

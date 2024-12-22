@@ -44,7 +44,7 @@
 #ifdef CONFIG_HISI_REMOTEPROC
 #include <asm/cacheflush.h>
 #include <linux/hisi/hisi-iommu.h>
-#include <linux/rproc_share.h>
+#include <linux/hisi/rproc_share.h>
 #include <linux/platform_data/remoteproc-hisi.h>
 #endif
 

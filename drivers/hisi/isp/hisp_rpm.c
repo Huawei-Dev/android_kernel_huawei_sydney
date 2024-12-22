@@ -23,7 +23,7 @@
 #include <linux/completion.h>
 #include <uapi/linux/histarisp.h>
 #include <linux/platform_data/remoteproc-hisi.h>
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/dma-buf.h>
 #include <linux/hisi/hisi_ion.h>
 #include <linux/version.h>

@@ -24,7 +24,7 @@
 #include <linux/smp.h>
 #include <linux/rcupdate.h>
 #include <linux/percpu-refcount.h>
-#include <linux/wbt.h>
+#include <linux/hisi/wbt.h>
 #include <linux/scatterlist.h>
 
 struct module;

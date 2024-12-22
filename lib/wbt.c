@@ -23,7 +23,7 @@
 #include <linux/blk_types.h>
 #include <linux/slab.h>
 #include <linux/backing-dev.h>
-#include <linux/wbt.h>
+#include <linux/hisi/wbt.h>
 #include <linux/blkdev.h>
 
 #define CREATE_TRACE_POINTS

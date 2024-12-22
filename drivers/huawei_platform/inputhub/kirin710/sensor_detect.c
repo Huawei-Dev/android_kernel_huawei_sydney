@@ -27,7 +27,7 @@
 #include <sensor_detect.h>
 #include "contexthub_debug.h"
 #include <linux/mtd/hisi_nve_interface.h>
-#include <linux/switch.h>
+#include <linux/hisi/switch.h>
 #include <linux/hisi/hw_cmdline_parse.h>
 #include "huawei_thp_attr.h"
 

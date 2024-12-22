@@ -33,7 +33,7 @@
 #include <linux/ratelimit.h>
 #include <linux/pm_runtime.h>
 #include <linux/blk-cgroup.h>
-#include <linux/wbt.h>
+#include <linux/hisi/wbt.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/block.h>

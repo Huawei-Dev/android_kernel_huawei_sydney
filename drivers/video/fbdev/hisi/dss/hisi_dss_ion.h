@@ -16,7 +16,7 @@
 #include <linux/dma-buf.h>
 #include <linux/device.h>
 #include <linux/of_reserved_mem.h>
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/fb.h>
 #include <linux/version.h>
 #include <linux/hisi/hisi-iommu.h>

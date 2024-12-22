@@ -50,7 +50,7 @@
 #include <linux/sched/mm.h>
 #include <linux/sched/signal.h>
 #endif
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/hisi/hisi_ion.h>
 #include <crypto/hash.h>
 #include <linux/hash.h>

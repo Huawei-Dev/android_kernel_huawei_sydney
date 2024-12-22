@@ -2,7 +2,7 @@
 #define __HI6XXX_MBHC_H__
 
 #include <linux/wakelock.h>
-#include <linux/switch.h>
+#include <linux/hisi/switch.h>
 #include <sound/soc.h>
 
 #ifdef CLT_AUDIO

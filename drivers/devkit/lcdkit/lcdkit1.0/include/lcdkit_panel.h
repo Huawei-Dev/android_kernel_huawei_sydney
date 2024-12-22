@@ -34,7 +34,7 @@
 
 #include <linux/spi/spi.h>
 
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 //#include <linux/hisi/hisi_ion.h>
 #include <linux/gpio.h>
 

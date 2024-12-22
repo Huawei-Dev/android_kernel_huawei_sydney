@@ -22,14 +22,14 @@
 #include <linux/delay.h>
 #include <linux/uaccess.h>
 #include <linux/wait.h>
-#include <linux/rproc_share.h>
+#include <linux/hisi/rproc_share.h>
 #include <linux/remoteproc.h>
 #include <linux/atomic.h>
 #include <linux/io.h>
 #include <linux/dma-buf.h>
 #include <linux/platform_data/remoteproc-hisi.h>
 #include "isprdr.h"
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/hisi/hisi_ion.h>
 #include <linux/version.h>
 #include <isp_ddr_map.h>

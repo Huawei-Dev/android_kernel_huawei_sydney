@@ -24,7 +24,7 @@
 #define __GMC_H__
 
 #include <linux/types.h>
-#include <linux/gmc_storage.h>
+#include <linux/hisi/gmc_storage.h>
 
 #define GMC_FS_MAX_DENTRIES 4
 

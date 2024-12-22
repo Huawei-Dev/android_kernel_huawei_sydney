@@ -22,7 +22,7 @@
 #include <linux/sched.h>
 #include <linux/scatterlist.h>
 #include <linux/vmalloc.h>
-#include <linux/ion-iommu.h>
+#include <linux/hisi/ion-iommu.h>
 
 #include "ion.h"
 #include "ion_priv.h"

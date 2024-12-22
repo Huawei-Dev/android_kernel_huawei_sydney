@@ -12,7 +12,7 @@
 #include <linux/dcache.h>
 #include <linux/magic.h>
 #include <linux/types.h>
-#include <linux/pmalloc.h>
+#include <linux/hisi/pmalloc.h>
 #include "flask.h"
 
 #define SECSID_NULL			0x00000000 /* unspecified SID */

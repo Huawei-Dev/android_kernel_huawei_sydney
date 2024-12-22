@@ -41,7 +41,7 @@
 #include <linux/iommu.h>
 #include <linux/proc_fs.h>
 #include <linux/hisi/hisi_ion.h>
-#include <linux/ion-iommu.h>
+#include <linux/hisi/ion-iommu.h>
 #include <linux/atomic.h>
 #include <linux/platform_device.h>
 #include <linux/hisi/rdr_hisi_ap_hook.h>

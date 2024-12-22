@@ -26,7 +26,7 @@
 #ifndef _MALI_GMC_H
 #define _MALI_GMC_H
 
-#include <linux/gmc.h>
+#include <linux/hisi/gmc.h>
 #include <mali_kbase.h>
 #include <kernel.h>
 

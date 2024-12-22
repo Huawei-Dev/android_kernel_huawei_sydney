@@ -38,7 +38,7 @@
 #include <linux/atomic.h>
 #include <linux/prefetch.h>
 #include <linux/fscrypt_common.h>
-#include <linux/iolimit_cgroup.h>
+#include <linux/hisi/iolimit_cgroup.h>
 
 /*
  * How many user pages to map in one call to get_user_pages().  This determines

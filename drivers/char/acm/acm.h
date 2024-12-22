@@ -33,7 +33,7 @@
 #include <linux/delay.h>
 #include <linux/jiffies.h>
 #include <linux/timer.h>
-#include <linux/acm_f2fs.h>
+#include <linux/hisi/acm_f2fs.h>
 
 #define ACM_DEV_NAME "acm"
 #define ACM_DEV_BASE_MINOR (0)

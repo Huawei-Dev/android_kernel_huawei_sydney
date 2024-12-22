@@ -24,7 +24,7 @@
 #include <linux/slab.h>
 #include <linux/vmalloc.h>
 #include <linux/sizes.h>
-#include <linux/ion-iommu.h>
+#include <linux/hisi/ion-iommu.h>
 #include <linux/hisi/page_tracker.h>
 
 #include "ion.h"

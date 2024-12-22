@@ -15,7 +15,7 @@
 #endif
 
 #include <linux/hisi/hisi_ion.h>
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 
 #include "securec.h"
 

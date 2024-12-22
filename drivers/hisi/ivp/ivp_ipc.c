@@ -15,11 +15,11 @@
 #include <linux/hisi/hisi_rproc.h>
 #include <linux/list.h>
 #include <linux/atomic.h>
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/hisi/hisi_ion.h>
 #include <linux/hisi/hisi-iommu.h>
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
-#include <linux/ion-iommu.h>
+#include <linux/hisi/ion-iommu.h>
 #endif
 #include "ivp.h"
 #include "ivp_log.h"

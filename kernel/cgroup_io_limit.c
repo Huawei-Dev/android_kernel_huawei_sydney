@@ -1,6 +1,6 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
-#include <linux/iolimit_cgroup.h>
+#include <linux/hisi/iolimit_cgroup.h>
 #include <linux/jiffies.h>
 #include <linux/blk-cgroup.h>
 

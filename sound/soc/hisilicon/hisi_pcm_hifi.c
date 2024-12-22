@@ -23,7 +23,7 @@
 #include <linux/kthread.h>
 #include <linux/semaphore.h>
 #include <linux/sched/rt.h>
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/version.h>
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
 #include <linux/hisi/hisi_ion.h>

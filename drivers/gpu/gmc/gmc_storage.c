@@ -31,7 +31,7 @@
 
 #include <linux/init.h>
 #include <linux/module.h>
-#include <linux/gmc_storage.h>
+#include <linux/hisi/gmc_storage.h>
 #include "securec.h"
 
 #define GMC_FLAG_ZERO (1 << 0)

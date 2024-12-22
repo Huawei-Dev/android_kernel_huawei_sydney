@@ -10,7 +10,7 @@
 #include <linux/blktrace_api.h>
 #include <linux/blk-mq.h>
 #include <linux/blk-cgroup.h>
-#include <linux/wbt.h>
+#include <linux/hisi/wbt.h>
 
 #include "blk.h"
 #include "blk-mq.h"

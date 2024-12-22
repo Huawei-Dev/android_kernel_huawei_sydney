@@ -28,7 +28,7 @@
 #include "sensor_feima.h"
 #include "sensor_sysfs.h"
 #include <linux/mtd/hisi_nve_interface.h>
-#include <linux/switch.h>
+#include <linux/hisi/switch.h>
 #include <linux/timer.h>
 #include <linux/delay.h>
 

@@ -13,7 +13,7 @@
 #ifndef HISI_PCM_ION_H
 #define HISI_PCM_ION_H
 
-#include <linux/ion.h>
+#include <linux/hisi/ion.h>
 #include <linux/version.h>
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
 int hisi_pcm_ion_phys(struct ion_client *client, struct ion_handle *handle,

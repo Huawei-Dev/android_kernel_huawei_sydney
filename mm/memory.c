@@ -75,10 +75,6 @@
 
 #include "internal.h"
 
-#ifdef CONFIG_HW_MEMORY_MONITOR
-#include <chipset_common/mmonitor/mmonitor.h>
-#endif
-
 #ifdef CONFIG_SPECULATIVE_PAGE_FAULT
 int sysctl_speculative_page_fault;
 #endif
@@ -3019,11 +3015,6 @@ int do_swap_page(struct fault_env *fe, pte_t orig_pte)
 		goto out;
 	}
 	delayacct_set_flag(DELAYACCT_PF_SWAPIN);
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	if (current->delays)
-		__delayacct_blkio_start();
-	count_mmonitor_event(FILE_CACHE_MAP_COUNT);
-#endif
 	page = lookup_swap_cache(entry);
 	if (!page) {
 		page = swapin_readahead(entry,
@@ -3046,10 +3037,6 @@ int do_swap_page(struct fault_env *fe, pte_t orig_pte)
 #endif
 			if (likely(pte_same(*fe->pte, orig_pte)))
 				ret = VM_FAULT_OOM;
-#ifdef CONFIG_HW_MEMORY_MONITOR
-			if (current->delays)
-				__delayacct_blkio_end();
-#endif
 			delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
 			goto unlock;
 		}
@@ -3064,10 +3051,6 @@ int do_swap_page(struct fault_env *fe, pte_t orig_pte)
 		 * owner processes (which may be unknown at hwpoison time)
 		 */
 		ret = VM_FAULT_HWPOISON;
-#ifdef CONFIG_HW_MEMORY_MONITOR
-		if (current->delays)
-			__delayacct_blkio_end();
-#endif
 		delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
 		swapcache = page;
 		goto out_release;
@@ -3075,10 +3058,6 @@ int do_swap_page(struct fault_env *fe, pte_t orig_pte)
 
 	swapcache = page;
 	locked = lock_page_or_retry(page, vma->vm_mm, fe->flags);
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	if (current->delays)
-		__delayacct_blkio_end();
-#endif
 	delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
 	if (!locked) {
 		ret |= VM_FAULT_RETRY;

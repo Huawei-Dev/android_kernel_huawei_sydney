@@ -185,9 +185,6 @@ static void clearpid(pid_t pid)
 {
 	struct task_struct *taskp;
 	struct sched_statistics *ssp;
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	unsigned long flags;
-#endif
 
 	taskp = find_task_by_vpid(pid);
 	if(!taskp){
@@ -214,16 +211,6 @@ static void clearpid(pid_t pid)
 	ssp->hwstatus.dstate_block_sum   = 0;
 	ssp->hwstatus.last_jiffies = jiffies;
 
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	if(taskp->delays){
-		spin_lock_irqsave(&taskp->delays->allocpages_lock, flags);
-		taskp->delays->allocuser_delay = 0;
-		taskp->delays->allocuser_count = 0;
-		taskp->delays->allocuser_delay_max = 0;
-		taskp->delays->allocuser_delay_max_order = 0;
-		spin_unlock_irqrestore(&taskp->delays->allocpages_lock, flags);
-	}
-#endif
 	put_task_struct(taskp);
 }
 
@@ -342,14 +329,6 @@ static int sched_hwstatus_show(struct seq_file *m, void *v)
 		PN(wait_count);
 		PN(iowait_count);
 		PN(statusp->sleep_count);
-#ifdef CONFIG_HW_MEMORY_MONITOR
-		if(taskp->delays){
-			PN(taskp->delays->allocuser_delay);
-			PN(taskp->delays->allocuser_count);
-			PN(taskp->delays->allocuser_delay_max);
-			PN(taskp->delays->allocuser_delay_max_order);
-		}
-#endif
 		put_task_struct(taskp);
 	}
 
@@ -424,24 +403,10 @@ static ssize_t sched_hwstatus_read(struct file* file, char __user *buf,
 		rstp->hwstatus.dstate_block_count = ssp->hwstatus.dstate_block_count;
 
 		if(version > VERSION_V1) {
-#ifdef CONFIG_HW_MEMORY_MONITOR
-			if(taskp->delays){
-				hwstatus_rst.mem[i].allocuser_delay = taskp->delays->allocuser_delay;
-				hwstatus_rst.mem[i].allocuser_count = taskp->delays->allocuser_count;
-				hwstatus_rst.mem[i].allocuser_delay_max = taskp->delays->allocuser_delay_max;
-				hwstatus_rst.mem[i].allocuser_delay_max_order = taskp->delays->allocuser_delay_max_order;
-			}else{
-				hwstatus_rst.mem[i].allocuser_delay = 0;
-				hwstatus_rst.mem[i].allocuser_count = 0;
-				hwstatus_rst.mem[i].allocuser_delay_max = 0;
-				hwstatus_rst.mem[i].allocuser_delay_max_order = 0;
-			}
-#else
 			hwstatus_rst.mem[i].allocuser_delay = 0;
 			hwstatus_rst.mem[i].allocuser_count = 0;
 			hwstatus_rst.mem[i].allocuser_delay_max = 0;
 			hwstatus_rst.mem[i].allocuser_delay_max_order = 0;
-#endif
 			if(caller.ktime_iodelay >= ktime_last) {
 				hwstatus_rst.caller.ktime_iodelay = caller.ktime_iodelay;
 				strncpy(hwstatus_rst.caller.caller_iodelay, caller.caller_iodelay, CALLER_NAME_LEN);

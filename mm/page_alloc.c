@@ -79,12 +79,6 @@
 #include <chipset_common/mm/unmovable_isolate.h>
 #endif
 
-#ifdef CONFIG_HW_MEMORY_MONITOR
-#include <linux/delayacct.h>
-#include <chipset_common/mmonitor/mmonitor.h>
-#include <chipset_common/allocpages_delayacct/allocpages_delayacct.h>
-#endif
-
 /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */
 static DEFINE_MUTEX(pcp_batch_high_lock);
 #define MIN_PERCPU_PAGELIST_FRACTION	(8)
@@ -3195,9 +3189,6 @@ void warn_alloc(gfp_t gfp_mask, const char *fmt, ...)
 	va_end(args);
 
 	pr_cont(", mode:%#x(%pGg)\n", gfp_mask, &gfp_mask);
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	count_mmonitor_event(ALLOC_FAILED_COUNT);
-#endif
 	dump_stack();
 	if (!should_suppress_show_mem())
 		show_mem(filter);
@@ -3698,10 +3689,6 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
 				(__GFP_ATOMIC|__GFP_DIRECT_RECLAIM)))
 		gfp_mask &= ~__GFP_ATOMIC;
 
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	delayacct_allocpages_start();
-#endif
-
 retry_cpuset:
 	compaction_retries = 0;
 	no_progress_loops = 0;
@@ -3912,9 +3899,6 @@ nopage:
 	warn_alloc(gfp_mask,
 			"page allocation failure: order:%u", order);
 got_pg:
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	delayacct_allocpages_end(order);
-#endif
 	return page;
 }
 

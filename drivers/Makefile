@@ -194,6 +194,4 @@ obj-$(CONFIG_HW_FDLEAK) += hwfdleak/
 obj-y += devkit/tpkit/
 obj-$(CONFIG_AUDIOKIT) += devkit/audiokit/
 obj-$(CONFIG_HW_CPULOAD_NOTI) += cpuload/
-obj-$(CONFIG_HW_MEMORY_MONITOR) += mmonitor/
-obj-$(CONFIG_HW_MEMORY_MONITOR) += allocpages_delayacct/
 obj-$(CONFIG_HUAWEI_DUBAI) += dubai/

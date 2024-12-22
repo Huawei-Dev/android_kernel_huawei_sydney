@@ -1038,19 +1038,6 @@ struct task_delay_info {
 	u64 freepages_start;
 	u64 freepages_delay;	/* wait for memory reclaim */
 	u32 freepages_count;	/* total count of memory reclaim */
-
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	spinlock_t	allocpages_lock;
-	u64 allocpages_start;
-	u64 allocpages_delay;	/* wait for memoroy slowpath allocation */
-	u64 allocpages_count;	/* total count of memory slowpath allocation */
-	u64 allocpages_delay_max;
-	u64 allocpages_delay_max_order;
-	u64 allocuser_delay;
-	u64 allocuser_count;
-	u64 allocuser_delay_max;
-	u64 allocuser_delay_max_order;
-#endif
 };
 #endif	/* CONFIG_TASK_DELAY_ACCT */
 

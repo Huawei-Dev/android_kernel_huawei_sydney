@@ -43,10 +43,6 @@
 #include <linux/hisi/protect_lru.h>
 #endif
 
-#ifdef CONFIG_HW_MEMORY_MONITOR
-#include <chipset_common/mmonitor/mmonitor.h>
-#endif
-
 #define CREATE_TRACE_POINTS
 #include <trace/events/filemap.h>
 
@@ -1759,9 +1755,6 @@ find_page:
 		}
 
 		page = find_get_page(mapping, index);
-#ifdef CONFIG_HW_MEMORY_MONITOR
-		count_mmonitor_event(FILE_CACHE_READ_COUNT);
-#endif
 		if(is_pagecache_stats_enable()) {
 			if(page) {
 				stat_inc_hit_count();
@@ -1770,10 +1763,6 @@ find_page:
 			}
 		}
 		if (!page) {
-#ifdef CONFIG_HW_MEMORY_MONITOR
-			count_mmonitor_event(FILE_CACHE_MISS_COUNT);
-#endif
-
 			if(is_pagecache_stats_enable()) {
 				stat_inc_syncread_pages_count(last_index - index);
 			}
@@ -2220,9 +2209,6 @@ int filemap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 	page = find_get_page(mapping, offset);
 #ifdef CONFIG_HW_CGROUP_WORKINGSET
 	workingset_pagecache_on_pagefault(file, offset);
-#endif
-#ifdef CONFIG_HW_MEMORY_MONITOR
-	count_mmonitor_event(FILE_CACHE_MAP_COUNT);
 #endif
 	if (likely(page) && !(vmf->flags & FAULT_FLAG_TRIED)) {
 		/*

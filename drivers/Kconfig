@@ -238,6 +238,4 @@ source "drivers/dubai/Kconfig"
 
 source "drivers/cpuload/Kconfig"
 
-source "drivers/mmonitor/Kconfig"
-
 endmenu

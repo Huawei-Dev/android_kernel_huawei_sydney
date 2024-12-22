@@ -234,8 +234,6 @@ source "drivers/hwfdleak/Kconfig"
 
 source "drivers/devkit/audiokit/Kconfig"
 
-source "drivers/spmi_hisi/Kconfig"
-
 source "drivers/devkit/lcdkit/Kconfig"
 
 source "drivers/devkit/tpkit/Kconfig"

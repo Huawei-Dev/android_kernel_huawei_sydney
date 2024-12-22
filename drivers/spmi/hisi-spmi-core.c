@@ -22,7 +22,6 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/spmi.h>
 #include <linux/hisi/of_hisi_spmi.h>
-#include "hisi-spmi-dbgfs.h"
 #include <linux/hisi/hisi_log.h>
 #define HISI_LOG_TAG HISI_SPMI_TAG
 
@@ -160,9 +159,6 @@ int spmi_del_controller(struct spmi_controller *ctrl)
 	bus_for_each_dev(&spmi_bus_type, NULL, ctrl, spmi_ctrl_remove_device);
 	mutex_unlock(&board_lock);
 
-#ifdef CONFIG_HISI_SPMI_DEBUG_FS
-	(void)spmi_dfs_del_controller(ctrl);
-#endif
 	mutex_lock(&board_lock);
 	idr_remove(&ctrl_idr, ctrl->nr);
 	mutex_unlock(&board_lock);
@@ -702,14 +698,6 @@ static int spmi_register_controller(struct spmi_controller *ctrl)
 	dev_err(&ctrl->dev, "Bus spmi-%d registered: dev:0x%pK\n",
 					ctrl->nr, &ctrl->dev);
 
-#ifdef CONFIG_HISI_SPMI_DEBUG_FS
-	ret = spmi_dfs_add_controller(ctrl);
-	if (ret) {
-		dev_err(&ctrl->dev, "Bus spmi-%d registered: dev:0x%pK add debug fs controller failed!\n",
-						ctrl->nr, &ctrl->dev);
-		goto exit;
-	}
-#endif
 	return ret;
 
 exit:

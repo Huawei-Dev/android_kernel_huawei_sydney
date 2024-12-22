@@ -10,7 +10,6 @@
 #include <linux/module.h>
 #include <linux/seq_file.h>
 #include <linux/hisi/of_hisi_spmi.h>
-#include "hisi-spmi-dbgfs.h"
 #include <linux/hisi/hisi_log.h>
 #define HISI_LOG_TAG HISI_SPMI_TAG
 

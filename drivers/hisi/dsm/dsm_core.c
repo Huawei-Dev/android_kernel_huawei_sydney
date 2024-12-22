@@ -1,5 +1,3 @@
-
-
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/ctype.h>
@@ -32,10 +30,6 @@ HWLOG_REGIST();
 #define DSM_LOG_DEBUG(x...)	_hwlog_debug(HWLOG_TAG, ##x)
 #ifndef DSM_MINOR
 #define DSM_MINOR		254    /* DSM */
-#endif
-
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-static struct dsm_msgq g_dsm_msgq;
 #endif
 
 static struct dsm_server g_dsm_server;
@@ -291,59 +285,6 @@ out:
 	return size;
 }
 
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-static unsigned int dsm_kfifo_get_data_len(void)
-{
-	unsigned int fifo_data_len = 0;
-	unsigned long flags = 0;
-
-	spin_lock_irqsave(&g_dsm_msgq.fifo_lock, flags);
-	fifo_data_len = kfifo_len(&g_dsm_msgq.msg_fifo);
-	spin_unlock_irqrestore(&g_dsm_msgq.fifo_lock, flags);
-
-	return fifo_data_len;
-}
-
-static void dsm_kfifo_reset(void)
-{
-	unsigned long flags = 0;
-
-	spin_lock_irqsave(&g_dsm_msgq.fifo_lock, flags);
-	kfifo_reset(&g_dsm_msgq.msg_fifo);
-	spin_unlock_irqrestore(&g_dsm_msgq.fifo_lock, flags);
-}
-
-static bool dsm_is_errno_in_da_range(int error_no)
-{
-	return (error_no >= DA_MIN_ERROR_NO && error_no <= DA_MAX_ERROR_NO);
-}
-
-int dsm_client_copy_ext(struct dsm_client *client, void *src, int sz)
-{
-	int size = 0;
-
-	if (!client || !src || sz <= 0) {
-		DSM_LOG_ERR("%s invlaid params\n", __func__);
-		goto out;
-	}
-
-	if ((dsm_kfifo_get_data_len() + sz) > MSGQ_SIZE) {
-		DSM_LOG_ERR("%s no enough space in msgQ, [used_size] - %u bytes\n",
-			__func__, dsm_kfifo_get_data_len());
-		goto out;
-	}
-
-	size = kfifo_in_locked(&g_dsm_msgq.msg_fifo, src, sz,
-		&g_dsm_msgq.fifo_lock);
-	if (size > 0)
-		DSM_LOG_INFO("%s finish putting %d bytes into msgQ\n",
-			client->client_name, size);
-
-out:
-	return size;
-}
-#endif
-
 static inline int dsm_client_readable(struct dsm_client *client)
 {
 	int ret = 0;
@@ -545,11 +486,6 @@ static ssize_t dsm_read(struct file *file, char __user *buf, size_t count, loff_
 {
 	struct dsm_client *client = file->private_data;
 	size_t copy_size = 0;
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-	size_t len = 0;
-	int ret = 0;
-	unsigned int copied = 0;
-#endif
 
 	DSM_LOG_DEBUG("%s enter\n", __func__);
 
@@ -559,33 +495,6 @@ static ssize_t dsm_read(struct file *file, char __user *buf, size_t count, loff_
 	}
 
 	if (dsm_client_readable(client)) {
-	#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-		if (dsm_is_errno_in_da_range(client->error_no)) {
-			len = dsm_kfifo_get_data_len();
-			DSM_LOG_DEBUG("[msgQ_len] - %zu bytes, [count] - %zu bytes\n",
-				len, count);
-			if (len > 0) {
-				if (mutex_lock_interruptible(&g_dsm_msgq.read_lock)) {
-					return -ERESTARTSYS;
-				}
-				ret = kfifo_to_user(&g_dsm_msgq.msg_fifo, buf, min(len, count), &copied);
-				mutex_unlock(&g_dsm_msgq.read_lock);
-				if (ret)
-					DSM_LOG_ERR("copy msgQ to user failed, ret %d\n", ret);
-				else
-					copy_size = copied;
-
-				if (copied == len) {
-					DSM_LOG_DEBUG("all msgQ data is ready for reset\n");
-					dsm_kfifo_reset();
-				}
-			} else {
-				DSM_LOG_ERR("ignore coping to user as msgQ is empty\n");
-			}
-			dsm_client_set_idle(client);
-			DSM_LOG_INFO("total %zu bytes read from msgQ to user\n", copy_size);
-		} else {
-	#endif
 		copy_size = min(count, (client->used_size - client->read_size));
 		if (copy_to_user(buf, &client->dump_buff[client->read_size], copy_size))
 			DSM_LOG_ERR("copy to user failed\n");
@@ -593,9 +502,6 @@ static ssize_t dsm_read(struct file *file, char __user *buf, size_t count, loff_
 		if (client->read_size >= client->used_size)
 			dsm_client_set_idle(client);
 		DSM_LOG_DEBUG("%zu bytes read to user\n", copy_size);
-	#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-		}
-	#endif
 	}
 
 out:
@@ -650,13 +556,6 @@ static unsigned int dsm_poll(struct file *file, poll_table *wait)
 	DSM_LOG_DEBUG("client name :%s\n", client->client_name);
 	poll_wait(file, &client->waitq, wait);
 	if (test_bit(CBUFF_READY_BIT, &client->buff_flag)) {
-	#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-		if (dsm_is_errno_in_da_range(client->error_no)) {
-			if (dsm_kfifo_get_data_len() > 0)
-				mask = POLLIN | POLLRDNORM;
-			goto out;
-		}
-	#endif
 		mask = POLLIN | POLLRDNORM;
 	}
 
@@ -877,17 +776,6 @@ static int __init dsm_init(void)
 					dsm_interface_attrs[i].attr.name, ret);
 	}
 
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-	memset(&g_dsm_msgq, 0, sizeof(struct dsm_msgq));
-	spin_lock_init(&g_dsm_msgq.fifo_lock);
-	mutex_init(&g_dsm_msgq.read_lock);
-	if (kfifo_alloc(&g_dsm_msgq.msg_fifo, MSGQ_SIZE, GFP_KERNEL)) {
-		DSM_LOG_ERR("alloc message queue failed\n");
-		ret = -ENOMEM;
-		goto out;
-	}
-#endif
-
 out:
 	DSM_LOG_INFO("%s called, ret %d\n", __func__, ret);
 	return ret;
@@ -901,9 +789,6 @@ EXPORT_SYMBOL(dsm_client_notify);
 EXPORT_SYMBOL(dsm_find_client);
 EXPORT_SYMBOL(dsm_client_unocuppy);
 EXPORT_SYMBOL(dsm_client_copy);
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-EXPORT_SYMBOL(dsm_client_copy_ext);
-#endif
 EXPORT_SYMBOL(dsm_update_client_vendor_info);
 
 subsys_initcall(dsm_init);

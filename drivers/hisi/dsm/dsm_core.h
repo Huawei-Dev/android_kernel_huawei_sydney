@@ -1,14 +1,9 @@
-
-
 #ifndef _DSM_CORE_H
 #define _DSM_CORE_H
 #include <dsm/dsm_pub.h>
 #include <linux/mutex.h>
 #include <linux/ioctl.h>
 #include <linux/err.h>
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-#include <linux/kfifo.h>
-#endif
 
 #define CLIENT_SIZE			(128)
 #define UINT_BUF_MAX		(12)
@@ -54,14 +49,5 @@ struct dsm_server{
 	struct workqueue_struct *dsm_wq;
 	struct mutex mtx_lock;
 };
-
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-#define MSGQ_SIZE (32 * 1024)  /* keep size with power of 2 */
-struct dsm_msgq {
-	struct kfifo msg_fifo;
-	spinlock_t fifo_lock;
-	struct mutex read_lock;
-};
-#endif
 
 #endif

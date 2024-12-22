@@ -62,17 +62,11 @@ struct power_dsm_data_info {
 struct dsm_client *power_dsm_get_dclient(enum power_dsm_type type);
 int power_dsm_dmd_report(enum power_dsm_type type, int err_no, void *buf);
 
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-int power_dsm_bigdata_report(enum power_dsm_type type, int err_no, void *msg);
-
-#else
-
 static inline int power_dsm_bigdata_report(enum power_dsm_type type,
 	int err_no, void *msg)
 {
 	return 0;
 }
-#endif /* CONFIG_HUAWEI_DATA_ACQUISITION */
 
 #define power_dsm_dmd_report_format(type, err_no, fmt, args...) do { \
 if (power_dsm_get_dclient(type)) { \

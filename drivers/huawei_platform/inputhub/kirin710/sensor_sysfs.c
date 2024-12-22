@@ -340,203 +340,6 @@ static DEVICE_ATTR(gps_4774_i2c_selfTest, 0664, show_gps_4774_i2c_selfTest_resul
 SET_SENSOR_SELFTEST(HANDPRESS, handpress);
 static DEVICE_ATTR(handpress_selfTest, 0664, show_handpress_selfTest_result, attr_set_handpress_selftest);
 
-#ifdef SENSOR_DATA_ACQUISITION
-static int init_msg_for_enq(struct message *msg)
-{
-	if(msg == NULL)
-		return -1;
-
-	memset(msg,0,sizeof(struct message));
-	msg->data_source = DATA_FROM_KERNEL;
-	msg->num_events = 0;
-	msg->version = 1;
-	return 0;
-}
-
-static int init_event_of_msg(struct event *events,struct sensor_eng_cal_test sensor_test)
-{
-	if(events == NULL )
-		return -1;
-	memset(events,0,sizeof(struct event));
-	events->error_code = 0;
-	events->cycle = 0;
-	memcpy(events->station, NA, sizeof(NA));
-	memcpy(events->device_name, sensor_test.name, sizeof(sensor_test.name));
-	memcpy(events->bsn, NA, sizeof(NA));
-	memcpy(events->min_threshold, NA, sizeof(NA));
-	memcpy(events->max_threshold, NA, sizeof(NA));
-	memcpy(events->result, sensor_test.result, sizeof(sensor_test.result));
-	memcpy(events->firmware, NA, sizeof(NA));
-	memcpy(events->description, NA, sizeof(NA));
-	return 0;
-}
-static int enq_msg_data_in_sensorhub_single(struct event events)
-{
-	struct message *msg = NULL;
-	char val[MAX_VAL_LEN];
-	int ret = -1;
-
-	msg = (struct message *)kzalloc(sizeof(struct message),GFP_KERNEL);
-	if(!msg){
-		hwlog_err("alloc message failed\n");
-		return ret;
-	}
-
-	msg->data_source = DATA_FROM_KERNEL;
-	msg->num_events = 1;
-	msg->version = 1;
-	events.error_code = 0;
-	events.cycle = 0;
-	memcpy(events.station, NA, sizeof(NA));
-	memcpy(events.bsn, NA, sizeof(NA));
-	memcpy(events.firmware, NA, sizeof(NA));
-	memcpy(events.description, NA, sizeof(NA));
-	memcpy(&(msg->events[0]), &events, sizeof(events));
-
-	if(!dsm_client_ocuppy(shb_dclient)){
-		ret = dsm_client_copy_ext(shb_dclient, msg, sizeof(struct message));
-		if(ret > 0){
-			dsm_client_notify(shb_dclient,DA_SENSOR_HUB_ERROR_NO);
-		}else{
-			hwlog_err("dsm_client_notify failed!");
-		}
-	}
-
-	if(msg){
-		kfree(msg);
-	}
-	return ret;
-}
-static int enq_msg_data_in_sensorhub(struct sensor_eng_cal_test sensor_test)
-{
-	struct message *msg = NULL;
-	int ret = -1;
-	int pCalValue = 0;
-	int pEvents = 0;
-
-	if(sensor_test.value_num > MAX_COPY_EVENT_SIZE || sensor_test.cal_value == NULL){
-		hwlog_info("enq_msg_data_in_sensorhub bad value!!\n");
-		return ret;
-	}
-
-	while(pCalValue < sensor_test.value_num){
-		msg = (struct message*)kzalloc(sizeof(struct message),GFP_KERNEL);
-		ret = init_msg_for_enq(msg);
-		if(ret){
-			hwlog_err("alloc mesage failed\n");
-			return ret;
-		}
-
-		for(pEvents=0; pEvents<MAX_MSG_EVENT_NUM && pCalValue<sensor_test.value_num; pEvents++, pCalValue++){
-			ret =  init_event_of_msg(&(msg->events[pEvents]),sensor_test);
-			if(ret){
-				hwlog_err("init_event_of_msg failed\n");
-				kfree(msg);
-				return ret;
-			}
-			snprintf(msg->events[pEvents].value,MAX_VAL_LEN,"%d",*(sensor_test.cal_value+pCalValue));
-			if(pCalValue < sensor_test.threshold_num){
-				snprintf(msg->events[pEvents].min_threshold,MAX_VAL_LEN,"%d",*(sensor_test.min_threshold+pCalValue));
-				snprintf(msg->events[pEvents].max_threshold,MAX_VAL_LEN,"%d",*(sensor_test.max_threshold+pCalValue));
-			}
-			memcpy(msg->events[pEvents].test_name,sensor_test.test_name[pCalValue],(strlen(sensor_test.test_name[pCalValue])+1));
-			msg->events[pEvents].item_id = sensor_test.first_item+pCalValue;
-		}
-		msg->num_events = pEvents;
-		ret = dsm_client_copy_ext(shb_dclient,msg,sizeof(struct message));
-		if(ret <= 0){
-			ret = -1;
-			hwlog_err("%s dsm_client_copy_ext for sensor failed\n",sensor_test.name);
-			kfree(msg);
-			return ret;
-		}else{
-			ret = 0;
-			if(msg){
-				kfree(msg);
-			}
-		}
-	}
-
-	hwlog_info("%s enq_msg_data_in_sensorhub succ!!\n",sensor_test.name);
-	return ret;
-}
-
-
-static void enq_notify_work_sensor(struct sensor_eng_cal_test sensor_test)
-{
-	int ret = 0;
-
-	if(!dsm_client_ocuppy(shb_dclient)){
-		ret = enq_msg_data_in_sensorhub(sensor_test);
-		if(!ret){
-			dsm_client_notify(shb_dclient,DA_SENSOR_HUB_ERROR_NO);
-		}
-	}
-}
-
-static void cap_prox_enq_notify_work(const int item_id, uint16_t value,uint16_t min_threshold,uint16_t max_threshold,const char *test_name)
-{
-	int ret = -1;
-	struct event cap_prox_event;
-	memset(&cap_prox_event, 0, sizeof(cap_prox_event));
-
-	if(test_name == NULL){
-		return;
-	}
-	cap_prox_event.item_id = item_id;
-	memcpy(cap_prox_event.device_name,CAP_PROX_TEST_CAL,sizeof(CAP_PROX_TEST_CAL));
-	memcpy(cap_prox_event.result,CAP_PROX_RESULT,(strlen(CAP_PROX_RESULT)+1));
-	memcpy(cap_prox_event.test_name,test_name,(strlen(test_name)+1));
-	snprintf(cap_prox_event.value,MAX_VAL_LEN,"%d",value);
-	snprintf(cap_prox_event.min_threshold,MAX_VAL_LEN,"%u",min_threshold);
-	snprintf(cap_prox_event.max_threshold,MAX_VAL_LEN,"%u",max_threshold);
-
-	ret = enq_msg_data_in_sensorhub_single(cap_prox_event);
-	if(ret > 0){
-		hwlog_info("cap_prox_enq_notify_work succ!!item_id=%d\n", cap_prox_event.item_id);
-	}else{
-		hwlog_info("cap_prox_enq_notify_work failed!!\n");
-	}
-}
-
-static void cap_prox_do_enq_work(int calibrate_index)
-{
-	uint16_t diff;
-	uint16_t offset;
-	uint16_t *calibrate_thred = NULL;
-
-	if (!strncmp(sensor_chip_info[CAP_PROX], "huawei,semtech-sx9323",
-			strlen("huawei,semtech-sx9323"))) {
-		diff = sar_calibrate_datas.semtech_cali_data.diff;
-		offset = sar_calibrate_datas.semtech_cali_data.offset;
-		calibrate_thred = sar_pdata.sar_datas.semteck_data.calibrate_thred;
-	} else if (!strncmp(sensor_chip_info[CAP_PROX], "huawei,abov-a96t3x6",
-			strlen("huawei,abov-a96t3x6"))) {
-		diff = sar_calibrate_datas.abov_cali_data.diff;
-		offset = sar_calibrate_datas.abov_cali_data.offset;
-		calibrate_thred = sar_pdata.sar_datas.abov_data.calibrate_thred;
-	}
-
-	if (calibrate_thred) {
-		switch (calibrate_index) {
-		case 1: /* near data */
-			cap_prox_enq_notify_work(SAR_SENSOR_DIFF_MSG, diff,
-						calibrate_thred[DIFF_MIN_THREDHOLD],
-						calibrate_thred[DIFF_MAX_THREDHOLD],
-						CAP_PROX_DIFF);
-			break;
-		case 2: /* far data */
-			cap_prox_enq_notify_work(SAR_SENSOR_OFFSET_MSG, offset,
-						calibrate_thred[OFFSET_MIN_THREDHOLD],
-						calibrate_thred[OFFSET_MAX_THREDHOLD],
-						CAP_PROX_OFFSET);
-			break;
-		default:
-			break;
-		}
-	}
-}
-#endif
 static ssize_t i2c_rw_pi(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
 {
 	uint64_t val = 0;
@@ -794,16 +597,6 @@ static ssize_t attr_acc_calibrate_write(struct device *dev, struct device_attrib
 	char date_str[CLI_TIME_STR_LEN] = { 0 };
 	interval_param_t param;
 	read_info_t read_pkg;
-	#ifdef SENSOR_DATA_ACQUISITION
-	int32_t minThreshold_acc[ACC_THRESHOLD_NUM] = {-gsensor_data.x_calibrate_thredhold,-gsensor_data.y_calibrate_thredhold,-gsensor_data.z_calibrate_thredhold};
-	int32_t maxThreshold_acc[ACC_THRESHOLD_NUM] = {gsensor_data.x_calibrate_thredhold,gsensor_data.y_calibrate_thredhold,gsensor_data.z_calibrate_thredhold};
-	struct sensor_eng_cal_test acc_test;
-	int pAccTest = 0;
-	#endif
-
-	#ifdef SENSOR_DATA_ACQUISITION
-	memset(&acc_test,0,sizeof(acc_test));
-	#endif
 
 	if (strict_strtoul(buf, 10, &val))
 		return -EINVAL;
@@ -845,23 +638,6 @@ static ssize_t attr_acc_calibrate_write(struct device *dev, struct device_attrib
 	}
 	get_test_time(date_str, sizeof(date_str));
 	acc_cali_data = (const int32_t *)read_pkg.data;
-
-	#ifdef SENSOR_DATA_ACQUISITION
-	minThreshold = (const int32_t *)minThreshold_acc;
-	maxThreshold = (const int32_t *)maxThreshold_acc;
-	acc_test.cal_value = acc_cali_data;
-	acc_test.value_num = ACC_CAL_NUM;
-	acc_test.threshold_num = ACC_THRESHOLD_NUM;
-	acc_test.first_item = ACC_CALI_X_OFFSET_MSG;
-	acc_test.min_threshold = minThreshold;
-	acc_test.max_threshold = maxThreshold;
-	memcpy(acc_test.name, ACC_TEST_CAL,sizeof(ACC_TEST_CAL));
-	memcpy(acc_test.result,ACC_CAL_RESULT,(strlen(ACC_CAL_RESULT)+1));
-	for(pAccTest=0; pAccTest<ACC_CAL_NUM;pAccTest++){
-		acc_test.test_name[pAccTest] = acc_test_name[pAccTest];
-	}
-	enq_notify_work_sensor(acc_test);
-	#endif
 
 	for (i=0; i<ARRAY_SIZE(acc_calibrate_param); i++) {
 		memset(&content, 0, sizeof(content));
@@ -946,16 +722,6 @@ static ssize_t attr_gyro_calibrate_write(struct device *dev, struct device_attri
 	const int32_t *maxThreshold = NULL;
 	char date_str[CLI_TIME_STR_LEN] = { 0 };
 	interval_param_t param;
-	#ifdef SENSOR_DATA_ACQUISITION
-	int32_t minThreshold_gyro[GYRO_THRESHOLD_NUM] = {-gyro_data.calibrate_thredhold,-gyro_data.calibrate_thredhold,-gyro_data.calibrate_thredhold};//-40dps
-	int32_t maxThreshold_gyro[GYRO_THRESHOLD_NUM] = {gyro_data.calibrate_thredhold,gyro_data.calibrate_thredhold,gyro_data.calibrate_thredhold};//40dps
-	struct sensor_eng_cal_test gyro_test;
-	int pGyroTest = 0;
-	#endif
-
-	#ifdef SENSOR_DATA_ACQUISITION
-	memset(&gyro_test,0,sizeof(gyro_test));
-	#endif
 
 	if (strict_strtoul(buf, 10, &val))
 		return -EINVAL;
@@ -1026,25 +792,7 @@ static ssize_t attr_gyro_calibrate_write(struct device *dev, struct device_attri
 	}
 
 	if(val == 1 || val == GYRO_DYN_CALIBRATE_END_ORDER) {
-
 		get_test_time(date_str, sizeof(date_str));
-		#ifdef SENSOR_DATA_ACQUISITION
-		minThreshold = (const int32_t *)minThreshold_gyro;
-		maxThreshold = (const int32_t *)maxThreshold_gyro;
-		gyro_test.cal_value = gyro_calib_data;
-		gyro_test.first_item = GYRO_CALI_X_OFFSET_MSG;
-		gyro_test.value_num = GYRO_CAL_NUM;
-		gyro_test.threshold_num = GYRO_THRESHOLD_NUM;
-		gyro_test.min_threshold = minThreshold;
-		gyro_test.max_threshold = maxThreshold;
-		memcpy(gyro_test.name, GYRO_TEST_CAL,sizeof(GYRO_TEST_CAL));
-		memcpy(gyro_test.result,GYRO_CAL_RESULT,(strlen(GYRO_CAL_RESULT)+1));
-		for(pGyroTest=0; pGyroTest<GYRO_CAL_NUM; pGyroTest++){
-			gyro_test.test_name[pGyroTest] = gyro_test_name[pGyroTest];
-		}
-		enq_notify_work_sensor(gyro_test);
-		#endif
-
 		for (i=0; i<ARRAY_SIZE(gyro_calibrate_param); i++) {
 			memset(&content, 0, sizeof(content));
 			snprintf(content, CLI_CONTENT_LEN_MAX, gyro_calibrate_param[i], gyro_calib_data[i],
@@ -1179,16 +927,6 @@ static ssize_t attr_ps_calibrate_write(struct device *dev, struct device_attribu
 	const int32_t *ps_cali_data = NULL;
 	const int32_t *minThreshold = NULL;
 	const int32_t *maxThreshold = NULL;
-	#ifdef SENSOR_DATA_ACQUISITION
-	int32_t minThreshold_ps[PS_CAL_NUM] = {0,0,0,-ps_data.offset_min};
-	int32_t maxThreshold_ps[PS_CAL_NUM] = {ps_data.ps_calib_20cm_threshold,ps_data.ps_calib_5cm_threshold,ps_data.ps_calib_3cm_threshold,ps_data.offset_max};
-	struct sensor_eng_cal_test ps_test;
-	int pPsTest = 0;
-	#endif
-
-	#ifdef SENSOR_DATA_ACQUISITION
-	memset(&ps_test,0,sizeof(ps_test));
-	#endif
 
 	if((txc_ps_flag != 1) && (ams_tmd2620_ps_flag != 1) &&	(avago_apds9110_ps_flag != 1) && (ams_tmd3725_ps_flag != 1)
 		&& (liteon_ltr582_ps_flag != 1) && (apds9999_ps_flag != 1) && (ams_tmd3702_ps_flag != 1)
@@ -1244,23 +982,6 @@ static ssize_t attr_ps_calibrate_write(struct device *dev, struct device_attribu
 save_log:
 	get_test_time(date_str, sizeof(date_str));
 	ps_cali_data = (const int32_t *)ps_calib_data_for_data_collect;
-
-	#ifdef SENSOR_DATA_ACQUISITION
-	minThreshold = (const int32_t *)minThreshold_ps;
-	maxThreshold = (const int32_t *)maxThreshold_ps;
-	ps_test.cal_value = ps_cali_data;
-	ps_test.first_item = PS_CALI_XTALK;
-	ps_test.value_num = PS_CAL_NUM;
-	ps_test.threshold_num = PS_THRESHOLD_NUM;
-	ps_test.min_threshold = minThreshold;
-	ps_test.max_threshold = maxThreshold;
-	memcpy(ps_test.name,PS_TEST_CAL,sizeof(PS_TEST_CAL));
-	memcpy(ps_test.result,PS_CAL_RESULT,(strlen(PS_CAL_RESULT)+1));
-	for(pPsTest=0; pPsTest<PS_CAL_NUM; pPsTest++){
-		ps_test.test_name[pPsTest] = ps_test_name[pPsTest];
-	}
-	enq_notify_work_sensor(ps_test);
-	#endif
 
 	if(val>=PS_XTALK_CALIBRATE && val<=PS_3CM_CALIBRATE){
 		memset(&content, 0, sizeof(content));
@@ -1329,26 +1050,6 @@ int write_als_offset_to_nv(char *temp)
 
 static void als_dark_noise_offset_enq_notify_work(const int item_id, uint16_t value,uint16_t min_threshold,uint16_t max_threshold)
 {
-	#ifdef SENSOR_DATA_ACQUISITION
-	int ret = -1;
-	struct event als_dark_noise_offset_event;
-	memset(&als_dark_noise_offset_event, 0, sizeof(als_dark_noise_offset_event));
-
-	als_dark_noise_offset_event.item_id = item_id;
-	memcpy(als_dark_noise_offset_event.device_name,ALS_TEST_CAL,sizeof(ALS_TEST_CAL));
-	memcpy(als_dark_noise_offset_event.result,ALS_CAL_RESULT,sizeof(ALS_CAL_RESULT));
-	memcpy(als_dark_noise_offset_event.test_name,ALS_DARK_CALI_NAME,sizeof(ALS_DARK_CALI_NAME));
-	snprintf(als_dark_noise_offset_event.value,MAX_VAL_LEN,"%d",value);
-	snprintf(als_dark_noise_offset_event.min_threshold,MAX_VAL_LEN,"%u",min_threshold);
-	snprintf(als_dark_noise_offset_event.max_threshold,MAX_VAL_LEN,"%u",max_threshold);
-
-	ret = enq_msg_data_in_sensorhub_single(als_dark_noise_offset_event);
-	if(ret > 0){
-		hwlog_info("als_dark_noise_offset_enq_notify_work succ!!item_id=%d\n", als_dark_noise_offset_event.item_id);
-	}else{
-		hwlog_info("als_dark_noise_offset_enq_notify_work failed!!\n");
-	}
-	#endif
 }
 
 static int als_calibrate_save(const void *buf, int length)
@@ -1393,16 +1094,6 @@ static ssize_t attr_als_calibrate_write(struct device *dev, struct device_attrib
 	const int32_t *maxThreshold = NULL;
 	char date_str[CLI_TIME_STR_LEN] = { 0 };
 	interval_param_t param;
-	#ifdef SENSOR_DATA_ACQUISITION
-	int32_t minThreshold_als[ALS_CAL_NUM] = {minThreshold_als_para,minThreshold_als_para,minThreshold_als_para,minThreshold_als_para,minThreshold_als_para,minThreshold_als_para};
-	int32_t maxThreshold_als[ALS_CAL_NUM] = {maxThreshold_als_para,maxThreshold_als_para,maxThreshold_als_para,maxThreshold_als_para,maxThreshold_als_para,maxThreshold_als_para};
-	struct sensor_eng_cal_test als_test;
-	int pAlsTest = 0;
-	#endif
-
-	#ifdef SENSOR_DATA_ACQUISITION
-	memset(&als_test,0,sizeof(als_test));
-	#endif
 
 	if (rohm_rgb_flag != 1 && avago_rgb_flag != 1 && ams_tmd3725_rgb_flag != 1  && liteon_ltr582_rgb_flag != 1 && is_cali_supported !=1
 		&& apds9999_rgb_flag != 1 && ams_tmd3702_rgb_flag != 1 && apds9253_rgb_flag != 1 && vishay_vcnl36658_als_flag != 1) {
@@ -1454,35 +1145,7 @@ static ssize_t attr_als_calibrate_write(struct device *dev, struct device_attrib
 	als_cali_data = (const int32_t *)pkg_mcu.data;
 
 	if (2 == val){
-#ifdef SENSOR_DATA_ACQUISITION
-		cali_data_u16 = (const uint16_t *)pkg_mcu.data;
-		als_dark_noise_offset_enq_notify_work(ALS_CALI_DARK_OFFSET_MSG, *cali_data_u16,
-				ALS_DARK_NOISE_OFFSET_MIN, ALS_DARK_NOISE_OFFSET_MAX);
-#endif
 	}else{
-#ifdef SENSOR_DATA_ACQUISITION
-		cali_data_u16 = (const uint16_t *)pkg_mcu.data;
-		int32_t als_cali_data_int32[ALS_CAL_NUM] = {*cali_data_u16,*(cali_data_u16 + 1),*(cali_data_u16 + 2),*(cali_data_u16 + 3),*(cali_data_u16 + 4),*(cali_data_u16 + 5)};
-		hwlog_info("als calibrate data for collect, %d %d %d %d %d %d\n",*cali_data_u16, *(cali_data_u16 + 1), *(cali_data_u16 + 2),
-				*(cali_data_u16 + 3), *(cali_data_u16 + 4), *(cali_data_u16 + 5));
-
-		minThreshold = (const int32_t *)minThreshold_als;
-		maxThreshold = (const int32_t *)maxThreshold_als;
-		als_test.cal_value = (const int32_t *)als_cali_data_int32;
-		als_test.first_item = ALS_CALI_R_MSG;
-		als_test.value_num = ALS_CAL_NUM;
-		als_test.threshold_num = ALS_THRESHOLD_NUM;
-		als_test.min_threshold = minThreshold;
-		als_test.max_threshold = maxThreshold;
-
-		memcpy(als_test.name,ALS_TEST_CAL,sizeof(ALS_TEST_CAL));
-		memcpy(als_test.result,ALS_CAL_RESULT,(strlen(ALS_CAL_RESULT)+1));
-		for(pAlsTest=0; pAlsTest<ALS_CAL_NUM; pAlsTest++){
-			als_test.test_name[pAlsTest] = als_test_name[pAlsTest];
-		}
-		enq_notify_work_sensor(als_test);
-#endif
-
 		for (i=0; i<ARRAY_SIZE(als_calibrate_param); i++) {
 			memset(&content, 0, sizeof(content));
 			snprintf(content, CLI_CONTENT_LEN_MAX, als_calibrate_param[i], *(als_cali_data),
@@ -1677,9 +1340,6 @@ static ssize_t attr_cap_prox_calibrate_write(struct device *dev,
 			}
 			INIT_WORK(&cap_prox_calibrate_work, cap_prox_calibrate_work_func);
 			queue_work(system_power_efficient_wq, &cap_prox_calibrate_work);
-			#ifdef SENSOR_DATA_ACQUISITION
-			cap_prox_do_enq_work(calibrate_index);
-			#endif
 		}
 	}
 	return count;

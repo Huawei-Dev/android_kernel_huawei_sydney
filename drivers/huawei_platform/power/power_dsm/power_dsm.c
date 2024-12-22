@@ -251,32 +251,6 @@ int power_dsm_dmd_report(enum power_dsm_type type, int err_no, void *buf)
 }
 EXPORT_SYMBOL_GPL(power_dsm_dmd_report);
 
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-int power_dsm_bigdata_report(enum power_dsm_type type, int err_no, void *msg)
-{
-	struct dsm_client *client = NULL;
-
-	client = power_dsm_get_dclient(type);
-
-	if (!client || !msg) {
-		hwlog_err("client or msg is null\n");
-		return -1;
-	}
-
-	if (!dsm_client_ocuppy(client)) {
-		dsm_client_copy_ext(client, (struct message *)msg,
-			sizeof(struct message));
-		dsm_client_notify(client, err_no);
-		hwlog_info("report type:%d, err_no:%d\n", type, err_no);
-		return 0;
-	}
-
-	hwlog_err("power dsm client is busy\n");
-	return -1;
-}
-EXPORT_SYMBOL_GPL(power_dsm_bigdata_report);
-#endif /* CONFIG_HUAWEI_DATA_ACQUISITION */
-
 #if (defined(POWER_DSM_DEBUG_TEST) && defined(CONFIG_SYSFS))
 static enum power_dsm_type g_power_dsm_type = POWER_DSM_TYPE_END;
 static int g_power_dsm_errno;

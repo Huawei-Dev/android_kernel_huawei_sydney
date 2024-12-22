@@ -875,12 +875,6 @@ enum DSM_KEYS_TYPE{
 /*cpu_buck*/
 #define ERROR_NO_CPU_BUCK_BASE  (920012000)
 
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-#define DA_SENSOR_HUB_ERROR_NO	(924005001)
-#define DA_VIBRATOR_ERROR_NO (924005002)
-#define DA_BATTERY_ACR_ERROR_NO (924005003)
-#endif
-
 /******************DMD NUMBER FOR RTC BEGIN*************************/
 #define DSM_RTC_PMU_READCOUNT_ERROR_NO (925005000)
 #define DSM_RTC_SET_RTC_TMIE_WARNING_NO (925005001)
@@ -923,48 +917,6 @@ struct dsm_extern_client{
 	int buf_size;
 };
 
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-#define MAX_BSN_LEN             (20)
-#define MAX_STATION_LEN         (8)
-#define MAX_DEVICE_NAME_LEN     (32)
-#define MAX_TEST_NAME_LEN       (32)
-#define MAX_VAL_LEN             (64)
-#define MAX_RESULT_LEN          (8)
-#define MAX_TIME_LEN            (20)
-#define MAX_FIRMWARE_LEN        (32)
-#define MAX_DESCRIPTION_LEN     (64)
-#define MAX_MSG_EVENT_NUM       (4)
-#define DATA_FROM_KERNEL        (1)
-#define ITEM_ID_MIN             (700000000)
-#define ITEM_ID_MAX             (799999999)
-#define DA_MIN_ERROR_NO			(924005000)
-#define DA_MAX_ERROR_NO			(924005999)
-
-struct event {
-	int error_code;                        /* error code (errno) */
-	int item_id;                           /* index of test item */
-	int cycle;                             /* which round in aging test */
-	char result[MAX_RESULT_LEN];           /* actual test result */
-	char station[MAX_STATION_LEN];         /* name of station */
-	char bsn[MAX_BSN_LEN];                 /* serial number of board */
-	char time[MAX_TIME_LEN];               /* test time */
-	char device_name[MAX_DEVICE_NAME_LEN]; /* name of device */
-	char test_name[MAX_TEST_NAME_LEN];     /* name of test item */
-	char value[MAX_VAL_LEN];               /* measured value */
-	char min_threshold[MAX_VAL_LEN];       /* min limit of measured value */
-	char max_threshold[MAX_VAL_LEN];       /* max limit of measured value */
-	char firmware[MAX_FIRMWARE_LEN];       /* firmware information */
-	char description[MAX_DESCRIPTION_LEN]; /* brief description */
-};
-
-struct message {
-	int version;                            /* message version */
-	int data_source;                        /* where is data from? */
-	int num_events;                         /* event counts */
-	struct event events[MAX_MSG_EVENT_NUM]; /* store event entity */
-};
-#endif
-
 #ifdef CONFIG_HUAWEI_DSM
 struct dsm_client *dsm_register_client (struct dsm_dev *dev);
 void dsm_unregister_client (struct dsm_client *dsm_client,struct dsm_dev *dev);
@@ -973,9 +925,6 @@ int dsm_client_ocuppy(struct dsm_client *client);
 int dsm_client_unocuppy(struct dsm_client *client);
 int dsm_client_record(struct dsm_client *client, const char *fmt, ...);
 int dsm_client_copy(struct dsm_client *client, void *src, int sz);
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-int dsm_client_copy_ext(struct dsm_client *client, void *src, int sz);
-#endif
 void dsm_client_notify(struct dsm_client *client, int error_no);
 extern void dsm_key_pressed(int type);
 int dsm_update_client_vendor_info(struct dsm_dev *dev);
@@ -1005,12 +954,7 @@ static inline int dsm_client_copy(struct dsm_client *client, void *src, int sz)
 {
 	return 0;
 }
-#ifdef CONFIG_HUAWEI_DATA_ACQUISITION
-static inline int dsm_client_copy_ext(struct dsm_client *client, void *src, int sz)
-{
-	return 0;
-}
-#endif
+
 static inline void dsm_client_notify(struct dsm_client *client, int error_no)
 {
 	return;

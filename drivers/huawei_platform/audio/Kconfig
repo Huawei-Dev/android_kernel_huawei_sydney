@@ -15,6 +15,5 @@ source "drivers/huawei_platform/audio/anc_hs_module/Kconfig"
 source "drivers/huawei_platform/audio/ak4376/Kconfig"
 source "drivers/huawei_platform/audio/ak4376-kernel-4-1/Kconfig"
 source "drivers/huawei_platform/audio/hifi_vir_dai/Kconfig"
-source "drivers/huawei_platform/audio/high_resistance_hs_det/Kconfig"
 endif # if HUAWEI_AUDIO
 endmenu

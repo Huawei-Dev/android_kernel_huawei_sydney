@@ -9,4 +9,3 @@ obj-$(CONFIG_MAXIM)	+= maxim/
 obj-$(CONFIG_AK4376)	+= ak4376/
 obj-$(CONFIG_AK4376_KERNEL_4_1)	+= ak4376-kernel-4-1/
 obj-$(CONFIG_HIFI_VIR_DAI)	+= hifi_vir_dai/
-obj-$(CONFIG_HIGH_RESISTANCE_HS_DET) += high_resistance_hs_det/

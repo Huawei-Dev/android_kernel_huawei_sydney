@@ -29,7 +29,6 @@ obj-y                                           += tzdriver/
 obj-$(CONFIG_LOAD_IMAGE) += load_image/
 obj-$(CONFIG_HISI_SECS_CTRL) += secs_power_ctrl/
 obj-$(CONFIG_HISI_SR)                      += pm/
-obj-$(CONFIG_HISI_OCBC)                    += ocbc/
 obj-$(CONFIG_HISI_HW_VOTE)                 += hw_vote/
 obj-$(CONFIG_HISI_GPUFREQ)                 += gpufreq/
 ifneq ($(link_kernel),false)

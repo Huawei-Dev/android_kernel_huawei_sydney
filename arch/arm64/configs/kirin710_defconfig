@@ -4148,11 +4148,6 @@ CONFIG_PM_SEC_IO=y
 # CONFIG_PM_FCM is not set
 
 #
-# Hisi OCBC options
-#
-# CONFIG_HISI_OCBC is not set
-
-#
 # Hisi HW Vote options
 #
 CONFIG_HISI_HW_VOTE=y

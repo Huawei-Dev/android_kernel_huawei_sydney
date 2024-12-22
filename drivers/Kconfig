@@ -240,6 +240,4 @@ source "drivers/cpuload/Kconfig"
 
 source "drivers/mmonitor/Kconfig"
 
-source "drivers/oae_fw_patch/Kconfig"
-
 endmenu

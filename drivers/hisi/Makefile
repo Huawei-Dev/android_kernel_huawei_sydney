@@ -45,3 +45,4 @@ obj-$(CONFIG_HUAWEI_WPA_DMD) += wpa_dmd/
 obj-$(CONFIG_SWITCH)		+= switch/
 obj-$(CONFIG_HUAWEI_STORAGE_ROFA) += storage_rofa/
 obj-$(CONFIG_OASES) += oases/
+obj-$(CONFIG_OAE_FW_PATCH) += oae_fw_patch/

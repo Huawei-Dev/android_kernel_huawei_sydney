@@ -47,3 +47,4 @@ obj-$(CONFIG_HUAWEI_STORAGE_ROFA) += storage_rofa/
 obj-$(CONFIG_OASES) += oases/
 obj-$(CONFIG_OAE_FW_PATCH) += oae_fw_patch/
 obj-$(CONFIG_LOGGER_EXTEND) += log/
+obj-$(CONFIG_HW_ZEROHUNG) += hwzerohung/

@@ -222,8 +222,6 @@ source "drivers/contexthub/Kconfig"
 
 source "drivers/hwbfm/Kconfig"
 
-source "drivers/hwzerohung/Kconfig"
-
 source "drivers/hwfdleak/Kconfig"
 
 source "drivers/devkit/audiokit/Kconfig"

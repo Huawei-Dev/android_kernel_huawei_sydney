@@ -37,12 +37,6 @@ config DEVFREQ_GOV_NPU_PM_QOS
     depends on ARCH_HISI && PM_DEVFREQ
     select PM_OPP
 
-config HISI_DDR_CHINTLV
-    bool "Hisilicon ddr devfreq chintlv"
-    default n
-    help
-      Deliver register address of GLB_ADDR_INTLV to ATF.
-
 config HISI_DDR_DEVFREQ_DEBUGFS
 	bool "Hisilicon ddr devfreq debugfs"
 	depends on HI3650_DDR_DEVFREQ && DEBUG_FS

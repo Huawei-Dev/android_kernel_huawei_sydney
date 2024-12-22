@@ -188,7 +188,6 @@ obj-$(CONFIG_HUAWEI_DSM)        += dsm/
 obj-$(CONFIG_CONNECTIVITY_HI110X) += connectivity/
 obj-$(CONFIG_CONTEXTHUB)        += contexthub/
 obj-$(CONFIG_HUAWEI_BFM) += hwbfm/
-obj-$(CONFIG_HW_FDLEAK) += hwfdleak/
 obj-y += devkit/tpkit/
 obj-$(CONFIG_AUDIOKIT) += devkit/audiokit/
 obj-$(CONFIG_HW_CPULOAD_NOTI) += cpuload/

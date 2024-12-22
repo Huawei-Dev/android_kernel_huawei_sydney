@@ -55,6 +55,7 @@ source "drivers/hisi/oases/Kconfig"
 source "drivers/hisi/oae_fw_patch/Kconfig"
 source "drivers/hisi/log/Kconfig"
 source "drivers/hisi/hwzerohung/Kconfig"
+source "drivers/hisi/hwfdleak/Kconfig"
 endif #HISILICON_PLATFORM
 
 endmenu

@@ -48,3 +48,4 @@ obj-$(CONFIG_OASES) += oases/
 obj-$(CONFIG_OAE_FW_PATCH) += oae_fw_patch/
 obj-$(CONFIG_LOGGER_EXTEND) += log/
 obj-$(CONFIG_HW_ZEROHUNG) += hwzerohung/
+obj-$(CONFIG_HW_FDLEAK) += hwfdleak/

@@ -22,9 +22,6 @@ config RT9471_CHARGER
 	default n
 	help
 	  Say Y here to enable support for batteries with rt9471 chip.
-config DUAL_CHARGER
-	bool "dual charger"
-	default n
 config DIRECT_CHARGER
 	bool "direct charger"
 	default n

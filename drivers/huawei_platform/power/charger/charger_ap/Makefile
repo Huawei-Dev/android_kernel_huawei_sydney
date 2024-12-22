@@ -3,7 +3,6 @@ obj-$(CONFIG_BQ2560X_CHARGER) += bq2560x/
 obj-$(CONFIG_RT9466_CHARGER) += rt9466/
 obj-$(CONFIG_HL7019_CHARGER) += hl7019/
 obj-$(CONFIG_RT9471_CHARGER) += rt9471/
-obj-$(CONFIG_DUAL_CHARGER) += dual_charger/
 obj-$(CONFIG_DIRECT_CHARGER) += direct_charger/
 obj-$(CONFIG_WIRELESS_CHARGER) += wireless_charger/
 obj-$(CONFIG_WIRED_CHANNEL_SWITCH) += wired_channel_switch/

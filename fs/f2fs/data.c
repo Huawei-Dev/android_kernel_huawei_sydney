@@ -22,6 +22,7 @@
 #include <linux/mm.h>
 #include <linux/memcontrol.h>
 #include <linux/cleancache.h>
+#include "../crypto/fscrypt_private.h"
 
 #include "f2fs.h"
 #include "node.h"

@@ -59,8 +59,6 @@
 #include <linux/swapops.h>
 #include <linux/balloon_compaction.h>
 
-#include <linux/hisi/pagecache_debug.h>
-
 #include "internal.h"
 
 #define CREATE_TRACE_POINTS
@@ -2105,7 +2103,6 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
 			nr_scanned, nr_reclaimed,
 			sc->priority, file);
 
-	pgcache_log(BIT_MM_SHRINK_INACTIVE_DUMP, "shrink inactive list, nr_reclaimed, %ld", nr_reclaimed);
 	return nr_reclaimed;
 }
 
@@ -2200,8 +2197,6 @@ static void shrink_active_list(unsigned long nr_to_scan,
 		isolate_mode |= ISOLATE_UNMAPPED;
 	if (!sc->may_writepage)
 		isolate_mode |= ISOLATE_CLEAN;
-
-	pgcache_log(BIT_MM_SHRINK_ACTIVE_DUMP, "shrink active list");
 
 	spin_lock_irq(&pgdat->lru_lock);
 

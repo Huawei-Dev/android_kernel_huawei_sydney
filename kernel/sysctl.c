@@ -94,7 +94,6 @@
 #ifdef CONFIG_TASK_PROTECT_LRU
 #include <linux/hisi/protect_lru.h>
 #endif
-#include <linux/hisi/pagecache_debug.h>
 
 #ifdef CONFIG_HUAWEI_UNMOVABLE_ISOLATE
 #include <chipset_common/mm/unmovable_isolate.h>

@@ -37,9 +37,6 @@
 #include <asm/byteorder.h>
 #include <uapi/linux/fs.h>
 
-#include <linux/hisi/pagecache_debug.h>
-
-
 struct backing_dev_info;
 struct bdi_writeback;
 struct export_operations;
@@ -2604,9 +2601,6 @@ extern int vfs_fsync(struct file *file, int datasync);
  */
 static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
 {
-	pgcache_log_path(BIT_GENERIC_WRITE_DUMP, &(iocb->ki_filp->f_path),
-			"generic write sync, offset, %ld, size, %ld",
-			iocb->ki_pos, count);
 	if (iocb->ki_flags & IOCB_DSYNC) {
 		int ret = vfs_fsync_range(iocb->ki_filp,
 				iocb->ki_pos - count, iocb->ki_pos - 1,

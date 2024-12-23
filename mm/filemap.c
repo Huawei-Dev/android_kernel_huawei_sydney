@@ -35,7 +35,6 @@
 #include <linux/memcontrol.h>
 #include <linux/cleancache.h>
 #include <linux/rmap.h>
-#include <linux/hisi/pagecache_debug.h>
 #include "internal.h"
 #include <linux/hisi/iolimit_cgroup.h>
 #ifdef CONFIG_TASK_PROTECT_LRU
@@ -1753,20 +1752,7 @@ find_page:
 		}
 
 		page = find_get_page(mapping, index);
-		if(is_pagecache_stats_enable()) {
-			if(page) {
-				stat_inc_hit_count();
-			} else {
-				stat_inc_miss_count();
-			}
-		}
 		if (!page) {
-			if(is_pagecache_stats_enable()) {
-				stat_inc_syncread_pages_count(last_index - index);
-			}
-			pgcache_log_path(BIT_GENERIC_SYNC_READ_DUMP, &(filp->f_path),
-					"generic sync read, offset, %ld, size, %ld",
-					*ppos, iter->count);
 			page_cache_sync_readahead(mapping,
 					ra, filp,
 					index, last_index - index);
@@ -1778,9 +1764,6 @@ find_page:
 			page_cache_async_readahead(mapping,
 					ra, filp, page,
 					index, last_index - index);
-			if(is_pagecache_stats_enable()) {
-				stat_inc_asyncread_pages_count(last_index - index);
-			}
 		}
 		if (!PageUptodate(page)) {
 			/*
@@ -2088,25 +2071,13 @@ static void do_sync_mmap_readahead(struct vm_area_struct *vma,
 
 	/* If we don't want any read-ahead, don't bother */
 	if (vma->vm_flags & VM_RAND_READ) {
-		pgcache_log_path(BIT_MMAP_SYNC_READ_DUMP, &(file->f_path),
-				"mmap sync read no need pre-fetch(VM_RAND_READ): pg_offset: %ld",
-				offset);
 		return;
 	}
 	if (!ra->ra_pages) {
-		pgcache_log_path(BIT_MMAP_SYNC_READ_DUMP, &(file->f_path),
-				"mmap sync read no need pre-fetch(ra_pages = 0): pg_offset: %ld",
-				offset);
 		return;
 	}
 
 	if (vma->vm_flags & VM_SEQ_READ) {
-		pgcache_log_path(BIT_MMAP_SYNC_READ_DUMP, &(file->f_path),
-				"mmap sync readahead(VM_SEQ_READ), pg_offset, %ld, ra_pages, %ld",
-				offset, ra->ra_pages);
-		if(is_pagecache_stats_enable()) {
-			stat_inc_mmap_syncread_pages_count(ra->ra_pages);
-		}
 		page_cache_sync_readahead(mapping, ra, file, offset,
 					  ra->ra_pages);
 		return;
@@ -2150,9 +2121,6 @@ static void do_async_mmap_readahead(struct vm_area_struct *vma,
 	if (ra->mmap_miss > 0)
 		ra->mmap_miss--;
 	if (PageReadahead(page)) {
-		if(is_pagecache_stats_enable()) {
-			stat_inc_mmap_asyncread_pages_count(ra->ra_pages);
-		}
 		page_cache_async_readahead(mapping, ra, file,
 					   page, offset, ra->ra_pages);
 	}
@@ -2198,9 +2166,6 @@ int filemap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 	if (offset >= size >> PAGE_SHIFT)
 		return VM_FAULT_SIGBUS;
 
-	pgcache_log_path(BIT_FILEMAP_FAULT_DUMP, &(file->f_path),
-			"filemap fault pg_offset: %ld size: %ld",
-			offset, size);
 	/*
 	 * Do we have something in the page cache already?
 	 */
@@ -2213,9 +2178,6 @@ int filemap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 		 * We found the page, so try async readahead before
 		 * waiting for the lock.
 		 */
-		if(is_pagecache_stats_enable()) {
-			stat_inc_mmap_hit_count();
-		}
 		task_set_in_pagefault(current);
 		do_async_mmap_readahead(vma, ra, file, page, offset);
 		task_clear_in_pagefault(current);
@@ -2225,11 +2187,6 @@ int filemap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 		do_sync_mmap_readahead(vma, ra, file, offset);
 		task_clear_in_pagefault(current);
 		pch_mmap_readextend(vma, ra, file, offset);
-
-		if(is_pagecache_stats_enable()) {
-			stat_inc_mmap_miss_count();
-		}
-
 		count_vm_event(PGMAJFAULT);
 		mem_cgroup_count_vm_event(vma->vm_mm, PGMAJFAULT);
 		ret = VM_FAULT_MAJOR;
@@ -2927,11 +2884,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
 
 	if (iocb->ki_flags & IOCB_DIRECT) {
 		loff_t pos, endbyte;
-
-		pgcache_log_path(BIT_GENERIC_WRITE_DUMP, &(file->f_path),
-				"generic write direct, offset, %ld, size, %ld",
-				iocb->ki_pos, iov_iter_count(from));
-
 		written = generic_file_direct_write(iocb, from);
 		/*
 		 * If the write stopped short of completing, fall back to
@@ -2975,9 +2927,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
 			 */
 		}
 	} else {
-		pgcache_log_path(BIT_GENERIC_WRITE_DUMP, &(file->f_path),
-				"generic write cache, offset, %ld, size, %ld",
-				iocb->ki_pos, iov_iter_count(from));
 		written = generic_perform_write(file, from, iocb->ki_pos);
 		if (likely(written > 0))
 			iocb->ki_pos += written;

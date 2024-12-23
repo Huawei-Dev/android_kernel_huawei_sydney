@@ -343,9 +343,6 @@ SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
 	}
 
 	ret = 0;
-	pgcache_log_path(BIT_FSYNC_SYSCALL_DUMP, &(f.file->f_path),
-			"sync file range start, offset:, %ld, end:, %ld, flags:, %d",
-			offset, endbyte, flags);
 	if (flags & SYNC_FILE_RANGE_WAIT_BEFORE) {
 		ret = filemap_fdatawait_range(mapping, offset, endbyte);
 		if (ret < 0)
@@ -363,9 +360,6 @@ SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
 		ret = filemap_fdatawait_range(mapping, offset, endbyte);
 
 out_put:
-	pgcache_log_path(BIT_FSYNC_SYSCALL_DUMP, &(f.file->f_path),
-			"sync file range end, offset:, %ld, end:, %ld, flags:, %d",
-			offset, endbyte, flags);
 	fdput(f);
 out:
 	return ret;

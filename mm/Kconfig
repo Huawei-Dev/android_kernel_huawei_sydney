@@ -541,12 +541,6 @@ config CMA_DEBUGFS
 	help
 	  Turns on the DebugFS interface for CMA.
 
-config HISI_CMA_DEBUG
-	bool "Hisilicon CMA debug log"
-	depends on CMA
-	help
-	  Turns on the debug log for hisilicon cma_alloc fail.
-
 config CMA_AREAS
 	int "Maximum count of the CMA areas"
 	depends on CMA

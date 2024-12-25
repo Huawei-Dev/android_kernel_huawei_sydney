@@ -4,7 +4,6 @@
 
 obj-y += cpuidle.o driver.o governor.o sysfs.o governors/
 obj-$(CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED) += coupled.o
-obj-$(CONFIG_BIG_LITTLE) += arm_big_little.o
 obj-$(CONFIG_DT_IDLE_STATES)		  += dt_idle_states.o
 
 ##################################################################################
@@ -30,6 +29,5 @@ obj-$(CONFIG_PSERIES_CPUIDLE)		+= cpuidle-pseries.o
 obj-$(CONFIG_POWERNV_CPUIDLE)		+= cpuidle-powernv.o
 ###############################################################################
 # ARM64 drivers
-obj-$(CONFIG_ARM64_CPUIDLE)		+= cpuidle-arm64.o
 obj-$(CONFIG_HISI_MULTIDRV_CPUIDLE)	+= hisi-multidrv-cpuidle.o
 obj-$(CONFIG_HISI_IDLE_SLEEP)	+= hisi-idle-sleep.o

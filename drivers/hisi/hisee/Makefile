@@ -4,10 +4,6 @@ EXTRA_CFLAGS 	+= -Idrivers/hisi/mntn/blackbox/platform_lpm3
 
 subdir-ccflags-y              += -Wall -Werror
 
-ifeq ($(TARGET_VERSION_MODE),factory)
-EXTRA_CFLAGS += -DCONFIG_HISI_HISEE_CHIPTEST_RT
-endif
-
 ifneq ($(TARGET_BUILD_VARIANT),user)
 EXTRA_CFLAGS += -DCONFIG_HISI_HISEE_CHIPTEST_SLT
 endif

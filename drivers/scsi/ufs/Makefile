@@ -17,7 +17,3 @@ obj-$(CONFIG_SCSI_UFS_TEST) += ufs_test.o
 obj-$(CONFIG_HUAWEI_UFS_DSM) += dsm_ufs.o
 obj-$(CONFIG_HISI_BOOTDEVICE) += ufs-rpmb.o
 obj-$(CONFIG_HISI_UFS_MANUAL_BKOPS) += hisi_ufs_bkops.o
-
-ifeq ($(TARGET_VERSION_MODE),factory)
-    EXTRA_CFLAGS += -DHEALTH_INFO_FACTORY_MODE
-endif

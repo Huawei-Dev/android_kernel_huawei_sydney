@@ -1,16 +1,3 @@
-
-ifneq ($(TARGET_BUILD_VARIANT),user)
-EXTRA_CFLAGS += -DHISI_PLUGUSB_TEST
-else
-ifeq ($(TARGET_VERSION_MODE),factory)
-EXTRA_CFLAGS += -DHISI_PLUGUSB_TEST
-endif
-endif
-
-
-
-#dwc3-$(CONFIG_USB_DWC3_OTG)		+= dwc3-otg_4_9.o
-
 ##
 # Platform-specific glue layers go here
 #
@@ -29,6 +16,11 @@ endif
 #obj-$(CONFIG_USB_DWC3_KEYSTONE)		+= dwc3-keystone.o
 #obj-$(CONFIG_USB_DWC3_OF_SIMPLE)	+= dwc3-of-simple.o
 #obj-$(CONFIG_USB_DWC3_ST)		+= dwc3-st.o
+#dwc3-$(CONFIG_USB_DWC3_OTG)		+= dwc3-otg_4_9.o
+
+ifneq ($(TARGET_BUILD_VARIANT),user)
+EXTRA_CFLAGS += -DHISI_PLUGUSB_TEST
+endif
 
 usb-vbus-y  := hisi_usb_vbus.o
 ifeq ($(CONFIG_USB_DWC3_VBUS_PLT),y)

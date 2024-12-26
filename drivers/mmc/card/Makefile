@@ -1,9 +1,6 @@
 #
 # Makefile for MMC/SD card drivers
 #
-ifeq ($(TARGET_VERSION_MODE),factory)
-KBUILD_CFLAGS += -DEMMC_FMD_FACTORY_MODE
-endif
 
 obj-$(CONFIG_MMC_BLOCK)		+= mmc_block.o
 mmc_block-objs			:= block.o queue.o

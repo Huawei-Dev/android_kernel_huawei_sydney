@@ -12,6 +12,3 @@ ccflags-y += -DBCM_ALLOC_STATIC_10K
 ccflags-y += -DDHD_DEVWAKE_EARLY
 ccflags-y += -DHW_PCIE_NOCLOG
 ccflags-y += -DHW_CUSTOM_BCN_TIMEOUT
-ifeq ($(TARGET_VERSION_MODE),factory)
-  ccflags-y += -DHW_WIFI_FACTORY_MODE
-endif

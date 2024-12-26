@@ -2,10 +2,6 @@ obj-y += rdr_hisi_audio_adapter.o
 obj-y += rdr_hisi_audio_codec.o
 obj-y += rdr_hisi_audio_soc.o
 
-ifeq ($(TARGET_VERSION_MODE),factory)
-EXTRA_CFLAGS += -DAUDIO_FACTORY_MODE
-endif
-
 EXTRA_CFLAGS += -Idrivers/hisi/hifi_dsp/
 EXTRA_CFLAGS += -Idrivers/hisi/hi64xx_dsp/
 EXTRA_CFLAGS += -Idrivers/hisi/mntn/blackbox/

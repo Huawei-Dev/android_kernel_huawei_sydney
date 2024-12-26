@@ -834,12 +834,7 @@ static int pci_pm_resume(struct device *dev)
 	 * This is necessary for the suspend error path in which resume is
 	 * called without restoring the standard config registers of the device.
 	 */
-#ifndef CONFIG_PCIE_KIRIN
 	if (pci_dev->state_saved)
-#else
-	//bcm vendor id is 0x14e4
-	if (pci_dev->state_saved && pci_dev->vendor != PCI_VENDOR_ID_BROADCOM)
-#endif
 		pci_restore_standard_config(pci_dev);
 
 	if (pci_has_legacy_pm_support(pci_dev))

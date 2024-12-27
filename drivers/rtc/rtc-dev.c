@@ -16,7 +16,9 @@
 #include <linux/module.h>
 #include <linux/rtc.h>
 #include <linux/sched.h>
+#ifdef CONFIG_COMPAT
 #include <linux/compat.h>
+#endif
 #include "rtc-core.h"
 
 static dev_t rtc_devt;

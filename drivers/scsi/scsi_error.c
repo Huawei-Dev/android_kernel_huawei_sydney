@@ -2386,10 +2386,10 @@ scsi_ioctl_reset(struct scsi_device *dev, int __user *arg)
 	struct request req;
 	unsigned long flags;
 	int error = 0, rtn, val;
-#ifndef BYPASS_AUTHORITY_VERIFY
+
 	if (!capable(CAP_SYS_ADMIN) || !capable(CAP_SYS_RAWIO))
 		return -EACCES;
-#endif
+
 	error = get_user(val, arg);
 	if (error)
 		return error;

@@ -243,7 +243,7 @@ ENDPROC(\label)
 
 	.align 11
 
-ENTRY_NOTAG(__kvm_hyp_vector)
+ENTRY(__kvm_hyp_vector)
 	ventry	el2t_sync_invalid		// Synchronous EL2t
 	ventry	el2t_irq_invalid		// IRQ EL2t
 	ventry	el2t_fiq_invalid		// FIQ EL2t

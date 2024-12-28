@@ -417,7 +417,7 @@ tsk	.req	x28		// current thread_info
 	.pushsection ".entry.text", "ax"
 
 	.align	11
-ENTRY_NOTAG(vectors)
+ENTRY(vectors)
 	kernel_ventry	1, sync_invalid			// Synchronous EL1t
 	kernel_ventry	1, irq_invalid			// IRQ EL1t
 	kernel_ventry	1, fiq_invalid			// FIQ EL1t
@@ -1095,7 +1095,7 @@ __ni_sys_trace:
 	.endm
 
 	.align	11
-ENTRY_NOTAG(tramp_vectors)
+ENTRY(tramp_vectors)
 	.space	0x400
 
 	tramp_ventry

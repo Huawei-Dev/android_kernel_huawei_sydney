@@ -51,6 +51,13 @@
 #ifdef CONFIG_HW_SLUB_DF
 static void set_harden_double_free_check_flags(bool status);
 static bool fill_random_malloc = false;
+#ifdef CONFIG_64BIT
+#ifdef __LITTLE_ENDIAN
+#define CANARY_MASK 0xffffffffffffff00UL
+#else
+#define CANARY_MASK 0x00ffffffffffffffUL
+#endif
+#endif
 #endif
 /*
  * Lock order:

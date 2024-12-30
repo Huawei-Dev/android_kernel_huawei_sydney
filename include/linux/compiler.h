@@ -591,17 +591,4 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 # define nokprobe_inline	inline
 #endif
 
-#ifndef __randomize_layout
-# define __randomize_layout
-#endif
-
-#ifndef __no_randomize_layout
-# define __no_randomize_layout
-#endif
-
-#ifndef randomized_struct_fields_start
-# define randomized_struct_fields_start
-# define randomized_struct_fields_end
-#endif
-
 #endif /* __LINUX_COMPILER_H */
